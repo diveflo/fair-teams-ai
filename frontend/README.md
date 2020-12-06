@@ -1,16 +1,27 @@
 # frontend
 
-A new Flutter project.
+The frontend for the awesome fair-teams-ai.
 
-## Getting Started
+## Install flutter
 
-This project is a starting point for a Flutter application.
+- [Flutter installation](https://flutter.dev/docs/get-started/install)
 
-A few resources to get you started if this is your first Flutter project:
+## Run flutter application
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Run and build webapp:  
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+`$ flutter channel beta` (because this feature is still in alpha)  
+`$ flutter upgrade`  
+`$ flutter config --enable-web`  
+`$ flutter run` (to start the application)  
+`$ flutter build web` (to build the webapp)  
+
+Build windows app:  
+
+`$ flutter channel dev`  (because this feature is still in alpha)  
+`$ flutter upgrade`  
+`$ flutter config --enable-windows-desktop`  
+`$ flutter config --un-enable-web` (if there is a conflict with another configuration)  
+`$ flutter create .` (to add a new directory with all the windows app stuff)  
+`$ flutter run` (to start the application)  
+`$ flutter build windows` (to build the webapp) 
