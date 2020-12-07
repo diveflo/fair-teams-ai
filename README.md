@@ -1,5 +1,7 @@
 # fair-teams-ai
 
+![backend ci](https://github.com/diveflo/fair-teams-ai/workflows/backend%20ci/badge.svg) ![frontend ci/cd](https://github.com/diveflo/fair-teams-ai/workflows/frontend%20ci/cd/badge.svg)
+
 Tired of listening to your friends whine about how unfair your CS:GO teams are? Enraged by the arrays, I'm sorry..."matrices", that start at `1` of your buddys MATLAB script?
 *Fair Teams AI* automagically creates balanced team assignments for your next match.
 
