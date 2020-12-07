@@ -10,8 +10,10 @@ jobs:
   build-debug:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-dotnet@v1
+      - name: checkout code
+        uses: actions/checkout@main
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.100'
       - name: build
@@ -26,8 +28,10 @@ jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-dotnet@v1
+      - name: checkout code
+        uses: actions/checkout@main
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.100'
       - name: build
