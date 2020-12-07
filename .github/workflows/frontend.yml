@@ -1,4 +1,4 @@
-name: continuous deployment
+name: frontend ci/cd
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
