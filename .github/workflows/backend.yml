@@ -1,0 +1,44 @@
+name: backend ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@main
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.100'
+      - name: build
+        run: dotnet build --configuration Debug
+        working-directory: backend
+      - name: upload build artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: backend-debug
+          path: backend/bin/Debug
+
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@main
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.100'
+      - name: build
+        run: dotnet build --configuration Release
+        working-directory: backend
+      - name: upload build artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: backend-release
+          path: backend/bin/Release
