@@ -23,9 +23,6 @@ jobs:
         with:
           name: web-build
           path: frontend/build/web
-      - name: Display structure of build files
-        run: ls -R
-        working-directory: frontend/build/web
       - uses: erickzanardo/flutter-gh-pages@v2
         with:
           workingDir: frontend
