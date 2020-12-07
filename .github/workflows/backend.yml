@@ -14,10 +14,18 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.100'
-      - run: dotnet build
+      - name: build debug
+        run: dotnet build --configuration Debug
         working-directory: backend
-      - name: upload build artifacts
+      - name: build release
+        run: dotnet build --configuration Release
+      - name: upload debug build artifacts
         uses: actions/upload-artifact@main
         with:
           name: backend
-          path: backend/bin
+          path: backend/bin/Debug
+      - name: upload release build artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: backend
+          path: backend/bin/Release
