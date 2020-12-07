@@ -3,6 +3,8 @@ name: continuous deployment
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -23,9 +25,7 @@ jobs:
         with:
           name: web-build
           path: frontend/build/web
-      - name: Display structure of build files
-        run: ls -R
-        working-directory: frontend/build/web
       - uses: erickzanardo/flutter-gh-pages@v2
+        if: github.ref == 'refs/heads/main'
         with:
           workingDir: frontend
