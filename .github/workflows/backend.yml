@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@main
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.x'
+          dotnet-version: '5.0.0'
       - run: dotnet build
         working-directory: backend
       - name: upload build artifacts
