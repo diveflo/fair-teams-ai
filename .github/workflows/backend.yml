@@ -22,7 +22,7 @@ jobs:
       - name: upload build artifacts
         uses: actions/upload-artifact@main
         with:
-          name: backend
+          name: backend-debug
           path: backend/bin/Debug
 
   build-release:
@@ -40,5 +40,5 @@ jobs:
       - name: upload build artifacts
         uses: actions/upload-artifact@main
         with:
-          name: backend
+          name: backend-release
           path: backend/bin/Release
