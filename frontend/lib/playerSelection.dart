@@ -27,6 +27,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     players.add(Player(name: "Ferdy"));
     players.add(Player(name: "Niggo"));
     players.add(Player(name: "Stefan"));
+    players.add(Player(name: "Uwe"));
 
     super.initState();
   }
