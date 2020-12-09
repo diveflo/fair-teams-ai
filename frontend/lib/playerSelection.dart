@@ -9,10 +9,14 @@ class PlayerSelection extends StatefulWidget {
 
 class _PlayerSelectionState extends State<PlayerSelection> {
   List<Player> players;
+  List<Player> team1;
+  List<Player> team2;
 
   @override
   void initState() {
     players = List<Player>();
+    team1 = List<Player>();
+    team2 = List<Player>();
     players.add(Player(name: "Flo"));
     players.add(Player(name: "Hubi"));
     players.add(Player(name: "Alex"));
@@ -58,10 +62,99 @@ class _PlayerSelectionState extends State<PlayerSelection> {
             ),
           ),
         ),
-        RaisedButton(
-          child: Text("Scramble"),
-          onPressed: () {},
+        Padding(
+          padding: EdgeInsets.all(50),
+          child: RaisedButton(
+            child: Text("Scramble"),
+            onPressed: () {
+              setState(() {
+                List<Player> activePlayers =
+                    players.where((element) => element.isSelected).toList();
+                if (activePlayers.length > 0) {
+                  List<Player> _team1 = List<Player>();
+                  List<Player> _team2 = List<Player>();
+                  activePlayers.shuffle();
+                  for (int i = 0; i < activePlayers.length; i++) {
+                    if (i % 2 == 0) {
+                      _team1.add(activePlayers[i]);
+                    } else {
+                      _team2.add(activePlayers[i]);
+                    }
+                  }
+                  team1 = _team1;
+                  team2 = _team2;
+                }
+              });
+            },
+          ),
         ),
+        Expanded(
+          flex: 2,
+          child: Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Team(
+                    team: team1,
+                    name: "Terrors",
+                    color: Colors.red,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Team(
+                    team: team2,
+                    name: "CTs",
+                    color: Colors.blue,
+                  ),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class Team extends StatelessWidget {
+  const Team({
+    Key key,
+    @required this.team,
+    @required this.color,
+    @required this.name,
+  }) : super(key: key);
+
+  final List<Player> team;
+  final Color color;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.bold, fontSize: 30),
+        ),
+        Expanded(
+          child: Container(
+            child: ListView.builder(
+              itemCount: team.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Align(
+                    alignment: Alignment.center,
+                    child: Text(team[index].name),
+                  ),
+                );
+              },
+            ),
+          ),
+        )
       ],
     );
   }
