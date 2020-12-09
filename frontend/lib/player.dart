@@ -5,7 +5,7 @@ class Player {
   bool isSelected;
   final String steamID;
 
-  Player({@required this.name, this.steamID = ""}) {
+  Player({@required this.name, this.steamID = "", this.isSelected = false}) {
     isSelected = false;
   }
 
