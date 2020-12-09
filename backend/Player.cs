@@ -35,6 +35,12 @@ namespace backend
                 using (var sr = new StreamReader(s))
                 {
                     dynamic json = JsonConvert.DeserializeObject(sr.ReadToEnd());
+                    
+                    if (json.response.players.Count != 1)
+                    {
+                        throw new ArgumentException($"The SteamID ({SteamID}) you provided could not be found. Please check the player's Steam community profile URL.");
+                    }
+
                     string profileName = json.response.players[0].personaname;
                     Name = profileName.Replace("'", "");
                 }
