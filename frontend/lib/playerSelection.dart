@@ -53,7 +53,9 @@ class _PlayerSelectionState extends State<PlayerSelection> {
               itemCount: players.length,
               itemBuilder: (BuildContext context, int index) {
                 return new CheckboxListTile(
-                  title: Text(players[index].name),
+                  title: Text(players[index].name,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   value: players[index].isSelected,
                   onChanged: (bool value) {
                     setState(() {
@@ -68,7 +70,16 @@ class _PlayerSelectionState extends State<PlayerSelection> {
         Padding(
           padding: EdgeInsets.all(50),
           child: RaisedButton(
-            child: Text("Scramble"),
+            color: Colors.lime,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "Scramble",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
             onPressed: () {
               setState(() {
                 List<Player> activePlayers =
@@ -151,7 +162,11 @@ class Team extends StatelessWidget {
                 return ListTile(
                   title: Align(
                     alignment: Alignment.center,
-                    child: Text(team[index].name),
+                    child: Text(
+                      team[index].name,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 );
               },
