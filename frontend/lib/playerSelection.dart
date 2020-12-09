@@ -35,9 +35,12 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text(
-          "Choose the players!",
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            "Choose the players!",
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
         ),
         SizedBox(
           height: 30,
