@@ -7,7 +7,7 @@ namespace backend
 {
     public class SkillBasedAssigner : ITeamAssigner
     {
-        IList<Player> ITeamAssigner.GetAssignedPlayers(IEnumerable<Player> players)
+        (Team terrorists, Team counterTerrorists) ITeamAssigner.GetAssignedPlayers(IEnumerable<Player> players)
         {
             foreach (var player in players)
             {
@@ -17,21 +17,38 @@ namespace backend
             var sortedByScore = players.OrderByDescending(x => x.Skill.SkillScore).ToList();
             var bestPlayerIsTerrorist = new Random().NextDouble() < 0.5;
 
+            var terrorists = new Team("Terrorists");
+            var counterTerrorists = new Team("CounterTerrorists");
+
             for (var i = 0; i < sortedByScore.Count; i++)
             {
                 var currentPlayer = sortedByScore[i];
 
                 if (i % 2 == 0)
                 {
-                    currentPlayer.Team = bestPlayerIsTerrorist ? Team.Terrorists : Team.CounterTerrorists;
+                    if (bestPlayerIsTerrorist)
+                    {
+                        terrorists.Players.Add(currentPlayer);
+                    }
+                    else
+                    {
+                        counterTerrorists.Players.Add(currentPlayer);
+                    }
                 }
                 else
                 {
-                    currentPlayer.Team = bestPlayerIsTerrorist ? Team.CounterTerrorists : Team.Terrorists;
+                    if (bestPlayerIsTerrorist)
+                    {
+                        counterTerrorists.Players.Add(currentPlayer);
+                    }
+                    else
+                    {
+                        terrorists.Players.Add(currentPlayer);
+                    }
                 }
             }
 
-            return sortedByScore;
+            return (terrorists, counterTerrorists);
         }
 
         private static void GetSkillLevel(Player player)

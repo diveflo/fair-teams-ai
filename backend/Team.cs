@@ -1,8 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace backend
 {
-    public enum Team
+    public class Team
     {
-        Terrorists = 0,
-        CounterTerrorists = 1
+        public string Name { get; set; }
+
+        public IList<Player> Players { get; set; }
+
+        public Team(string name)
+        {
+            Name = name;
+            Players = new List<Player>();
+        }
     }
 }
