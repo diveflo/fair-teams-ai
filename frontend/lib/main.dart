@@ -22,6 +22,11 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        primaryTextTheme: TextTheme(
+          headline1: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          bodyText1: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
+        ),
       ),
       home: MyHomePage(title: 'No Cry-babies'),
     );

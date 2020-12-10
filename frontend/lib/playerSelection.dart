@@ -17,17 +17,17 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     players = List<Player>();
     team1 = List<Player>();
     team2 = List<Player>();
-    players.add(Player(name: "Flo"));
-    players.add(Player(name: "Hubi"));
-    players.add(Player(name: "Alex"));
+    players.add(Player(name: "Flo", steamID: "76561197973591119"));
+    players.add(Player(name: "Hubi", steamID: "76561198258023370"));
+    players.add(Player(name: "Alex", steamID: "76561198011775117"));
     players.add(Player(name: "Sandy", steamID: "76561198011654217"));
-    players.add(Player(name: "Markus"));
-    players.add(Player(name: "Andi"));
-    players.add(Player(name: "Martin"));
-    players.add(Player(name: "Ferdy"));
-    players.add(Player(name: "Niggo"));
-    players.add(Player(name: "Stefan"));
-    players.add(Player(name: "Uwe"));
+    players.add(Player(name: "Markus", steamID: "76561197984050254"));
+    players.add(Player(name: "Andi", steamID: "76561199045573415"));
+    players.add(Player(name: "Martin", steamID: "76561197978519504"));
+    players.add(Player(name: "Ferdy", steamID: "76561198031200891"));
+    // players.add(Player(name: "Niggo"));
+    players.add(Player(name: "Stefan", steamID: "76561198058595736"));
+    players.add(Player(name: "Uwe", steamID: "76561198053826525"));
 
     super.initState();
   }
@@ -56,8 +56,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
               itemBuilder: (BuildContext context, int index) {
                 return new CheckboxListTile(
                   title: Text(players[index].name,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      style: Theme.of(context).primaryTextTheme.bodyText1),
                   value: players[index].isSelected,
                   onChanged: (bool value) {
                     setState(() {
@@ -166,8 +165,7 @@ class Team extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       team[index].name,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
                 );
