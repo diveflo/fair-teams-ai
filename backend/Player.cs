@@ -13,8 +13,6 @@ namespace backend
 
         public SkillLevel Skill { get; set; }
 
-        public Team Team { get; set; }
-
         public void ScrapeName()
         {
             if (string.IsNullOrEmpty(SteamID))

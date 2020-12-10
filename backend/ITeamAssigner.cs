@@ -4,6 +4,6 @@ namespace backend
 {
     public interface ITeamAssigner
     {
-        public IList<Player> GetAssignedPlayers(IEnumerable<Player> players);
+        (Team terrorists, Team counterTerrorists) GetAssignedPlayers(IEnumerable<Player> players);
     }
 }
