@@ -1,4 +1,4 @@
-import 'package:frontend/player.dart';
+import 'package:frontend/model/player.dart';
 
 class Team {
   List<Player> players;

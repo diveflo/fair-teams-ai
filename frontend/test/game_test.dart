@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/game.dart';
+import 'package:frontend/model/game.dart';
 
 void main() {
   test("toJson", () {

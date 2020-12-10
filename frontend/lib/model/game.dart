@@ -1,4 +1,4 @@
-import 'package:frontend/team.dart';
+import 'package:frontend/model/team.dart';
 
 class Game {
   Team t;
