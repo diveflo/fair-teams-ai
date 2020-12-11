@@ -23,10 +23,23 @@ void main() {
 
       var testiJson = testi.toJson();
 
-      expect(testiJson, {
-        "name": "player1",
-        "steamID": "id122",
-      });
+      expect(testiJson, {"name": "player1", "steamID": "id122", "skill": {}});
+    });
+  });
+
+  group("fromJson", () {
+    test("convert", () {
+      var json = {
+        "name": "testi",
+        "steamID": "001",
+        "skill": {"skillScore": 0.1}
+      };
+
+      Player testi = Player.fromJson(json);
+
+      expect(testi.name, "testi");
+      expect(testi.steamID, "001");
+      expect(testi.skillScore, 0.1);
     });
   });
 }

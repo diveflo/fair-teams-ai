@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:frontend/player.dart';
+import 'package:frontend/apiService.dart';
+import 'package:frontend/model/game.dart';
+import 'package:frontend/model/player.dart';
 
 class PlayerSelection extends StatefulWidget {
   @override
@@ -69,7 +71,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(50),
+          padding: EdgeInsets.all(10),
           child: RaisedButton(
             color: Colors.lime,
             shape:
@@ -99,6 +101,33 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                   team1 = _team1;
                   team2 = _team2;
                 }
+              });
+            },
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: RaisedButton(
+            color: Colors.lime,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "ScrambleAPI",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+            onPressed: () {
+              PlayerApi api = PlayerApi();
+
+              List<Player> activePlayers =
+                  players.where((element) => element.isSelected).toList();
+              api.fetchScrambledTeams(activePlayers).then((game) {
+                setState(() {
+                  team1 = game.t.players;
+                  team2 = game.ct.players;
+                });
               });
             },
           ),

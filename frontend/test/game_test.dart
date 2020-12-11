@@ -1,21 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/model/game.dart';
 
 void main() {
-  test("toJson", () {
-    var inputJson = {
+  test("fromJson", () {
+    var inputJson = '''{
       "terrorists": {
         "name": "Terror",
         "players": [
           {
             "name": "Player1",
             "steamID": "10001",
-            "skill": {"skillScore": 0}
+            "skill": {"skillScore": 0.0}
           },
           {
             "name": "Player2",
             "steamID": "10002",
-            "skill": {"skillScore": 0}
+            "skill": {"skillScore": 0.0}
           }
         ]
       },
@@ -25,18 +27,18 @@ void main() {
           {
             "name": "Player3",
             "steamID": "10003",
-            "skill": {"skillScore": 0}
+            "skill": {"skillScore": 0.0}
           },
           {
             "name": "Player4",
             "steamID": "10004",
-            "skill": {"skillScore": 0}
+            "skill": {"skillScore": 0.0}
           }
         ]
       }
-    };
+    }''';
 
-    Game testi = Game.fromJson(inputJson);
+    Game testi = Game.fromJson(jsonDecode(inputJson));
 
     expect(testi.t.players.length, 2);
     expect(testi.ct.players.length, 2);

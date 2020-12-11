@@ -4,7 +4,7 @@ class Player {
   String name;
   bool isSelected;
   String steamID;
-  int skillScore;
+  double skillScore;
 
   Player({@required this.name, this.steamID = "", this.isSelected = false}) {
     isSelected = false;
@@ -15,11 +15,12 @@ class Player {
     steamID = json["steamID"] != null ? json["steamID"] : ["invalid id"];
     skillScore = json["skill"]["skillScore"] != null
         ? json["skill"]["skillScore"]
-        : ["no score"];
+        : [0.0];
   }
 
-  Map<String, String> toJson() => {
+  Map<String, dynamic> toJson() => {
         'name': name,
         'steamID': steamID,
+        'skill': {},
       };
 }
