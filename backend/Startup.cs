@@ -30,7 +30,7 @@ namespace backend
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.AllowAnyOrigin();
+                        builder.AllowAnyOrigin().AllowAnyHeader();
                     }
                 );
             });
