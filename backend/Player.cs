@@ -10,6 +10,7 @@ namespace backend
         private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
         public string Name { get; set; }
         public string SteamName => ScrapeSteamName();
+        public bool ProfilePublic { get; set; }
         public string SteamID { get; set; }
         public SkillLevel Skill { get; set; }
 

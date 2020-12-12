@@ -53,9 +53,17 @@ namespace backend
 
         private static void GetSkillLevel(Player player)
         {
-            var hltvRating = new HLTVRating();
-            hltvRating.ScrapeForPlayer(player.SteamID);
-            player.Skill.AddRating(hltvRating);
+            try
+            {
+                var kdRating = new KDRating(player.SteamID);
+                player.Skill.AddRating(kdRating);
+                player.ProfilePublic = true;
+            }
+            catch (ProfileNotPublicException)
+            {
+                player.Skill.AddRating(new DummyRating());
+                player.ProfilePublic = false;
+            }
         }
     }
 }

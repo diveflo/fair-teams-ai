@@ -7,7 +7,7 @@ namespace backend.Rating
         public string Name => "HLTV";
         public double Score { get; set; }
 
-        public void ScrapeForPlayer(string steamID)
+        public void ScrapeForPlayer()
         {
             var random = new Random();
             Score = random.NextDouble();
