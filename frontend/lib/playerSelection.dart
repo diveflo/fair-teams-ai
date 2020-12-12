@@ -13,6 +13,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   List<Player> players;
   List<Player> team1;
   List<Player> team2;
+  bool isLoading;
 
   @override
   void initState() {
@@ -30,6 +31,8 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     // players.add(Player(name: "Niggo"));
     players.add(Player(name: "Stefan", steamID: "76561198058595736"));
     players.add(Player(name: "Uwe", steamID: "76561198053826525"));
+
+    isLoading = false;
 
     super.initState();
   }
@@ -108,6 +111,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                 },
               ),
             ),
+            isLoading ? CircularProgressIndicator() : Container(),
             Padding(
               padding: EdgeInsets.all(10),
               child: RaisedButton(
@@ -126,10 +130,16 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
                   List<Player> activePlayers =
                       players.where((element) => element.isSelected).toList();
+
+                  setState(() {
+                    isLoading = true;
+                  });
+
                   api.fetchScrambledTeams(activePlayers).then((game) {
                     setState(() {
                       team1 = game.t.players;
                       team2 = game.ct.players;
+                      isLoading = false;
                     });
                   });
                 },
