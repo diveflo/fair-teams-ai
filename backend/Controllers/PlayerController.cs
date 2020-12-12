@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors]
     public class PlayerController : ControllerBase
     {
         private readonly ITeamAssigner myAssigner;
