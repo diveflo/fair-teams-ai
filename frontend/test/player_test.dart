@@ -18,12 +18,17 @@ void main() {
     });
   });
   group("toJson", () {
-    test("convert name and steamID", () {
+    test("convert to api request json", () {
       Player testi = Player(name: "player1", steamID: "id122");
 
       var testiJson = testi.toJson();
 
-      expect(testiJson, {"name": "player1", "steamID": "id122", "skill": {}});
+      expect(testiJson, {
+        "name": "player1",
+        "profilePublic": false,
+        "steamID": "id122",
+        "skill": {}
+      });
     });
   });
 
@@ -31,6 +36,8 @@ void main() {
     test("convert", () {
       var json = {
         "name": "testi",
+        "steamName": "boon",
+        "profilePublic": true,
         "steamID": "001",
         "skill": {"skillScore": 0.1}
       };
@@ -38,6 +45,8 @@ void main() {
       Player testi = Player.fromJson(json);
 
       expect(testi.name, "testi");
+      expect(testi.steamName, "boon");
+      expect(testi.profilePublic, true);
       expect(testi.steamID, "001");
       expect(testi.skillScore, 0.1);
     });
