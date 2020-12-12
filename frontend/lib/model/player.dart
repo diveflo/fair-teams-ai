@@ -11,6 +11,7 @@ class Player {
 
   Player(
       {@required this.name,
+      this.steamName = "Player1",
       this.profilePublic = false,
       this.steamID = "",
       this.isSelected = false,
