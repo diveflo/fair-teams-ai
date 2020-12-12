@@ -70,67 +70,72 @@ class _PlayerSelectionState extends State<PlayerSelection> {
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: RaisedButton(
-            color: Colors.lime,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Scramble",
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-            onPressed: () {
-              setState(() {
-                List<Player> activePlayers =
-                    players.where((element) => element.isSelected).toList();
-                if (activePlayers.length > 0) {
-                  List<Player> _team1 = List<Player>();
-                  List<Player> _team2 = List<Player>();
-                  activePlayers.shuffle();
-                  for (int i = 0; i < activePlayers.length; i++) {
-                    if (i % 2 == 0) {
-                      _team1.add(activePlayers[i]);
-                    } else {
-                      _team2.add(activePlayers[i]);
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: RaisedButton(
+                color: Colors.lime,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    "Scramble",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    List<Player> activePlayers =
+                        players.where((element) => element.isSelected).toList();
+                    if (activePlayers.length > 0) {
+                      List<Player> _team1 = List<Player>();
+                      List<Player> _team2 = List<Player>();
+                      activePlayers.shuffle();
+                      for (int i = 0; i < activePlayers.length; i++) {
+                        if (i % 2 == 0) {
+                          _team1.add(activePlayers[i]);
+                        } else {
+                          _team2.add(activePlayers[i]);
+                        }
+                      }
+                      team1 = _team1;
+                      team2 = _team2;
                     }
-                  }
-                  team1 = _team1;
-                  team2 = _team2;
-                }
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: RaisedButton(
-            color: Colors.lime,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "ScrambleAPI",
-                style: TextStyle(fontSize: 20),
+                  });
+                },
               ),
             ),
-            onPressed: () {
-              PlayerApi api = PlayerApi();
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: RaisedButton(
+                color: Colors.lime,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    "ScrambleAPI",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                onPressed: () {
+                  PlayerApi api = PlayerApi();
 
-              List<Player> activePlayers =
-                  players.where((element) => element.isSelected).toList();
-              api.fetchScrambledTeams(activePlayers).then((game) {
-                setState(() {
-                  team1 = game.t.players;
-                  team2 = game.ct.players;
-                });
-              });
-            },
-          ),
+                  List<Player> activePlayers =
+                      players.where((element) => element.isSelected).toList();
+                  api.fetchScrambledTeams(activePlayers).then((game) {
+                    setState(() {
+                      team1 = game.t.players;
+                      team2 = game.ct.players;
+                    });
+                  });
+                },
+              ),
+            ),
+          ],
         ),
         Expanded(
           flex: 2,
@@ -141,6 +146,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                 Expanded(
                   flex: 1,
                   child: Team(
+                    imagePath: 't.png',
                     team: team1,
                     name: "Terrors",
                     color: Colors.red,
@@ -149,6 +155,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                 Expanded(
                   flex: 1,
                   child: Team(
+                    imagePath: 'ct.jpg',
                     team: team2,
                     name: "CTs",
                     color: Colors.blue,
@@ -169,11 +176,13 @@ class Team extends StatelessWidget {
     @required this.team,
     @required this.color,
     @required this.name,
+    @required this.imagePath,
   }) : super(key: key);
 
   final List<Player> team;
   final Color color;
   final String name;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -189,13 +198,32 @@ class Team extends StatelessWidget {
             child: ListView.builder(
               itemCount: team.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      team[index].name,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
+                return Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Image(
+                          image: AssetImage(imagePath),
+                        ),
+                        title: Text(
+                          team[index].name,
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        subtitle: Text(
+                          team[index].steamName,
+                          style: TextStyle(
+                              color: color, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Align(
+                          alignment: Alignment.bottomRight,
+                          child: Text(
+                            team[index].skillScore.toString(),
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Colors.purple),
+                          ))
+                    ],
                   ),
                 );
               },
