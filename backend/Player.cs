@@ -20,10 +20,6 @@ namespace backend
             }
 
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamAPIKey}&steamids={SteamID}");
-            if (webRequest == null)
-            {
-                return;
-            }
 
             webRequest.ContentType = "application/json";
 
