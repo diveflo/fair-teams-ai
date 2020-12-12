@@ -9,10 +9,11 @@ namespace backend
     {
         private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
         public string Name { get; set; }
+        public string SteamName => ScrapeSteamName();
         public string SteamID { get; set; }
         public SkillLevel Skill { get; set; }
 
-        public void ScrapeName()
+        private string ScrapeSteamName()
         {
             if (string.IsNullOrEmpty(SteamID))
             {
@@ -33,7 +34,7 @@ namespace backend
             }
 
             string profileName = responseJson.response.players[0].personaname;
-            Name = profileName.Replace("'", "");
+            return profileName.Replace("'", "");
         }
     }
 }
