@@ -18,11 +18,6 @@ namespace backend.Controllers
         [HttpPost]
         public Assignment GetAssignedTeams(IEnumerable<Player> players)
         {
-            foreach (var player in players)
-            {
-                player.ScrapeName();
-            }
-
             (Team terrorists, Team counterTerrorists) = myAssigner.GetAssignedPlayers(players);
             return new Assignment(terrorists, counterTerrorists);
         }
