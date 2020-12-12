@@ -1,14 +1,12 @@
+using backend.Rating;
 using System;
-
 using System.Collections.Generic;
 using System.Linq;
-
-using backend.Rating;
 
 namespace backend
 {
     public class SkillLevel : IComparable
-    {        
+    {
         private readonly IList<IRating> myRatings;
 
         public double SkillScore => myRatings.Average(x => x.Score);

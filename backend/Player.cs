@@ -1,11 +1,12 @@
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
-using Newtonsoft.Json;
 
 namespace backend
 {
-    public class Player {
+    public class Player
+    {
         private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
         public string Name { get; set; }
 
@@ -33,7 +34,7 @@ namespace backend
                 using (var sr = new StreamReader(s))
                 {
                     dynamic json = JsonConvert.DeserializeObject(sr.ReadToEnd());
-                    
+
                     if (json.response.players.Count != 1)
                     {
                         throw new ArgumentException($"The SteamID ({SteamID}) you provided could not be found. Please check the player's Steam community profile URL.");
