@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/apiService.dart';
-import 'package:frontend/model/game.dart';
 import 'package:frontend/model/player.dart';
 
 class PlayerSelection extends StatefulWidget {
