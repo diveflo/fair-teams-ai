@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/apiService.dart';
 import 'package:frontend/model/player.dart';
@@ -13,6 +14,12 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   List<Player> team1;
   List<Player> team2;
   bool isLoading;
+  bool _isValid;
+
+  TextEditingController _nameController;
+  TextEditingController _steamIdController;
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -29,11 +36,43 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     players.add(Player(name: "Ferdy", steamID: "76561198031200891"));
     // players.add(Player(name: "Niggo"));
     players.add(Player(name: "Stefan", steamID: "76561198058595736"));
-    players.add(Player(name: "Uwe", steamID: "76561198053826525"));
+    players.add(Player(name: "Uwe", steamID: ""));
 
     isLoading = false;
+    _nameController = TextEditingController();
+    _steamIdController = TextEditingController();
+    _steamIdController.addListener(_validateSteamID);
+    _isValid = false;
 
     super.initState();
+  }
+
+  _validateSteamID() {
+    setState(() {
+      if (_steamIdController.value.text.length == 17) {
+        _isValid = true;
+      } else {
+        _isValid = false;
+      }
+    });
+  }
+
+  _addPlayer() {
+    if (_isValid) {
+      setState(() {
+        players.add(Player(
+            name: _nameController.text, steamID: _steamIdController.text));
+        _nameController.clear();
+        _steamIdController.clear();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _steamIdController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,110 +80,179 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            "Choose the players!",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-        ),
         SizedBox(
           height: 30,
         ),
         Expanded(
           flex: 2,
-          child: Container(
-            width: 200,
-            child: ListView.builder(
-              itemCount: players.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new CheckboxListTile(
-                  title: Text(players[index].name,
-                      style: Theme.of(context).primaryTextTheme.bodyText1),
-                  value: players[index].isSelected,
-                  onChanged: (bool value) {
-                    setState(() {
-                      players[index].isSelected = value;
-                    });
-                  },
-                );
-              },
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(flex: 1, child: Image.asset("cs.jpg")),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  child: Scrollbar(
+                    isAlwaysShown: true,
+                    controller: _scrollController,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: players.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return new CheckboxListTile(
+                          title: Text(players[index].name,
+                              style:
+                                  Theme.of(context).primaryTextTheme.bodyText1),
+                          value: players[index].isSelected,
+                          onChanged: (bool value) {
+                            setState(() {
+                              players[index].isSelected = value;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "Name"),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: TextField(
+                            controller: _steamIdController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "SteamID",
+                                errorText:
+                                    _isValid ? null : "invalid steam ID"),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: RaisedButton(
+                                child: Text(
+                                  "Add Player",
+                                ),
+                                onPressed: _addPlayer,
+                                color: Colors.pink,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: RaisedButton(
+                                  color: Colors.lime,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Text(
+                                    "Scramble",
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      List<Player> activePlayers = players
+                                          .where(
+                                              (element) => element.isSelected)
+                                          .toList();
+                                      if (activePlayers.length > 0) {
+                                        List<Player> _team1 = List<Player>();
+                                        List<Player> _team2 = List<Player>();
+                                        activePlayers.shuffle();
+                                        for (int i = 0;
+                                            i < activePlayers.length;
+                                            i++) {
+                                          if (i % 2 == 0) {
+                                            _team1.add(activePlayers[i]);
+                                          } else {
+                                            _team2.add(activePlayers[i]);
+                                          }
+                                        }
+                                        team1 = _team1;
+                                        team2 = _team2;
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                              isLoading
+                                  ? CircularProgressIndicator()
+                                  : Container(),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: RaisedButton(
+                                  color: Colors.lime,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Text(
+                                    "ScrambleAPI",
+                                  ),
+                                  onPressed: () {
+                                    PlayerApi api = PlayerApi();
+
+                                    List<Player> activePlayers = players
+                                        .where((element) => element.isSelected)
+                                        .toList();
+
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+
+                                    api
+                                        .fetchScrambledTeams(activePlayers)
+                                        .then((game) {
+                                      setState(() {
+                                        team1 = game.t.players;
+                                        team2 = game.ct.players;
+                                        isLoading = false;
+                                      });
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: RaisedButton(
-                color: Colors.lime,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    "Scramble",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                onPressed: () {
-                  setState(() {
-                    List<Player> activePlayers =
-                        players.where((element) => element.isSelected).toList();
-                    if (activePlayers.length > 0) {
-                      List<Player> _team1 = List<Player>();
-                      List<Player> _team2 = List<Player>();
-                      activePlayers.shuffle();
-                      for (int i = 0; i < activePlayers.length; i++) {
-                        if (i % 2 == 0) {
-                          _team1.add(activePlayers[i]);
-                        } else {
-                          _team2.add(activePlayers[i]);
-                        }
-                      }
-                      team1 = _team1;
-                      team2 = _team2;
-                    }
-                  });
-                },
-              ),
-            ),
-            isLoading ? CircularProgressIndicator() : Container(),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: RaisedButton(
-                color: Colors.lime,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    "ScrambleAPI",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                onPressed: () {
-                  PlayerApi api = PlayerApi();
-
-                  List<Player> activePlayers =
-                      players.where((element) => element.isSelected).toList();
-
-                  setState(() {
-                    isLoading = true;
-                  });
-
-                  api.fetchScrambledTeams(activePlayers).then((game) {
-                    setState(() {
-                      team1 = game.t.players;
-                      team2 = game.ct.players;
-                      isLoading = false;
-                    });
-                  });
-                },
-              ),
-            ),
-          ],
+        SizedBox(
+          height: 30,
         ),
         Expanded(
           flex: 2,
@@ -158,7 +266,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     imagePath: 't.png',
                     team: team1,
                     name: "Terrors",
-                    color: Colors.red,
+                    color: Colors.orange,
                   ),
                 ),
                 Expanded(
@@ -167,7 +275,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     imagePath: 'ct.jpg',
                     team: team2,
                     name: "CTs",
-                    color: Colors.blue,
+                    color: Colors.blueGrey,
                   ),
                 )
               ],
@@ -208,6 +316,9 @@ class Team extends StatelessWidget {
               itemCount: team.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: color, width: 2),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: [
                       ListTile(
@@ -226,11 +337,14 @@ class Team extends StatelessWidget {
                       ),
                       Align(
                           alignment: Alignment.bottomRight,
-                          child: Text(
-                            team[index].skillScore.toString(),
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.purple),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              team[index].skillScore.toString(),
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.purple),
+                            ),
                           ))
                     ],
                   ),
