@@ -19,6 +19,8 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   TextEditingController _nameController;
   TextEditingController _steamIdController;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     players = List<Player>();
@@ -78,15 +80,8 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Text(
-            "Choose the players!",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-        ),
         SizedBox(
-          height: 20,
+          height: 30,
         ),
         Expanded(
           flex: 2,
@@ -95,20 +90,26 @@ class _PlayerSelectionState extends State<PlayerSelection> {
             children: [
               Container(
                 width: 200,
-                child: ListView.builder(
-                  itemCount: players.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new CheckboxListTile(
-                      title: Text(players[index].name,
-                          style: Theme.of(context).primaryTextTheme.bodyText1),
-                      value: players[index].isSelected,
-                      onChanged: (bool value) {
-                        setState(() {
-                          players[index].isSelected = value;
-                        });
-                      },
-                    );
-                  },
+                child: Scrollbar(
+                  isAlwaysShown: true,
+                  controller: _scrollController,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: players.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new CheckboxListTile(
+                        title: Text(players[index].name,
+                            style:
+                                Theme.of(context).primaryTextTheme.bodyText1),
+                        value: players[index].isSelected,
+                        onChanged: (bool value) {
+                          setState(() {
+                            players[index].isSelected = value;
+                          });
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
               Container(
