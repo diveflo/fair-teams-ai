@@ -81,7 +81,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
-          height: 30,
+          height: 20,
         ),
         Expanded(
           flex: 2,
