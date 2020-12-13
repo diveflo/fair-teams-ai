@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/apiService.dart';
 import 'package:frontend/model/player.dart';
@@ -13,6 +14,10 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   List<Player> team1;
   List<Player> team2;
   bool isLoading;
+  bool _isValid;
+
+  TextEditingController _nameController;
+  TextEditingController _steamIdController;
 
   @override
   void initState() {
@@ -29,11 +34,43 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     players.add(Player(name: "Ferdy", steamID: "76561198031200891"));
     // players.add(Player(name: "Niggo"));
     players.add(Player(name: "Stefan", steamID: "76561198058595736"));
-    players.add(Player(name: "Uwe", steamID: "76561198053826525"));
+    players.add(Player(name: "Uwe", steamID: ""));
 
     isLoading = false;
+    _nameController = TextEditingController();
+    _steamIdController = TextEditingController();
+    _steamIdController.addListener(_validateSteamID);
+    _isValid = false;
 
     super.initState();
+  }
+
+  _validateSteamID() {
+    setState(() {
+      if (_steamIdController.value.text.length == 17) {
+        _isValid = true;
+      } else {
+        _isValid = false;
+      }
+    });
+  }
+
+  _addPlayer() {
+    if (_isValid) {
+      setState(() {
+        players.add(Player(
+            name: _nameController.text, steamID: _steamIdController.text));
+        _nameController.clear();
+        _steamIdController.clear();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _steamIdController.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,27 +86,71 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           ),
         ),
         SizedBox(
-          height: 30,
+          height: 20,
         ),
         Expanded(
           flex: 2,
-          child: Container(
-            width: 200,
-            child: ListView.builder(
-              itemCount: players.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new CheckboxListTile(
-                  title: Text(players[index].name,
-                      style: Theme.of(context).primaryTextTheme.bodyText1),
-                  value: players[index].isSelected,
-                  onChanged: (bool value) {
-                    setState(() {
-                      players[index].isSelected = value;
-                    });
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 200,
+                child: ListView.builder(
+                  itemCount: players.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new CheckboxListTile(
+                      title: Text(players[index].name,
+                          style: Theme.of(context).primaryTextTheme.bodyText1),
+                      value: players[index].isSelected,
+                      onChanged: (bool value) {
+                        setState(() {
+                          players[index].isSelected = value;
+                        });
+                      },
+                    );
                   },
-                );
-              },
-            ),
+                ),
+              ),
+              Container(
+                width: 300,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: TextField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(), labelText: "Name"),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: TextField(
+                        controller: _steamIdController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "SteamID",
+                            errorText: _isValid ? null : "invalid steam ID"),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: RaisedButton(
+                        child: Text("Add Player"),
+                        onPressed: _addPlayer,
+                        color: Colors.purple,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
         Row(
