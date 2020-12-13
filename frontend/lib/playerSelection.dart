@@ -77,52 +77,78 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        SizedBox(
-          height: 30,
-        ),
-        Expanded(
-          flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(flex: 1, child: Image.asset("cs.jpg")),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: Scrollbar(
-                    isAlwaysShown: true,
-                    controller: _scrollController,
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: players.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return new CheckboxListTile(
-                          title: Text(players[index].name,
-                              style:
-                                  Theme.of(context).primaryTextTheme.bodyText1),
-                          value: players[index].isSelected,
-                          onChanged: (bool value) {
-                            setState(() {
-                              players[index].isSelected = value;
-                            });
-                          },
-                        );
-                      },
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            "Players",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            child: Scrollbar(
+                              isAlwaysShown: true,
+                              controller: _scrollController,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: players.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new CheckboxListTile(
+                                    title: Text(players[index].name,
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .bodyText1),
+                                    value: players[index].isSelected,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        players[index].isSelected = value;
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
+                Expanded(
+                  flex: 1,
                   child: Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            "New Player",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
                         Expanded(
                           flex: 1,
                           child: TextField(
@@ -246,43 +272,43 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                       ],
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 30,
-        ),
-        Expanded(
-          flex: 2,
-          child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Team(
-                    imagePath: 't.png',
-                    team: team1,
-                    name: "Terrors",
-                    color: Colors.orange,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Team(
-                    imagePath: 'ct.jpg',
-                    team: team2,
-                    name: "CTs",
-                    color: Colors.blueGrey,
-                  ),
                 )
               ],
             ),
           ),
-        )
-      ],
+          SizedBox(
+            height: 30,
+          ),
+          Expanded(
+            flex: 2,
+            child: Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Team(
+                      imagePath: 't.png',
+                      team: team1,
+                      name: "Terrors",
+                      color: Colors.orange,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Team(
+                      imagePath: 'ct.jpg',
+                      team: team2,
+                      name: "CTs",
+                      color: Colors.blueGrey,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
