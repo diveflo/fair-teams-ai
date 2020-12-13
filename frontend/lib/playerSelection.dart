@@ -88,6 +88,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Image.asset("cs.jpg"),
               Container(
                 width: 200,
                 child: Scrollbar(
@@ -154,11 +155,14 @@ class _PlayerSelectionState extends State<PlayerSelection> {
             ],
           ),
         ),
+        SizedBox(
+          height: 30,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: RaisedButton(
                 color: Colors.lime,
                 shape: RoundedRectangleBorder(
@@ -194,7 +198,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
             ),
             isLoading ? CircularProgressIndicator() : Container(),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: RaisedButton(
                 color: Colors.lime,
                 shape: RoundedRectangleBorder(
