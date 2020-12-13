@@ -88,68 +88,81 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset("cs.jpg"),
-              Container(
-                width: 200,
-                child: Scrollbar(
-                  isAlwaysShown: true,
-                  controller: _scrollController,
-                  child: ListView.builder(
+              Expanded(flex: 1, child: Image.asset("cs.jpg")),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  child: Scrollbar(
+                    isAlwaysShown: true,
                     controller: _scrollController,
-                    itemCount: players.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return new CheckboxListTile(
-                        title: Text(players[index].name,
-                            style:
-                                Theme.of(context).primaryTextTheme.bodyText1),
-                        value: players[index].isSelected,
-                        onChanged: (bool value) {
-                          setState(() {
-                            players[index].isSelected = value;
-                          });
-                        },
-                      );
-                    },
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: players.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return new CheckboxListTile(
+                          title: Text(players[index].name,
+                              style:
+                                  Theme.of(context).primaryTextTheme.bodyText1),
+                          value: players[index].isSelected,
+                          onChanged: (bool value) {
+                            setState(() {
+                              players[index].isSelected = value;
+                            });
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-              Container(
-                width: 300,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(), labelText: "Name"),
-                      ),
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "Name"),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: TextField(
+                            controller: _steamIdController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: "SteamID",
+                                errorText:
+                                    _isValid ? null : "invalid steam ID"),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: RaisedButton(
+                            child: Text(
+                              "Add Player",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            onPressed: _addPlayer,
+                            color: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: TextField(
-                        controller: _steamIdController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "SteamID",
-                            errorText: _isValid ? null : "invalid steam ID"),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: RaisedButton(
-                        child: Text("Add Player"),
-                        onPressed: _addPlayer,
-                        color: Colors.purple,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               )
             ],
@@ -244,7 +257,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     imagePath: 't.png',
                     team: team1,
                     name: "Terrors",
-                    color: Colors.red,
+                    color: Colors.orange,
                   ),
                 ),
                 Expanded(
@@ -253,7 +266,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     imagePath: 'ct.jpg',
                     team: team2,
                     name: "CTs",
-                    color: Colors.blue,
+                    color: Colors.blueGrey,
                   ),
                 )
               ],
@@ -294,6 +307,9 @@ class Team extends StatelessWidget {
               itemCount: team.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: color, width: 2),
+                      borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: [
                       ListTile(
@@ -312,11 +328,14 @@ class Team extends StatelessWidget {
                       ),
                       Align(
                           alignment: Alignment.bottomRight,
-                          child: Text(
-                            team[index].skillScore.toString(),
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.purple),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              team[index].skillScore.toString(),
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.purple),
+                            ),
                           ))
                     ],
                   ),
