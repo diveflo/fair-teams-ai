@@ -15,6 +15,27 @@ namespace backend
             }
 
             var sortedByScore = players.OrderByDescending(x => x.Skill.SkillScore).ToList();
+
+            if (sortedByScore.Count % 2 != 0)
+            {
+                var bot = new Player
+                {
+                    Name = "BOT",
+                    SteamName = "BOT",
+                    ProfilePublic = true,
+                    SteamID = "1",
+                    Skill = new SkillLevel()
+                };
+
+                bot.Skill.AddRating(new DummyRating { Score = 0.0d });
+
+                sortedByScore.Add(bot);
+                var bestPlayer = sortedByScore[0];
+                var secondBestPlayer = sortedByScore[1];
+                sortedByScore[0] = secondBestPlayer;
+                sortedByScore[1] = bestPlayer;
+            }
+
             var bestPlayerIsTerrorist = new Random().NextDouble() < 0.5;
 
             var terrorists = new Team("Terrorists");
@@ -61,7 +82,7 @@ namespace backend
             }
             catch (ProfileNotPublicException)
             {
-                player.Skill.AddRating(new DummyRating());
+                player.Skill.AddRating(new DummyRating { Score = Double.MaxValue });
                 player.ProfilePublic = false;
             }
         }

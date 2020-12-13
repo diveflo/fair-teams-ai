@@ -1,6 +1,6 @@
 using System;
 
-namespace backend.Rating
+namespace backend
 {
     public class ProfileNotPublicException : Exception
     {}
