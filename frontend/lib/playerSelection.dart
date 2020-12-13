@@ -34,9 +34,10 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     players.add(Player(name: "Andi", steamID: "76561199045573415"));
     players.add(Player(name: "Martin", steamID: "76561197978519504"));
     players.add(Player(name: "Ferdy", steamID: "76561198031200891"));
-    // players.add(Player(name: "Niggo"));
+    players.add(Player(name: "Niggo", steamID: "76561197995643389"));
+    players.add(Player(name: "Chris", steamID: "76561197976972561"));
     players.add(Player(name: "Stefan", steamID: "76561198058595736"));
-    players.add(Player(name: "Uwe", steamID: ""));
+    players.add(Player(name: "Uwe", steamID: "76561198053826525"));
 
     isLoading = false;
     _nameController = TextEditingController();
