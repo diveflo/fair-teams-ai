@@ -2,6 +2,7 @@ using backend.Rating;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace backend
 {
@@ -9,10 +10,10 @@ namespace backend
     {
         (Team terrorists, Team counterTerrorists) ITeamAssigner.GetAssignedPlayers(IEnumerable<Player> players)
         {
-            foreach (var player in players)
+            Parallel.ForEach(players, player =>
             {
                 GetSkillLevel(player);
-            }
+            });
 
             var sortedByScore = players.OrderByDescending(x => x.Skill.SkillScore).ToList();
 
