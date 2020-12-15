@@ -140,7 +140,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                   flex: 1,
                   child: Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
@@ -150,8 +150,8 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
-                        Expanded(
-                          flex: 1,
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
                           child: TextField(
                             controller: _nameController,
                             decoration: InputDecoration(
@@ -159,27 +159,22 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                 labelText: "Name"),
                           ),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: TextField(
-                            controller: _steamIdController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "SteamID",
-                                errorText:
-                                    _isValid ? null : "invalid steam ID"),
-                          ),
+                        TextField(
+                          controller: _steamIdController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "SteamID",
+                              errorText: _isValid ? null : "invalid steam ID"),
                         ),
                         Expanded(
-                          flex: 1,
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: RaisedButton(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              RaisedButton(
                                 child: Text(
                                   "Add Player",
                                 ),
@@ -188,88 +183,91 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20)),
                               ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: RaisedButton(
-                                  color: Colors.lime,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Text(
-                                    "Scramble",
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      List<Player> activePlayers = players
-                                          .where(
-                                              (element) => element.isSelected)
-                                          .toList();
-                                      if (activePlayers.length > 0) {
-                                        List<Player> _team1 = List<Player>();
-                                        List<Player> _team2 = List<Player>();
-                                        activePlayers.shuffle();
-                                        for (int i = 0;
-                                            i < activePlayers.length;
-                                            i++) {
-                                          if (i % 2 == 0) {
-                                            _team1.add(activePlayers[i]);
-                                          } else {
-                                            _team2.add(activePlayers[i]);
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: RaisedButton(
+                                      color: Colors.lime,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Text(
+                                        "Scramble",
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          List<Player> activePlayers = players
+                                              .where((element) =>
+                                                  element.isSelected)
+                                              .toList();
+                                          if (activePlayers.length > 0) {
+                                            List<Player> _team1 =
+                                                List<Player>();
+                                            List<Player> _team2 =
+                                                List<Player>();
+                                            activePlayers.shuffle();
+                                            for (int i = 0;
+                                                i < activePlayers.length;
+                                                i++) {
+                                              if (i % 2 == 0) {
+                                                _team1.add(activePlayers[i]);
+                                              } else {
+                                                _team2.add(activePlayers[i]);
+                                              }
+                                            }
+                                            team1 = _team1;
+                                            team2 = _team2;
                                           }
-                                        }
-                                        team1 = _team1;
-                                        team2 = _team2;
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                              isLoading
-                                  ? CircularProgressIndicator()
-                                  : Container(),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: RaisedButton(
-                                  color: Colors.lime,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Text(
-                                    "ScrambleAPI",
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    PlayerApi api = PlayerApi();
+                                  isLoading
+                                      ? CircularProgressIndicator()
+                                      : Container(),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: RaisedButton(
+                                      color: Colors.lime,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Text(
+                                        "ScrambleAPI",
+                                      ),
+                                      onPressed: () {
+                                        PlayerApi api = PlayerApi();
 
-                                    List<Player> activePlayers = players
-                                        .where((element) => element.isSelected)
-                                        .toList();
+                                        List<Player> activePlayers = players
+                                            .where(
+                                                (element) => element.isSelected)
+                                            .toList();
 
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                        setState(() {
+                                          isLoading = true;
+                                        });
 
-                                    api
-                                        .fetchScrambledTeams(activePlayers)
-                                        .then((game) {
-                                      setState(() {
-                                        team1 = game.t.players;
-                                        team2 = game.ct.players;
-                                        isLoading = false;
-                                      });
-                                    });
-                                  },
-                                ),
+                                        api
+                                            .fetchScrambledTeams(activePlayers)
+                                            .then((game) {
+                                          setState(() {
+                                            team1 = game.t.players;
+                                            team2 = game.ct.players;
+                                            isLoading = false;
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -291,7 +289,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     child: Team(
                       imagePath: 't.png',
                       team: team1,
-                      name: "Terrors",
+                      name: "Terrorists",
                       color: Colors.orange,
                     ),
                   ),
@@ -300,7 +298,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     child: Team(
                       imagePath: 'ct.jpg',
                       team: team2,
-                      name: "CTs",
+                      name: "Counter Terrorists",
                       color: Colors.blueGrey,
                     ),
                   )
@@ -354,25 +352,23 @@ class Team extends StatelessWidget {
                         ),
                         title: Text(
                           team[index].name,
-                          style: TextStyle(fontSize: 25),
+                          style: TextStyle(fontSize: 20),
                         ),
-                        subtitle: Text(
-                          team[index].steamName,
-                          style: TextStyle(
-                              color: color, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(team[index].steamName,
+                                style: TextStyle(
+                                    color: color, fontWeight: FontWeight.bold)),
+                            Text(
                               team[index].skillScore.toString(),
                               style: TextStyle(
                                   fontStyle: FontStyle.italic,
                                   color: Colors.purple),
                             ),
-                          ))
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );
