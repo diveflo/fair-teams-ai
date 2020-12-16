@@ -121,26 +121,7 @@ class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
   }
 
   void _scramblePlayers() {
-    List<Player> candidates =
-        StoreProvider.of<AppState>(context).state.gameConfigState.candidates;
-
-    List<Player> activePlayers =
-        candidates.where((element) => element.isSelected).toList();
-    if (activePlayers.length > 0) {
-      List<Player> _team1 = List<Player>();
-      List<Player> _team2 = List<Player>();
-      activePlayers.shuffle();
-      for (int i = 0; i < activePlayers.length; i++) {
-        if (i % 2 == 0) {
-          _team1.add(activePlayers[i]);
-        } else {
-          _team2.add(activePlayers[i]);
-        }
-      }
-      Team a = Team(_team1, "tt");
-      Team b = Team(_team2, "ct");
-      StoreProvider.of<AppState>(context).dispatch(SetTeamsAction(a, b));
-    }
+    StoreProvider.of<AppState>(context).dispatch(scrambleTeamsRandom());
   }
 
   void _scrambleApi() {
