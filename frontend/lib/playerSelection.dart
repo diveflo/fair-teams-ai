@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/player.dart';
-import 'package:frontend/model/team.dart';
-import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
@@ -51,7 +49,7 @@ class PlayerSelection extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: TeamWidget(
+                      child: FinalTeamWidget(
                         imagePath: 't.png',
                         team: game.t.players,
                         name: "Terrorists",
@@ -60,7 +58,7 @@ class PlayerSelection extends StatelessWidget {
                     ),
                     Expanded(
                       flex: 1,
-                      child: TeamWidget(
+                      child: FinalTeamWidget(
                         imagePath: 'ct.jpg',
                         team: game.ct.players,
                         name: "Counter Terrorists",
@@ -216,7 +214,19 @@ class CandidatesColumnWidget extends StatefulWidget {
 }
 
 class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
-  final ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController;
+
+  @override
+  initState() {
+    _scrollController = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -291,8 +301,8 @@ class MyButton extends StatelessWidget {
   }
 }
 
-class TeamWidget extends StatelessWidget {
-  const TeamWidget({
+class FinalTeamWidget extends StatelessWidget {
+  const FinalTeamWidget({
     Key key,
     @required this.team,
     @required this.color,
