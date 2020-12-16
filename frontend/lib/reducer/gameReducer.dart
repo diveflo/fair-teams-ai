@@ -1,36 +1,27 @@
-import 'package:frontend/model/player.dart';
-import 'package:frontend/state/gameConfigState.dart';
+import 'package:frontend/model/team.dart';
+import 'package:frontend/state/gameState.dart';
 import 'package:redux/redux.dart';
 
-final gameReducer = combineReducers<GameConfigState>([
-  TypedReducer<GameConfigState, AddPlayerAction>(_addPlayer),
-  TypedReducer<GameConfigState, TogglePlayerSelectionAction>(
-      _togglePlayerSelection),
+final gameReducer = combineReducers<GameState>([
+  TypedReducer<GameState, SetTeamsFromJsonAction>(_setTeamsFromJson),
+  TypedReducer<GameState, SetTeamsAction>(_setTeams),
 ]);
 
-class AddPlayerAction {
-  final Player player;
-  AddPlayerAction(this.player);
+class SetTeamsFromJsonAction {
+  final dynamic json;
+  SetTeamsFromJsonAction(this.json);
 }
 
-class TogglePlayerSelectionAction {
-  final Player player;
-  TogglePlayerSelectionAction(this.player);
+class SetTeamsAction {
+  final Team t;
+  final Team ct;
+  SetTeamsAction(this.t, this.ct);
 }
 
-GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
-  List<Player> newCandidates = state.candidates;
-  newCandidates.add(action.player);
-  return state.copyWith(candidates: newCandidates);
+GameState _setTeamsFromJson(GameState state, SetTeamsFromJsonAction action) {
+  return GameState.fromJson(action.json);
 }
 
-GameConfigState _togglePlayerSelection(
-    GameConfigState state, TogglePlayerSelectionAction action) {
-  List<Player> updatedCandidates = state.candidates;
-  updatedCandidates.forEach((element) {
-    if (element.steamID == action.player.steamID) {
-      element.isSelected = !element.isSelected;
-    }
-  });
-  return state.copyWith(candidates: updatedCandidates);
+GameState _setTeams(GameState state, SetTeamsAction action) {
+  return state.copyWith(t: action.t, ct: action.ct);
 }

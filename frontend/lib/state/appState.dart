@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:frontend/reducer/game.dart';
+import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/state/gameConfigState.dart';
 import 'package:frontend/state/gameState.dart';
 
 AppState appReducer(AppState state, dynamic action) => AppState(
-      gameConfigState: gameReducer(state.gameConfigState, action),
-      gameState: game(state.gameState, action),
+      gameConfigState: gameConfigReducer(state.gameConfigState, action),
+      gameState: gameReducer(state.gameState, action),
     );
 
 class AppState {

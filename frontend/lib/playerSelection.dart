@@ -5,8 +5,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/apiService.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/model/team.dart';
-import 'package:frontend/reducer/game.dart';
 import 'package:frontend/reducer/gameReducer.dart';
+import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 
