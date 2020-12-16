@@ -4,6 +4,16 @@ class Team {
   List<Player> players;
   String name;
 
+  Team.empy() {
+    players = List<Player>();
+    name = "";
+  }
+
+  Team(List<Player> players, String name) {
+    this.players = players;
+    this.name = name;
+  }
+
   Team.fromJson(Map<String, dynamic> json) {
     List<dynamic> playersJson = json["players"];
     players = playersJson.map((player) => Player.fromJson(player)).toList();

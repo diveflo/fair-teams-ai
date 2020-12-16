@@ -24,12 +24,12 @@ class Player {
     profilePublic = json["profilePublic"];
     if (!profilePublic) {
       skillScore = double.maxFinite;
-      return;
+    } else {
+      skillScore = json["skill"]["skillScore"] != null
+          ? json["skill"]["skillScore"]
+          : [0.0];
     }
-
-    skillScore = json["skill"]["skillScore"] != null
-        ? json["skill"]["skillScore"]
-        : [0.0];
+    skillScore = double.parse((skillScore).toStringAsFixed(3));
   }
 
   Map<String, dynamic> toJson() => {
