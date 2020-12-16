@@ -21,8 +21,6 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   TextEditingController _nameController;
   TextEditingController _steamIdController;
 
-  final ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     team1 = List<Player>();
@@ -128,55 +126,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            "Players",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Scrollbar(
-                              isAlwaysShown: true,
-                              controller: _scrollController,
-                              child: StoreConnector<AppState, List<Player>>(
-                                converter: (store) =>
-                                    store.state.gameState.candidates,
-                                builder: (context, players) {
-                                  return ListView.builder(
-                                    controller: _scrollController,
-                                    itemCount: players.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return new CheckboxListTile(
-                                        title: Text(players[index].name,
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .bodyText1),
-                                        value: players[index].isSelected,
-                                        onChanged: (bool value) {
-                                          StoreProvider.of<AppState>(context)
-                                              .dispatch(
-                                                  TogglePlayerSelectionAction(
-                                                      players[index]));
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                  child: CandidatesColumnWidget(),
                 ),
                 Expanded(
                   flex: 1,
@@ -285,6 +235,62 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                     ),
                   )
                 ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class CandidatesColumnWidget extends StatefulWidget {
+  @override
+  _CandidatesColumnWidgetState createState() => _CandidatesColumnWidgetState();
+}
+
+class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              "Players",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              child: Scrollbar(
+                isAlwaysShown: true,
+                controller: _scrollController,
+                child: StoreConnector<AppState, List<Player>>(
+                  converter: (store) => store.state.gameState.candidates,
+                  builder: (context, players) {
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: players.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return new CheckboxListTile(
+                          title: Text(players[index].name,
+                              style:
+                                  Theme.of(context).primaryTextTheme.bodyText1),
+                          value: players[index].isSelected,
+                          onChanged: (bool value) {
+                            StoreProvider.of<AppState>(context).dispatch(
+                                TogglePlayerSelectionAction(players[index]));
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           )
