@@ -10,12 +10,80 @@ import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 import 'package:frontend/thunks/scramble.dart';
 
-class PlayerSelection extends StatefulWidget {
+class PlayerSelection extends StatelessWidget {
   @override
-  _PlayerSelectionState createState() => _PlayerSelectionState();
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CandidatesColumnWidget(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: NewPlayerColumnWidget(),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Expanded(
+            flex: 2,
+            child: StoreConnector<AppState, GameState>(
+              converter: (store) => store.state.gameState,
+              builder: (context, game) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 't.png',
+                        team: game.t.players,
+                        name: "Terrorists",
+                        color: Colors.orange,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 'ct.jpg',
+                        team: game.ct.players,
+                        name: "Counter Terrorists",
+                        color: Colors.blueGrey,
+                      ),
+                    )
+                  ],
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
 
-class _PlayerSelectionState extends State<PlayerSelection> {
+class NewPlayerColumnWidget extends StatefulWidget {
+  @override
+  _NewPlayerColumnWidgetState createState() => _NewPlayerColumnWidgetState();
+}
+
+class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
   bool _isValid;
 
   TextEditingController _nameController;
@@ -88,143 +156,73 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
+    return Container(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Text(
+              "New Player",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(), labelText: "Name"),
+            ),
+          ),
+          TextField(
+            controller: _steamIdController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "SteamID",
+                errorText: _isValid ? null : "invalid steam ID"),
+          ),
           Expanded(
-            flex: 2,
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
+                MyButton(
+                  onPressed: _addPlayer,
+                  color: Colors.pink,
+                  buttonText: "Add Player",
                 ),
-                Expanded(
-                  flex: 1,
-                  child: CandidatesColumnWidget(),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                StoreConnector<AppState, bool>(
+                  converter: (store) => store.state.gameState.isLoading,
+                  builder: (context, isLoading) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            "New Player",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: MyButton(
+                            buttonText: "Scramble",
+                            onPressed: _scramblePlayers,
+                            color: Colors.lime,
                           ),
                         ),
+                        isLoading ? CircularProgressIndicator() : Container(),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: TextField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Name"),
-                          ),
-                        ),
-                        TextField(
-                          controller: _steamIdController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "SteamID",
-                              errorText: _isValid ? null : "invalid steam ID"),
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              MyButton(
-                                onPressed: _addPlayer,
-                                color: Colors.pink,
-                                buttonText: "Add Player",
-                              ),
-                              StoreConnector<AppState, bool>(
-                                converter: (store) =>
-                                    store.state.gameState.isLoading,
-                                builder: (context, isLoading) {
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: MyButton(
-                                          buttonText: "Scramble",
-                                          onPressed: _scramblePlayers,
-                                          color: Colors.lime,
-                                        ),
-                                      ),
-                                      isLoading
-                                          ? CircularProgressIndicator()
-                                          : Container(),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: MyButton(
-                                          buttonText: "ScrambleApi",
-                                          onPressed: _scrambleApi,
-                                          color: Colors.lime,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: MyButton(
+                            buttonText: "ScrambleApi",
+                            onPressed: _scrambleApi,
+                            color: Colors.lime,
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                )
+                    );
+                  },
+                ),
               ],
             ),
           ),
-          SizedBox(
-            height: 30,
-          ),
-          Expanded(
-            flex: 2,
-            child: StoreConnector<AppState, GameState>(
-              converter: (store) => store.state.gameState,
-              builder: (context, game) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: TeamWidget(
-                        imagePath: 't.png',
-                        team: game.t.players,
-                        name: "Terrorists",
-                        color: Colors.orange,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: TeamWidget(
-                        imagePath: 'ct.jpg',
-                        team: game.ct.players,
-                        name: "Counter Terrorists",
-                        color: Colors.blueGrey,
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
-          )
         ],
       ),
     );
