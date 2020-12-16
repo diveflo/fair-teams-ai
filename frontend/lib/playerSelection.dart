@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/apiService.dart';
+import 'package:frontend/model/game.dart';
 import 'package:frontend/model/player.dart';
 
 class PlayerSelection extends StatefulWidget {
@@ -10,7 +11,7 @@ class PlayerSelection extends StatefulWidget {
 }
 
 class _PlayerSelectionState extends State<PlayerSelection> {
-  List<Player> players;
+  Game gameConfig;
   List<Player> team1;
   List<Player> team2;
   bool isLoading;
@@ -23,21 +24,9 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   void initState() {
-    players = List<Player>();
+    gameConfig = Game();
     team1 = List<Player>();
     team2 = List<Player>();
-    players.add(Player(name: "Flo", steamID: "76561197973591119"));
-    players.add(Player(name: "Hubi", steamID: "76561198258023370"));
-    players.add(Player(name: "Alex", steamID: "76561198011775117"));
-    players.add(Player(name: "Sandy", steamID: "76561198011654217"));
-    players.add(Player(name: "Markus", steamID: "76561197984050254"));
-    players.add(Player(name: "Andi", steamID: "76561199045573415"));
-    players.add(Player(name: "Martin", steamID: "76561197978519504"));
-    players.add(Player(name: "Ferdy", steamID: "76561198031200891"));
-    players.add(Player(name: "Niggo", steamID: "76561197995643389"));
-    players.add(Player(name: "Chris", steamID: "76561197976972561"));
-    players.add(Player(name: "Stefan", steamID: "76561198058595736"));
-    players.add(Player(name: "Uwe", steamID: "76561198053826525"));
 
     isLoading = false;
     _nameController = TextEditingController();
@@ -48,7 +37,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     super.initState();
   }
 
-  _validateSteamID() {
+  void _validateSteamID() {
     setState(() {
       if (_steamIdController.value.text.length == 17) {
         _isValid = true;
@@ -58,15 +47,55 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     });
   }
 
-  _addPlayer() {
+  void _addPlayer() {
     if (_isValid) {
       setState(() {
-        players.add(Player(
-            name: _nameController.text, steamID: _steamIdController.text));
+        gameConfig.addCandidate((Player(
+            name: _nameController.text, steamID: _steamIdController.text)));
         _nameController.clear();
         _steamIdController.clear();
       });
     }
+  }
+
+  void _scramblePlayers() {
+    setState(() {
+      List<Player> activePlayers =
+          gameConfig.candidates.where((element) => element.isSelected).toList();
+      if (activePlayers.length > 0) {
+        List<Player> _team1 = List<Player>();
+        List<Player> _team2 = List<Player>();
+        activePlayers.shuffle();
+        for (int i = 0; i < activePlayers.length; i++) {
+          if (i % 2 == 0) {
+            _team1.add(activePlayers[i]);
+          } else {
+            _team2.add(activePlayers[i]);
+          }
+        }
+        team1 = _team1;
+        team2 = _team2;
+      }
+    });
+  }
+
+  void _scrambleApi() {
+    PlayerApi api = PlayerApi();
+
+    List<Player> activePlayers =
+        gameConfig.candidates.where((element) => element.isSelected).toList();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    api.fetchScrambledTeams(activePlayers).then((game) {
+      setState(() {
+        team1 = game.t.players;
+        team2 = game.ct.players;
+        isLoading = false;
+      });
+    });
   }
 
   @override
@@ -113,17 +142,20 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                               controller: _scrollController,
                               child: ListView.builder(
                                 controller: _scrollController,
-                                itemCount: players.length,
+                                itemCount: gameConfig.candidates.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return new CheckboxListTile(
-                                    title: Text(players[index].name,
+                                    title: Text(
+                                        gameConfig.candidates[index].name,
                                         style: Theme.of(context)
                                             .primaryTextTheme
                                             .bodyText1),
-                                    value: players[index].isSelected,
+                                    value:
+                                        gameConfig.candidates[index].isSelected,
                                     onChanged: (bool value) {
                                       setState(() {
-                                        players[index].isSelected = value;
+                                        gameConfig.candidates[index]
+                                            .isSelected = value;
                                       });
                                     },
                                   );
@@ -174,14 +206,10 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              RaisedButton(
-                                child: Text(
-                                  "Add Player",
-                                ),
+                              MyButton(
                                 onPressed: _addPlayer,
                                 color: Colors.pink,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
+                                buttonText: "Add Player",
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -189,40 +217,10 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                   Padding(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 10),
-                                    child: RaisedButton(
+                                    child: MyButton(
+                                      buttonText: "Scramble",
+                                      onPressed: _scramblePlayers,
                                       color: Colors.lime,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Text(
-                                        "Scramble",
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          List<Player> activePlayers = players
-                                              .where((element) =>
-                                                  element.isSelected)
-                                              .toList();
-                                          if (activePlayers.length > 0) {
-                                            List<Player> _team1 =
-                                                List<Player>();
-                                            List<Player> _team2 =
-                                                List<Player>();
-                                            activePlayers.shuffle();
-                                            for (int i = 0;
-                                                i < activePlayers.length;
-                                                i++) {
-                                              if (i % 2 == 0) {
-                                                _team1.add(activePlayers[i]);
-                                              } else {
-                                                _team2.add(activePlayers[i]);
-                                              }
-                                            }
-                                            team1 = _team1;
-                                            team2 = _team2;
-                                          }
-                                        });
-                                      },
                                     ),
                                   ),
                                   isLoading
@@ -231,36 +229,10 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                   Padding(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 10),
-                                    child: RaisedButton(
+                                    child: MyButton(
+                                      buttonText: "ScrambleApi",
+                                      onPressed: _scrambleApi,
                                       color: Colors.lime,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Text(
-                                        "ScrambleAPI",
-                                      ),
-                                      onPressed: () {
-                                        PlayerApi api = PlayerApi();
-
-                                        List<Player> activePlayers = players
-                                            .where(
-                                                (element) => element.isSelected)
-                                            .toList();
-
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-
-                                        api
-                                            .fetchScrambledTeams(activePlayers)
-                                            .then((game) {
-                                          setState(() {
-                                            team1 = game.t.players;
-                                            team2 = game.ct.players;
-                                            isLoading = false;
-                                          });
-                                        });
-                                      },
                                     ),
                                   ),
                                 ],
@@ -308,6 +280,31 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           )
         ],
       ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  const MyButton({
+    Key key,
+    @required this.onPressed,
+    @required this.color,
+    @required this.buttonText,
+  }) : super(key: key);
+
+  final VoidCallback onPressed;
+  final Color color;
+  final String buttonText;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      child: Text(
+        buttonText,
+      ),
+      onPressed: onPressed,
+      color: color,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 }
