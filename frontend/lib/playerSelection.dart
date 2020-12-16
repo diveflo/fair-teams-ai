@@ -58,7 +58,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   void _scramblePlayers() {
     List<Player> candidates =
-        StoreProvider.of<AppState>(context).state.gameState.candidates;
+        StoreProvider.of<AppState>(context).state.gameConfigState.candidates;
 
     setState(() {
       List<Player> activePlayers =
@@ -83,7 +83,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   void _scrambleApi() {
     PlayerApi api = PlayerApi();
     List<Player> candidates =
-        StoreProvider.of<AppState>(context).state.gameState.candidates;
+        StoreProvider.of<AppState>(context).state.gameConfigState.candidates;
 
     List<Player> activePlayers =
         candidates.where((element) => element.isSelected).toList();
@@ -271,7 +271,7 @@ class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
                 isAlwaysShown: true,
                 controller: _scrollController,
                 child: StoreConnector<AppState, List<Player>>(
-                  converter: (store) => store.state.gameState.candidates,
+                  converter: (store) => store.state.gameConfigState.candidates,
                   builder: (context, players) {
                     return ListView.builder(
                       controller: _scrollController,

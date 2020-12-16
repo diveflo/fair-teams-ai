@@ -2,15 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/model/team.dart';
 
-class GameState {
+class GameConfigState {
   final List<Player> candidates;
   final Team t;
   final Team ct;
 
-  GameState({@required this.candidates, @required this.t, @required this.ct});
+  GameConfigState(
+      {@required this.candidates, @required this.t, @required this.ct});
 
-  factory GameState.initial() {
-    return GameState(candidates: [
+  factory GameConfigState.initial() {
+    return GameConfigState(candidates: [
       Player(name: "Flo", steamID: "76561197973591119"),
       Player(name: "Hubi", steamID: "76561198258023370"),
       Player(name: "Alex", steamID: "76561198011775117"),
@@ -26,14 +27,14 @@ class GameState {
     ], t: Team(), ct: Team());
   }
 
-  GameState copyWith({List<Player> candidates}) {
-    return new GameState(
+  GameConfigState copyWith({List<Player> candidates}) {
+    return new GameConfigState(
         candidates: candidates ?? this.candidates,
         t: t ?? this.t,
         ct: ct ?? this.ct);
   }
 
-  static GameState fromJson(Map<String, dynamic> json) {
+  static GameConfigState fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> jsonT = json["terrorists"];
     Map<String, dynamic> jsonCT = json["counterTerrorists"];
 
@@ -41,7 +42,7 @@ class GameState {
     var ct = Team.fromJson(jsonCT);
 
     return json != null
-        ? GameState(candidates: null, t: t, ct: ct)
-        : GameState.initial();
+        ? GameConfigState(candidates: null, t: t, ct: ct)
+        : GameConfigState.initial();
   }
 }
