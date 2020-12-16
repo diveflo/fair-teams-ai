@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/apiService.dart';
-import 'package:frontend/model/game.dart';
 import 'package:frontend/model/player.dart';
+import 'package:frontend/reducer/gameReducer.dart';
+import 'package:frontend/state/appState.dart';
 
 class PlayerSelection extends StatefulWidget {
   @override
@@ -11,7 +13,6 @@ class PlayerSelection extends StatefulWidget {
 }
 
 class _PlayerSelectionState extends State<PlayerSelection> {
-  Game gameConfig;
   List<Player> team1;
   List<Player> team2;
   bool isLoading;
@@ -24,7 +25,6 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   void initState() {
-    gameConfig = Game();
     team1 = List<Player>();
     team2 = List<Player>();
 
@@ -49,9 +49,9 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   void _addPlayer() {
     if (_isValid) {
+      StoreProvider.of<AppState>(context).dispatch(AddPlayerAction(Player(
+          name: _nameController.text, steamID: _steamIdController.text)));
       setState(() {
-        gameConfig.addCandidate((Player(
-            name: _nameController.text, steamID: _steamIdController.text)));
         _nameController.clear();
         _steamIdController.clear();
       });
@@ -59,9 +59,12 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   }
 
   void _scramblePlayers() {
+    List<Player> candidates =
+        StoreProvider.of<AppState>(context).state.gameState.candidates;
+
     setState(() {
       List<Player> activePlayers =
-          gameConfig.candidates.where((element) => element.isSelected).toList();
+          candidates.where((element) => element.isSelected).toList();
       if (activePlayers.length > 0) {
         List<Player> _team1 = List<Player>();
         List<Player> _team2 = List<Player>();
@@ -81,9 +84,11 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   void _scrambleApi() {
     PlayerApi api = PlayerApi();
+    List<Player> candidates =
+        StoreProvider.of<AppState>(context).state.gameState.candidates;
 
     List<Player> activePlayers =
-        gameConfig.candidates.where((element) => element.isSelected).toList();
+        candidates.where((element) => element.isSelected).toList();
 
     setState(() {
       isLoading = true;
@@ -140,23 +145,28 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                             child: Scrollbar(
                               isAlwaysShown: true,
                               controller: _scrollController,
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                itemCount: gameConfig.candidates.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return new CheckboxListTile(
-                                    title: Text(
-                                        gameConfig.candidates[index].name,
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .bodyText1),
-                                    value:
-                                        gameConfig.candidates[index].isSelected,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        gameConfig.candidates[index]
-                                            .isSelected = value;
-                                      });
+                              child: StoreConnector<AppState, List<Player>>(
+                                converter: (store) =>
+                                    store.state.gameState.candidates,
+                                builder: (context, players) {
+                                  return ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: players.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return new CheckboxListTile(
+                                        title: Text(players[index].name,
+                                            style: Theme.of(context)
+                                                .primaryTextTheme
+                                                .bodyText1),
+                                        value: players[index].isSelected,
+                                        onChanged: (bool value) {
+                                          StoreProvider.of<AppState>(context)
+                                              .dispatch(
+                                                  TogglePlayerSelectionAction(
+                                                      players[index]));
+                                        },
+                                      );
                                     },
                                   );
                                 },
