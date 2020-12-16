@@ -4,8 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/apiService.dart';
 import 'package:frontend/model/player.dart';
+import 'package:frontend/model/team.dart';
+import 'package:frontend/reducer/game.dart';
 import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/state/appState.dart';
+import 'package:frontend/state/gameState.dart';
 
 class PlayerSelection extends StatefulWidget {
   @override
@@ -13,8 +16,6 @@ class PlayerSelection extends StatefulWidget {
 }
 
 class _PlayerSelectionState extends State<PlayerSelection> {
-  List<Player> team1;
-  List<Player> team2;
   bool isLoading;
   bool _isValid;
 
@@ -23,9 +24,6 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   void initState() {
-    team1 = List<Player>();
-    team2 = List<Player>();
-
     isLoading = false;
     _nameController = TextEditingController();
     _steamIdController = TextEditingController();
@@ -60,24 +58,23 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     List<Player> candidates =
         StoreProvider.of<AppState>(context).state.gameConfigState.candidates;
 
-    setState(() {
-      List<Player> activePlayers =
-          candidates.where((element) => element.isSelected).toList();
-      if (activePlayers.length > 0) {
-        List<Player> _team1 = List<Player>();
-        List<Player> _team2 = List<Player>();
-        activePlayers.shuffle();
-        for (int i = 0; i < activePlayers.length; i++) {
-          if (i % 2 == 0) {
-            _team1.add(activePlayers[i]);
-          } else {
-            _team2.add(activePlayers[i]);
-          }
+    List<Player> activePlayers =
+        candidates.where((element) => element.isSelected).toList();
+    if (activePlayers.length > 0) {
+      List<Player> _team1 = List<Player>();
+      List<Player> _team2 = List<Player>();
+      activePlayers.shuffle();
+      for (int i = 0; i < activePlayers.length; i++) {
+        if (i % 2 == 0) {
+          _team1.add(activePlayers[i]);
+        } else {
+          _team2.add(activePlayers[i]);
         }
-        team1 = _team1;
-        team2 = _team2;
       }
-    });
+      Team a = Team(_team1, "tt");
+      Team b = Team(_team2, "ct");
+      StoreProvider.of<AppState>(context).dispatch(SetTeamsAction(a, b));
+    }
   }
 
   void _scrambleApi() {
@@ -93,9 +90,9 @@ class _PlayerSelectionState extends State<PlayerSelection> {
     });
 
     api.fetchScrambledTeams(activePlayers).then((game) {
+      StoreProvider.of<AppState>(context)
+          .dispatch(SetTeamsAction(game.t, game.ct));
       setState(() {
-        team1 = game.t.players;
-        team2 = game.ct.players;
         isLoading = false;
       });
     });
@@ -212,30 +209,33 @@ class _PlayerSelectionState extends State<PlayerSelection> {
           ),
           Expanded(
             flex: 2,
-            child: Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Team(
-                      imagePath: 't.png',
-                      team: team1,
-                      name: "Terrorists",
-                      color: Colors.orange,
+            child: StoreConnector<AppState, GameState>(
+              converter: (store) => store.state.gameState,
+              builder: (context, game) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 't.png',
+                        team: game.t.players,
+                        name: "Terrorists",
+                        color: Colors.orange,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Team(
-                      imagePath: 'ct.jpg',
-                      team: team2,
-                      name: "Counter Terrorists",
-                      color: Colors.blueGrey,
-                    ),
-                  )
-                ],
-              ),
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 'ct.jpg',
+                        team: game.ct.players,
+                        name: "Counter Terrorists",
+                        color: Colors.blueGrey,
+                      ),
+                    )
+                  ],
+                );
+              },
             ),
           )
         ],
@@ -325,8 +325,8 @@ class MyButton extends StatelessWidget {
   }
 }
 
-class Team extends StatelessWidget {
-  const Team({
+class TeamWidget extends StatelessWidget {
+  const TeamWidget({
     Key key,
     @required this.team,
     @required this.color,
