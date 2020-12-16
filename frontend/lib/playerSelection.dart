@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/apiService.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/model/team.dart';
 import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
+import 'package:frontend/thunks/scramble.dart';
 
 class PlayerSelection extends StatefulWidget {
   @override
@@ -16,7 +16,6 @@ class PlayerSelection extends StatefulWidget {
 }
 
 class _PlayerSelectionState extends State<PlayerSelection> {
-  bool isLoading;
   bool _isValid;
 
   TextEditingController _nameController;
@@ -24,7 +23,6 @@ class _PlayerSelectionState extends State<PlayerSelection> {
 
   @override
   void initState() {
-    isLoading = false;
     _nameController = TextEditingController();
     _steamIdController = TextEditingController();
     _steamIdController.addListener(_validateSteamID);
@@ -78,24 +76,7 @@ class _PlayerSelectionState extends State<PlayerSelection> {
   }
 
   void _scrambleApi() {
-    PlayerApi api = PlayerApi();
-    List<Player> candidates =
-        StoreProvider.of<AppState>(context).state.gameConfigState.candidates;
-
-    List<Player> activePlayers =
-        candidates.where((element) => element.isSelected).toList();
-
-    setState(() {
-      isLoading = true;
-    });
-
-    api.fetchScrambledTeams(activePlayers).then((game) {
-      StoreProvider.of<AppState>(context)
-          .dispatch(SetTeamsAction(game.t, game.ct));
-      setState(() {
-        isLoading = false;
-      });
-    });
+    StoreProvider.of<AppState>(context).dispatch(scrambleTeams());
   }
 
   @override
@@ -168,31 +149,37 @@ class _PlayerSelectionState extends State<PlayerSelection> {
                                 color: Colors.pink,
                                 buttonText: "Add Player",
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: MyButton(
-                                      buttonText: "Scramble",
-                                      onPressed: _scramblePlayers,
-                                      color: Colors.lime,
-                                    ),
-                                  ),
-                                  isLoading
-                                      ? CircularProgressIndicator()
-                                      : Container(),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: MyButton(
-                                      buttonText: "ScrambleApi",
-                                      onPressed: _scrambleApi,
-                                      color: Colors.lime,
-                                    ),
-                                  ),
-                                ],
+                              StoreConnector<AppState, bool>(
+                                converter: (store) =>
+                                    store.state.gameState.isLoading,
+                                builder: (context, isLoading) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: MyButton(
+                                          buttonText: "Scramble",
+                                          onPressed: _scramblePlayers,
+                                          color: Colors.lime,
+                                        ),
+                                      ),
+                                      isLoading
+                                          ? CircularProgressIndicator()
+                                          : Container(),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10),
+                                        child: MyButton(
+                                          buttonText: "ScrambleApi",
+                                          onPressed: _scrambleApi,
+                                          color: Colors.lime,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             ],
                           ),

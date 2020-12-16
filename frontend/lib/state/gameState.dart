@@ -4,11 +4,16 @@ import 'package:frontend/model/team.dart';
 class GameState {
   final Team t;
   final Team ct;
+  final bool isLoading;
 
-  GameState({@required this.t, @required this.ct});
+  GameState({@required this.t, @required this.ct, @required this.isLoading});
 
   factory GameState.initial() {
-    return GameState(ct: Team.empy(), t: Team.empy());
+    return GameState(
+      ct: Team.empy(),
+      t: Team.empy(),
+      isLoading: false,
+    );
   }
 
   factory GameState.fromJson(dynamic json) {
@@ -18,10 +23,15 @@ class GameState {
     var t = Team.fromJson(jsonT);
     var ct = Team.fromJson(jsonCT);
 
-    return json != null ? GameState(ct: ct, t: t) : GameState.initial();
+    return json != null
+        ? GameState(ct: ct, t: t, isLoading: false)
+        : GameState.initial();
   }
 
-  GameState copyWith({Team t, Team ct}) {
-    return GameState(ct: ct ?? this.ct, t: t ?? this.t);
+  GameState copyWith({Team t, Team ct, bool isLoading}) {
+    return GameState(
+        ct: ct ?? this.ct,
+        t: t ?? this.t,
+        isLoading: isLoading ?? this.isLoading);
   }
 }
