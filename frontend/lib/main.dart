@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/model/playerSelection.dart';
+import 'package:frontend/views/playerSelection.dart';
 import 'package:frontend/state/store.dart';
 
 void main() {
