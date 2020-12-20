@@ -7,6 +7,7 @@ import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 import 'package:frontend/thunks/scramble.dart';
+import 'package:frontend/views/mapPool.dart';
 
 class PlayerSelection extends StatelessWidget {
   @override
@@ -64,6 +65,10 @@ class PlayerSelection extends StatelessWidget {
                         name: "Counter Terrorists",
                         color: Colors.blueGrey,
                       ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: MapPoolWidget(),
                     )
                   ],
                 );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/playerSelection.dart';
+import 'package:frontend/views/playerSelection.dart';
 import 'package:frontend/state/store.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider(
       store: store,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'No Cry-babies',
         theme: ThemeData(
           // This is the theme of your application.
           //
