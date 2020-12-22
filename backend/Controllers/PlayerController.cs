@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace backend.Controllers
 {
@@ -17,10 +18,10 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public Assignment GetAssignedTeams(IEnumerable<Player> players)
+        public async Task<Assignment> GetAssignedTeams(IEnumerable<Player> players)
         {
-            var playersWithSteamNames = SteamworksApi.SteamworksApi.ParseSteamUsernames(players.ToList());
-            (Team terrorists, Team counterTerrorists) = myAssigner.GetAssignedPlayers(playersWithSteamNames);
+            var playersWithSteamNames = await SteamworksApi.SteamworksApi.ParseSteamUsernames(players.ToList());
+            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(playersWithSteamNames);
             return new Assignment(terrorists, counterTerrorists);
         }
     }

@@ -1,8 +1,9 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace backend.SteamworksApi
 {
@@ -10,14 +11,15 @@ namespace backend.SteamworksApi
     {
         private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
 
-        public static IList<Player> ParseSteamUsernames(IList<Player> players)
+        public static async Task<IList<Player>> ParseSteamUsernames(IList<Player> players)
         {
             var commaDelimitedSteamIDs = string.Join(",", players.Select(x => x.SteamID));
 
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamAPIKey}&steamids={commaDelimitedSteamIDs}");
             webRequest.ContentType = "application/json";
 
-            using var responseStream = webRequest.GetResponse().GetResponseStream();
+            using var response = await webRequest.GetResponseAsync();
+            using var responseStream = response.GetResponseStream();
             using var responseStreamReader = new StreamReader(responseStream);
 
             var parsedResponse = JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(responseStreamReader.ReadToEnd());
@@ -32,14 +34,15 @@ namespace backend.SteamworksApi
             return players;
         }
 
-        public static IList<Statistic> ParsePlayerStatistics(string steamID)
+        public static async Task<IList<Statistic>> ParsePlayerStatistics(string steamID)
         {
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key={steamAPIKey}&steamid={steamID}");
             webRequest.ContentType = "application/json";
 
             try
             {
-                using var responseStream = webRequest.GetResponse().GetResponseStream();
+                using var response = await webRequest.GetResponseAsync();
+                using var responseStream = response.GetResponseStream();
                 using var responseStreamReader = new StreamReader(responseStream);
 
                 return JsonConvert.DeserializeObject<PlayerStatistics>(responseStreamReader.ReadToEnd()).Statistics.Stats;
