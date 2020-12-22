@@ -1,3 +1,5 @@
+using backend.SteamworksApi;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace backend.Rating
@@ -7,10 +9,8 @@ namespace backend.Rating
         public string Name => "KD";
         public double Score { get; }
 
-        public KDRating(string steamID)
+        public KDRating(IEnumerable<Statistic> playerStatistics)
         {
-            var playerStatistics = SteamworksApi.SteamworksApi.ParsePlayerStatistics(steamID);
-            
             var kills = playerStatistics.SingleOrDefault(x => x.Name == "total_kills").Value;
             var deaths = playerStatistics.SingleOrDefault(x => x.Name == "total_deaths").Value;
 

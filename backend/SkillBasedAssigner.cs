@@ -77,7 +77,8 @@ namespace backend
         {
             try
             {
-                var kdRating = new KDRating(player.SteamID);
+                var playerStatistics = SteamworksApi.SteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var kdRating = new KDRating(playerStatistics);
                 player.Skill.AddRating(kdRating);
                 player.ProfilePublic = true;
             }
