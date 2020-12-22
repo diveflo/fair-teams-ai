@@ -1,4 +1,5 @@
 using backend.Rating;
+using Combinatorics.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,51 @@ namespace backend
             return (terrorists, counterTerrorists);
         }
 
+        private static (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players, double skillDifferenceCutoff)
+        {
+            var playersList = players.ToList();
+
+            if (playersList.Count % 2 != 0)
+            {
+                throw new ArgumentException("The number of players has to be even!");
+            }
+
+            var playersPerTeam = playersList.Count / 2;
+
+            var firstTeamCombinations = new Combinations<Player>(playersList, playersPerTeam);
+
+            var assignmentAndCost = new Dictionary<(Team, Team), double>((int)firstTeamCombinations.Count);
+
+            Parallel.ForEach(firstTeamCombinations, combination =>
+            {
+                var terrorists = new Team("Terrorists")
+                {
+                    Players = combination
+                };
+                var counterTerrorists = new Team("CounterTerrorists")
+                {
+                    Players = playersList.Except(combination).ToList()
+                };
+
+                var skillDifference = GetSkillDifference(terrorists, counterTerrorists);
+
+                assignmentAndCost.Add((terrorists, counterTerrorists), skillDifference);
+            });
+
+            var assignmentsSortedBySkillDifference = assignmentAndCost.OrderBy(x => x.Value).TakeWhile(x => x.Value < skillDifferenceCutoff).ToList();
+            var indexOfRandomlySelectedAssignment = new Random().Next(0, assignmentsSortedBySkillDifference.Count);
+
+            return assignmentsSortedBySkillDifference.ElementAt(indexOfRandomlySelectedAssignment).Key;
+        }
+
+        private static double GetSkillDifference(Team terrorists, Team counterTerrorists)
+        {
+            var averageSkillTerrorists = terrorists.Players.Sum(x => x.Skill.SkillScore);
+            var averageSkillCounterTerrorists = counterTerrorists.Players.Sum(x => x.Skill.SkillScore);
+
+            return Math.Abs(averageSkillTerrorists - averageSkillCounterTerrorists);
+        }
+
         private static async Task<Player> GetSkillLevel(Player player)
         {
             try
@@ -104,7 +150,7 @@ namespace backend
             }
             catch (ProfileNotPublicException)
             {
-                player.Skill.AddRating(new DummyRating { Score = Double.MaxValue });
+                player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
                 player.ProfilePublic = false;
             }
 
