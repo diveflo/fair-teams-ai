@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace backend.SteamworksApi
 {
@@ -7,7 +7,7 @@ namespace backend.SteamworksApi
     {
         [JsonProperty("name")]
         public string Name { get; set; }
-        
+
         [JsonProperty("value")]
         public int Value { get; set; }
     }
