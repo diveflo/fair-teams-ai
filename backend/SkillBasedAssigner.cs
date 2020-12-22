@@ -6,11 +6,20 @@ using System.Threading.Tasks;
 
 namespace backend
 {
+    public enum SolverOptions
+    {
+        Greedy,
+        Optimal
+    }
+
     public class SkillBasedAssigner : ITeamAssigner
     {
-        (Team terrorists, Team counterTerrorists) ITeamAssigner.GetAssignedPlayers(IEnumerable<Player> players)
+        public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
-        private static async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+            return await GetAssignedPlayers(players, SolverOptions.Optimal);
+        }
+
+        private static async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
         {
             var playersList = players.ToList();
 
