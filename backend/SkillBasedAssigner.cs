@@ -10,12 +10,16 @@ namespace backend
     {
         (Team terrorists, Team counterTerrorists) ITeamAssigner.GetAssignedPlayers(IEnumerable<Player> players)
         {
-            Parallel.ForEach(players, player =>
-            {
-                GetSkillLevel(player);
-            });
+        private static async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+        {
+            var playersList = players.ToList();
 
-            var sortedByScore = players.OrderByDescending(x => x.Skill.SkillScore).ToList();
+            for (var i = 0; i < playersList.Count; i++)
+            {
+                playersList[i] = await GetSkillLevel(playersList[i]);
+            }
+
+            var sortedByScore = playersList.OrderByDescending(x => x.Skill.SkillScore).ToList();
 
             if (sortedByScore.Count % 2 != 0)
             {
@@ -73,11 +77,11 @@ namespace backend
             return (terrorists, counterTerrorists);
         }
 
-        private static void GetSkillLevel(Player player)
+        private static async Task<Player> GetSkillLevel(Player player)
         {
             try
             {
-                var playerStatistics = SteamworksApi.SteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var playerStatistics = await SteamworksApi.SteamworksApi.ParsePlayerStatistics(player.SteamID);
                 var kdRating = new KDRating(playerStatistics);
                 player.Skill.AddRating(kdRating);
                 player.ProfilePublic = true;
@@ -87,6 +91,8 @@ namespace backend
                 player.Skill.AddRating(new DummyRating { Score = Double.MaxValue });
                 player.ProfilePublic = false;
             }
+
+            return player;
         }
     }
 }

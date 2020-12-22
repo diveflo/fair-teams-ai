@@ -34,14 +34,15 @@ namespace backend.SteamworksApi
             return players;
         }
 
-        public static IList<Statistic> ParsePlayerStatistics(string steamID)
+        public static async Task<IList<Statistic>> ParsePlayerStatistics(string steamID)
         {
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key={steamAPIKey}&steamid={steamID}");
             webRequest.ContentType = "application/json";
 
             try
             {
-                using var responseStream = webRequest.GetResponse().GetResponseStream();
+                using var response = await webRequest.GetResponseAsync();
+                using var responseStream = response.GetResponseStream();
                 using var responseStreamReader = new StreamReader(responseStream);
 
                 return JsonConvert.DeserializeObject<PlayerStatistics>(responseStreamReader.ReadToEnd()).Statistics.Stats;

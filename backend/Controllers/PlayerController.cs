@@ -21,6 +21,7 @@ namespace backend.Controllers
         public async Task<Assignment> GetAssignedTeams(IEnumerable<Player> players)
         {
             var playersWithSteamNames = await SteamworksApi.SteamworksApi.ParseSteamUsernames(players.ToList());
+            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(playersWithSteamNames);
             return new Assignment(terrorists, counterTerrorists);
         }
     }
