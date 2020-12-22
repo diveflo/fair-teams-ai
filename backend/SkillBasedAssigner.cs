@@ -42,7 +42,8 @@ namespace backend
                     Skill = new SkillLevel()
                 };
 
-                bot.Skill.AddRating(new DummyRating { Score = 0.0d });
+                var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
+                bot.Skill.AddRating(new DummyRating { Score = averageScoreHumanPlayers / 2.0 });
 
                 sortedByScore.Add(bot);
                 var bestPlayer = sortedByScore[0];
