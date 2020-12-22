@@ -60,7 +60,7 @@ class PlayerSelection extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: FinalTeamWidget(
-                        imagePath: 'ct.jpg',
+                        imagePath: 'ct.png',
                         team: game.ct.players,
                         name: "Counter Terrorists",
                         color: Colors.blueGrey,
