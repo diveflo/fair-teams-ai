@@ -50,6 +50,13 @@ namespace backend
                 sortedByScore[1] = bestPlayer;
             }
 
+            return GreedyAssigner(sortedByScore);
+        }
+
+        private static (Team terrorists, Team counterTerrorists) GreedyAssigner(IEnumerable<Player> playersSortedByScore)
+        {
+            var sortedByScore = playersSortedByScore.ToList();
+
             var bestPlayerIsTerrorist = new Random().NextDouble() < 0.5;
 
             var terrorists = new Team("Terrorists");
