@@ -70,8 +70,6 @@ namespace backend
                 }
             }
 
-            (terrorists, counterTerrorists) = ScrambleTeams(terrorists, counterTerrorists, 0.1);
-
             return (terrorists, counterTerrorists);
         }
 
@@ -88,29 +86,6 @@ namespace backend
                 player.Skill.AddRating(new DummyRating { Score = Double.MaxValue });
                 player.ProfilePublic = false;
             }
-        }
-
-        private static (Team terrorists, Team counterTerrorists) ScrambleTeams(Team terrorists, Team counterTerrorists, double scrambleProbability)
-        {
-            var random = new Random();
-
-            for (var i = 0; i < terrorists.Players.Count; i++)
-            {
-                var scramble = random.NextDouble() > scrambleProbability;
-
-                if (scramble)
-                {
-                    var terrorist = terrorists.Players[i];
-                    var counterTerrorist = counterTerrorists.Players[i];
-                    terrorists.Players.Remove(terrorist);
-                    counterTerrorists.Players.Remove(counterTerrorist);
-
-                    terrorists.Players.Insert(i, counterTerrorist);
-                    counterTerrorists.Players.Insert(i, terrorist);
-                }
-            }
-
-            return (terrorists, counterTerrorists);
         }
     }
 }
