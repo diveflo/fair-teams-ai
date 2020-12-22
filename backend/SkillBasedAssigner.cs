@@ -51,7 +51,20 @@ namespace backend
                 sortedByScore[1] = bestPlayer;
             }
 
-            return GreedyAssigner(sortedByScore);
+            var terrorists = new Team("Terrorists");
+            var counterTerrorists = new Team("CounterTerrorists");
+
+            switch (option)
+            {
+                case SolverOptions.Optimal:
+                    (terrorists, counterTerrorists) = OptimalAssigner(sortedByScore, 0.1);
+                    break;
+                case SolverOptions.Greedy:
+                    (terrorists, counterTerrorists) = GreedyAssigner(sortedByScore);
+                    break;
+            }
+
+            return (terrorists, counterTerrorists);
         }
 
         private static (Team terrorists, Team counterTerrorists) GreedyAssigner(IEnumerable<Player> playersSortedByScore)
