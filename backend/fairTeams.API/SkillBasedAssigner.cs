@@ -1,5 +1,6 @@
 using Combinatorics.Collections;
 using fairTeams.API.Rating;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,19 @@ namespace fairTeams.API
 
     public class SkillBasedAssigner : ITeamAssigner
     {
+        private readonly ILogger myLogger;
+
+        public SkillBasedAssigner(ILogger<SkillBasedAssigner> logger)
+        {
+            myLogger = logger;
+        }
+
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
             return await GetAssignedPlayers(players, SolverOptions.Optimal);
         }
 
-        private static async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
+        private async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
         {
             var playersList = players.ToList();
 
@@ -153,7 +161,7 @@ namespace fairTeams.API
             return Math.Abs(averageSkillTerrorists - averageSkillCounterTerrorists);
         }
 
-        private static async Task<Player> GetSkillLevel(Player player)
+        private async Task<Player> GetSkillLevel(Player player)
         {
             try
             {
@@ -164,6 +172,8 @@ namespace fairTeams.API
             }
             catch (ProfileNotPublicException)
             {
+                myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
+
                 player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
                 player.ProfilePublic = false;
             }
