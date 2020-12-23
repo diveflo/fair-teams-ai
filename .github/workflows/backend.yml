@@ -43,7 +43,7 @@ jobs:
 
   docker:
     if: github.ref == 'refs/heads/main'
-    needs: [ build, test ]
+    needs: [ build, test, code-analysis ]
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
