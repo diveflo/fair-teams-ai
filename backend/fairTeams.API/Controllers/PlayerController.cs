@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +13,12 @@ namespace fairTeams.API.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly ITeamAssigner myAssigner;
-        public PlayerController()
+        private readonly ILogger myLogger;
+
+        public PlayerController(ILogger<PlayerController> logger)
         {
             myAssigner = new SkillBasedAssigner();
+            myLogger = logger;
         }
 
         [HttpPost]
