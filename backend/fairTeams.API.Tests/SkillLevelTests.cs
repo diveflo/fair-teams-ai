@@ -1,5 +1,4 @@
 using fairTeams.API.Rating;
-using Moq;
 using System;
 using Xunit;
 
