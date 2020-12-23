@@ -8,6 +8,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /App
 
 COPY --from=build /app .
-ENTRYPOINT [ "dotnet", "backend.dll" ]
+ENTRYPOINT [ "dotnet", "fairTeams.API.dll" ]
 
 EXPOSE 80

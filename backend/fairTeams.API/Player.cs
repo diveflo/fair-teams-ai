@@ -1,4 +1,4 @@
-namespace backend
+namespace fairTeams.API
 {
     public class Player
     {

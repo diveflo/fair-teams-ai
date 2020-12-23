@@ -1,11 +1,11 @@
-using backend.Rating;
+using fairTeams.API.Rating;
 using Combinatorics.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace backend
+namespace fairTeams.API
 {
     public enum SolverOptions
     {

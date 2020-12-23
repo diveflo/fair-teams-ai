@@ -1,9 +1,9 @@
-using backend.Rating;
+using fairTeams.API.Rating;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace backend
+namespace fairTeams.API
 {
     public class SkillLevel : IComparable
     {

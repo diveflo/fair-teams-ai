@@ -1,6 +1,6 @@
 using System;
 
-namespace backend
+namespace fairTeams.API
 {
     public class ProfileNotPublicException : Exception
     { }

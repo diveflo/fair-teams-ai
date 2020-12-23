@@ -1,8 +1,8 @@
-using backend.SteamworksApi;
+using fairTeams.API.SteamworksApi;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace backend.Rating
+namespace fairTeams.API.Rating
 {
     public class KDRating : IRating
     {

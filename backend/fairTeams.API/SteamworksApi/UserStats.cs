@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace backend.SteamworksApi
+namespace fairTeams.API.SteamworksApi
 {
     public class Statistic
     {
