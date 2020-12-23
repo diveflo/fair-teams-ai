@@ -51,5 +51,31 @@ namespace fairTeams.API.Tests
 
             Assert.True(comparisonResult < 0.0d);
         }
+
+        [Fact]
+        public void CompareTo_SameScore_ReturnsZero()
+        {
+            var firstSkillLevel = new SkillLevel();
+            firstSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+            var secondSkillLevel = new SkillLevel();
+            secondSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+
+            var comparisonResult = firstSkillLevel.CompareTo(secondSkillLevel);
+
+            Assert.Equal(0.0d, comparisonResult);
+        }
+
+        [Fact]
+        public void CompareTo_SecondBetterThanFirst_ReturnsPositiveValue()
+        {
+            var firstSkillLevel = new SkillLevel();
+            firstSkillLevel.AddRating(new DummyRating() { Score = 0.5d });
+            var secondSkillLevel = new SkillLevel();
+            secondSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+
+            var comparisonResult = firstSkillLevel.CompareTo(secondSkillLevel);
+
+            Assert.True(comparisonResult > 0.0d);
+        }
     }
 }

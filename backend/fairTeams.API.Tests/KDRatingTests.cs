@@ -1,4 +1,4 @@
-using fairTeams.API.Rating;
+﻿using fairTeams.API.Rating;
 using fairTeams.API.SteamworksApi;
 using System;
 using System.Collections.Generic;
@@ -46,6 +46,16 @@ namespace fairTeams.API.Tests
             var statistics = new List<Statistic>() { kills };
 
             Assert.Throws<ArgumentException>(() => new KDRating(statistics));
+        }
+
+        [Fact]
+        public void Score_ZeroDeaths_ReturnsInfinity()
+        {
+            var kills = new Statistic { Name = "total_kills", Value = 20 };
+            var deaths = new Statistic { Name = "total_deaths", Value = 0 };
+            var kdRating = new KDRating(new List<Statistic>() { kills, deaths });
+
+            Assert.Equal(double.PositiveInfinity, kdRating.Score);
         }
     }
 }
