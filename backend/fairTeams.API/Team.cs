@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace backend
+namespace fairTeams.API
 {
     public class Team
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace backend.SteamworksApi
+namespace fairTeams.API.SteamworksApi
 {
     public static class SteamworksApi
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace backend
+namespace fairTeams.API
 {
     public interface ITeamAssigner
     {

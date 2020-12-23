@@ -1,4 +1,4 @@
-namespace backend.Rating
+namespace fairTeams.API.Rating
 {
     public interface IRating
     {
