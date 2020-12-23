@@ -41,6 +41,25 @@ jobs:
         run: dotnet test
         working-directory: backend
 
+  code-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@main
+      - name: initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: 'csharp'
+      - name: setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.100'
+      - name: build
+        run: dotnet build
+        working-directory: backend
+      - name: perform CodeQL code-analysis
+        uses: github/codeql-action/analyze@v1
+
   docker:
     if: github.ref == 'refs/heads/main'
     needs: [ build, test, code-analysis ]
@@ -65,22 +84,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: floriang89/fair-teams-ai:latest
-
-  code-analysis:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout code
-        uses: actions/checkout@main
-      - name: initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: 'csharp'
-      - name: setup dotnet
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.100'
-      - name: build
-        run: dotnet build
-        working-directory: backend
-      - name: perform CodeQL code-analysis
-        uses: github/codeql-action/analyze@v1
