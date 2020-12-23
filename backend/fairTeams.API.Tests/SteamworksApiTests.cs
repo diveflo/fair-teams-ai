@@ -30,5 +30,13 @@ namespace fairTeams.API.Tests
 
             await Assert.ThrowsAsync<PlayerNotFoundException>(() => parseUsernameTask);
         }
+
+        [Fact]
+        public async Task ParsePlayerStatistics_ProfileNotPublic_ThrowsProfileNotPublicException()
+        {
+            var parseStatisticsTask = SteamworksApi.SteamworksApi.ParsePlayerStatistics(myPrivateProfilePlayerSteamID);
+
+            await Assert.ThrowsAsync<ProfileNotPublicException>(() => parseStatisticsTask);
+        }
     }
 }
