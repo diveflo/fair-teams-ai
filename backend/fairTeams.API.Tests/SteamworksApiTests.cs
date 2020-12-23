@@ -1,4 +1,4 @@
-using fairTeams.API.SteamworksApi;
+﻿using fairTeams.API.SteamworksApi;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -10,6 +10,8 @@ namespace fairTeams.API.Tests
     {
         private const string myPrivateProfilePlayerSteamID = "76561199120831930";
         private const string myPrivateProfilePlayerSteamUsername = "fairteamsai";
+        private const string myPublicProfilePlayerSteamID = "76561197973591119";
+
         [Fact]
         public void ParseSteamUsernames_ValidSteamID_ReturnsFairTeamsAIUsername()
         {
@@ -37,6 +39,27 @@ namespace fairTeams.API.Tests
             var parseStatisticsTask = SteamworksApi.SteamworksApi.ParsePlayerStatistics(myPrivateProfilePlayerSteamID);
 
             await Assert.ThrowsAsync<ProfileNotPublicException>(() => parseStatisticsTask);
+        }
+
+        [Fact]
+        public void ParsePlayerStatistics_ProfilePublic_ReturnsExpectedStatistics()
+        {
+            var expectedStatistics = new List<string>
+            {
+                "total_kills",
+                "total_deaths",
+                "total_damage_done",
+                "total_kills_bizon"
+            };
+
+            var statistics = SteamworksApi.SteamworksApi.ParsePlayerStatistics(myPublicProfilePlayerSteamID).Result;
+
+            Assert.True(statistics.Any());
+
+            foreach(var expectedStatistic in expectedStatistics)
+            {
+                Assert.True(statistics.Select(x => x.Name == expectedStatistic).Any());
+            }
         }
     }
 }
