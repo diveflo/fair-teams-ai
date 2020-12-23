@@ -31,6 +31,12 @@ namespace fairTeams.API.SteamworksApi
                 correspondingPlayer.SteamName = player.SteamName;
             }
 
+            if (parsedPlayers.Count != players.Count)
+            {
+                var notFoundPlayers = players.Where(x => !parsedPlayers.Select(y => y.SteamID).Contains(x.SteamID));
+                throw new PlayerNotFoundException($"Did not find player(s) with steam id(s): {string.Join(", ", notFoundPlayers.Select(x => x.SteamID))}");
+            }
+
             return players;
         }
 
