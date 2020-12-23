@@ -2,9 +2,9 @@ name: backend ci
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.100'
+          dotnet-version: "5.0.100"
       - name: build
         run: dotnet build --configuration Release
         working-directory: backend
@@ -36,7 +36,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.100'
+          dotnet-version: "5.0.100"
       - name: run tests
         run: dotnet test
         working-directory: backend
@@ -49,11 +49,11 @@ jobs:
       - name: initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
-          languages: 'csharp'
+          languages: "csharp"
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.100'
+          dotnet-version: "5.0.100"
       - name: build
         run: dotnet build
         working-directory: backend
@@ -62,7 +62,7 @@ jobs:
 
   docker:
     if: github.ref == 'refs/heads/main'
-    needs: [ build, test, code-analysis ]
+    needs: [build, test, code-analysis]
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
