@@ -1,4 +1,4 @@
-using fairTeams.API.SteamworksApi;
+﻿using fairTeams.API.SteamworksApi;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -20,5 +20,15 @@ namespace fairTeams.API.Tests
             Assert.Equal(expectedSteamUsername, flo.SteamName);
         }
 
+        [Fact]
+        public async Task ParseSteamUsernames_InvalidSteamID_ThrowsPlayerNotFoundException()
+        {            
+            var invalidSteamID = "0";
+            var nonExistingUser = new Player { Name = "ImAGhostYo", SteamID = invalidSteamID };
+
+            var parseUsernameTask = SteamworksApi.SteamworksApi.ParseSteamUsernames(new List<Player> { nonExistingUser });
+
+            await Assert.ThrowsAsync<PlayerNotFoundException>(() => parseUsernameTask);
+        }
     }
 }
