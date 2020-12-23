@@ -1,4 +1,4 @@
-﻿using fairTeams.API.SteamworksApi;
+using fairTeams.API.SteamworksApi;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -8,16 +8,16 @@ namespace fairTeams.API.Tests
 {
     public class SteamworksApiTests
     {
+        private const string myPrivateProfilePlayerSteamID = "76561199120831930";
+        private const string myPrivateProfilePlayerSteamUsername = "fairteamsai";
         [Fact]
-        public void ParseSteamUsernames_FloSteamID_ReturnsAntifasupersoldier()
+        public void ParseSteamUsernames_ValidSteamID_ReturnsFairTeamsAIUsername()
         {
-            var expectedSteamUsername = "antifa super soldier";
-            var floSteamID = "76561197973591119";
-            var flo = new Player { Name = "Flo", SteamID = floSteamID };
+            var user = new Player { SteamID = myPrivateProfilePlayerSteamID };
 
-            flo = SteamworksApi.SteamworksApi.ParseSteamUsernames(new List<Player> { flo }).Result.First();
+            user = SteamworksApi.SteamworksApi.ParseSteamUsernames(new List<Player> { user }).Result.First();
 
-            Assert.Equal(expectedSteamUsername, flo.SteamName);
+            Assert.Equal(myPrivateProfilePlayerSteamUsername, user.SteamName);
         }
 
         [Fact]
