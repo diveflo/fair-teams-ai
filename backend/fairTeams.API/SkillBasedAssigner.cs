@@ -28,7 +28,7 @@ namespace fairTeams.API
             return await GetAssignedPlayers(players, SolverOptions.Optimal);
         }
 
-        private static async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
+        private async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
         {
             var playersList = players.ToList();
 
@@ -161,7 +161,7 @@ namespace fairTeams.API
             return Math.Abs(averageSkillTerrorists - averageSkillCounterTerrorists);
         }
 
-        private static async Task<Player> GetSkillLevel(Player player)
+        private async Task<Player> GetSkillLevel(Player player)
         {
             try
             {
@@ -172,6 +172,8 @@ namespace fairTeams.API
             }
             catch (ProfileNotPublicException)
             {
+                myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
+
                 player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
                 player.ProfilePublic = false;
             }
