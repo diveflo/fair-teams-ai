@@ -1,5 +1,5 @@
-using fairTeams.API.Rating;
 using Combinatorics.Collections;
+using fairTeams.API.Rating;
 using System;
 using System.Collections.Generic;
 using System.Linq;
