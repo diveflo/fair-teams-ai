@@ -16,9 +16,9 @@ namespace fairTeams.API.Controllers
         private readonly ITeamAssigner myAssigner;
         private readonly ILogger myLogger;
 
-        public PlayerController(ILogger<PlayerController> logger)
+        public PlayerController(ITeamAssigner teamAssigner, ILogger<PlayerController> logger)
         {
-            myAssigner = new SkillBasedAssigner();
+            myAssigner = teamAssigner;
             myLogger = logger;
         }
 
