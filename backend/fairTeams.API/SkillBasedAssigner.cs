@@ -1,5 +1,6 @@
 using Combinatorics.Collections;
 using fairTeams.API.Rating;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,13 @@ namespace fairTeams.API
 
     public class SkillBasedAssigner : ITeamAssigner
     {
+        private readonly ILogger myLogger;
+
+        public SkillBasedAssigner(ILogger<SkillBasedAssigner> logger)
+        {
+            myLogger = logger;
+        }
+
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
             return await GetAssignedPlayers(players, SolverOptions.Optimal);
