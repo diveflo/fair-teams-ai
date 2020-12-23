@@ -1,3 +1,4 @@
+using fairTeams.API.SteamworksApi;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,16 @@ namespace fairTeams.API.Controllers
         [HttpPost]
         public async Task<Assignment> GetAssignedTeams(IEnumerable<Player> players)
         {
-            var playersWithSteamNames = await SteamworksApi.SteamworksApi.ParseSteamUsernames(players.ToList());
+            var playersWithSteamNames = players;
+            try
+            {
+                playersWithSteamNames = await SteamworksApi.SteamworksApi.ParseSteamUsernames(players.ToList());
+            }
+            catch (PlayerNotFoundException e)
+            {
+                myLogger.LogWarning(e.Message);
+            }
+
             (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(playersWithSteamNames);
             return new Assignment(terrorists, counterTerrorists);
         }
