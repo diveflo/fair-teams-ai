@@ -1,8 +1,8 @@
 ﻿using fairTeams.API.SteamworksApi;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace fairTeams.API.Tests
 {
@@ -24,7 +24,7 @@ namespace fairTeams.API.Tests
 
         [Fact]
         public async Task ParseSteamUsernames_InvalidSteamID_ThrowsPlayerNotFoundException()
-        {            
+        {
             var invalidSteamID = "0";
             var nonExistingUser = new Player { Name = "ImAGhostYo", SteamID = invalidSteamID };
 
@@ -56,7 +56,7 @@ namespace fairTeams.API.Tests
 
             Assert.True(statistics.Any());
 
-            foreach(var expectedStatistic in expectedStatistics)
+            foreach (var expectedStatistic in expectedStatistics)
             {
                 Assert.True(statistics.Select(x => x.Name == expectedStatistic).Any());
             }
