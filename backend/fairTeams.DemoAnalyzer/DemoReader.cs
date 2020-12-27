@@ -53,12 +53,7 @@ namespace fairTeams.DemoAnalyzer
 
             myHasMatchStarted = true;
 
-            foreach (var playingPlayer in myDemoParser.PlayingParticipants)
-            {
-                var matchPlayer = new MatchPlayer { SteamID = playingPlayer.SteamID, Name = playingPlayer.Name };
-                Match.PlayerResults.Add(matchPlayer, new MatchStatistics());
-                myIngamePlayers.Add(playingPlayer);
-            }
+            ProcessNewPlayers();
         }
 
         private void HandleRoundStarted(object sender, RoundStartedEventArgs e)
