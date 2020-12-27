@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -10,11 +10,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DemoInfoNet" Version="1.0.0" />
+		<PackageReference Include="DemoInfoNet" Version="1.0.0" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
+	</ItemGroup>
 
 </Project>
