@@ -34,20 +34,16 @@ namespace fairTeams.API.Controllers
 
         private async Task<IEnumerable<Player>> SetSteamUsernames(IEnumerable<Player> players)
         {
-            IDictionary<string, string> steamIDsWithUsernames = new Dictionary<string, string>();
-
-            try
-            {
-                steamIDsWithUsernames = await SteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
-            }
-            catch (PlayerNotFoundException e)
-            {
-                myLogger.LogWarning(e.Message);
-            }
+            var steamIDsWithUsernames = await SteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
 
             foreach (var player in players)
             {
                 player.SteamName = steamIDsWithUsernames.SingleOrDefault(x => x.Key == player.SteamID).Value;
+            }
+
+            foreach (var notFoundPlayer in players.Where(x => string.IsNullOrEmpty(x.SteamName)))
+            {
+                myLogger.LogWarning($"Player's {notFoundPlayer.Name} Steam ID ({notFoundPlayer.SteamID}) seems to be invalid.");
             }
 
             return players;

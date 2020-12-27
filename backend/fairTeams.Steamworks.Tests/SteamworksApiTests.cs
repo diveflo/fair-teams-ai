@@ -20,13 +20,25 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
-        public async Task ParseSteamUsernames_InvalidSteamID_ThrowsPlayerNotFoundException()
+        public void ParseSteamUsernames_InvalidSteamID_ReturnsNothing()
         {
             var invalidSteamID = "0";
 
-            var parseUsernameTask = SteamworksApi.ParseSteamUsernames(new List<string> { invalidSteamID });
+            var steamIDsWithUsername = SteamworksApi.ParseSteamUsernames(new List<string> { invalidSteamID }).Result;
 
-            await Assert.ThrowsAsync<PlayerNotFoundException>(() => parseUsernameTask);
+            Assert.Empty(steamIDsWithUsername);
+        }
+
+        [Fact]
+        public void ParseSteamUsernames_OneValidOneInvalidSteamID_ReturnsUsernameForValidSteamID()
+        {
+            var invalidSteamID = "0";
+            var oneValidOneInvalidSteamID = new List<string> { myPrivateProfilePlayerSteamID, invalidSteamID };
+
+            var steamIDsWithUsername = SteamworksApi.ParseSteamUsernames(oneValidOneInvalidSteamID).Result;
+
+            Assert.Single(steamIDsWithUsername);
+            Assert.Equal(myPrivateProfilePlayerSteamUsername, steamIDsWithUsername.First().Value);
         }
 
         [Fact]
