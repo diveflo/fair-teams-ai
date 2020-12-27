@@ -1,4 +1,4 @@
-﻿using DemoInfo;
+using DemoInfo;
 using fairTeams.Core;
 using System.Collections.Generic;
 using System.IO;
@@ -23,10 +23,7 @@ namespace fairTeams.DemoAnalyzer
             myKillsThisRound = new Dictionary<Player, int>();
             myIngamePlayers = new List<Player>();
 
-            Match = new Match
-            {
-                PlayerResults = new Dictionary<MatchPlayer, MatchStatistics>()
-            };
+            Match = new Match();
         }
 
         public void Read()
