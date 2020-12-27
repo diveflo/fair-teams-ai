@@ -151,7 +151,8 @@ namespace fairTeams.DemoAnalyzer
 
         private void ProcessNewPlayers()
         {
-            var newPlayers = myDemoParser.PlayingParticipants.Except(myIngamePlayers);
+            var playingParticipantsWithoutBots = myDemoParser.PlayingParticipants.Where(x => !(x.SteamID == 0));
+            var newPlayers = playingParticipantsWithoutBots.Where(x => !Match.PlayerResults.Keys.Select(x => x.SteamID).Contains(x.SteamID)).ToList();
             foreach (var newPlayer in newPlayers)
             {
                 var matchPlayer = new MatchPlayer { SteamID = newPlayer.SteamID, Name = newPlayer.Name };
