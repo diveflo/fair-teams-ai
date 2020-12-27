@@ -20,5 +20,16 @@ namespace fairTeams.Core.Tests
 
             Assert.Equal(first, second);
         }
+
+        [Fact]
+        public void HLTVScore_RealStatsFromPastGame_CorrectScore()
+        {
+            var expectedHLTVScore = 1.831;
+            var playerStatistics = new MatchStatistics { Kills = 36, Deaths = 17, Rounds = 28, MultipleKills = new MultipleKills { OneKill = 11, TwoKill = 6, ThreeKill = 3, FourKill = 1 } };
+
+            var hltvScore = playerStatistics.HLTVScore;
+
+            Assert.Equal(expectedHLTVScore, hltvScore);
+        }
     }
 }
