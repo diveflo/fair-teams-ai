@@ -1,5 +1,5 @@
 using fairTeams.API.Rating;
-using fairTeams.API.SteamworksApi;
+using fairTeams.Steamworks;
 using System;
 using System.Collections.Generic;
 using Xunit;

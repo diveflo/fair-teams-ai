@@ -1,5 +1,6 @@
 using Combinatorics.Collections;
 using fairTeams.API.Rating;
+using fairTeams.Steamworks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace fairTeams.API
         {
             try
             {
-                var playerStatistics = await SteamworksApi.SteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var playerStatistics = await SteamworksApi.ParsePlayerStatistics(player.SteamID);
                 var kdRating = new KDRating(playerStatistics);
                 player.Skill.AddRating(kdRating);
                 player.ProfilePublic = true;

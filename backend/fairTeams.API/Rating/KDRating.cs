@@ -1,4 +1,4 @@
-using fairTeams.API.SteamworksApi;
+using fairTeams.Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
