@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fairTeams.DemoAnalyzer", "f
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fairTeams.DemoAnalyzer.Tests", "fairTeams.DemoAnalyzer.Tests\fairTeams.DemoAnalyzer.Tests.csproj", "{E5E3BAE2-875C-455D-B0D2-84043CB9DB64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fairTeams.Steamworks", "fairTeams.Steamworks\fairTeams.Steamworks.csproj", "{BEF2114C-4134-4B99-8816-28B0C85B5F94}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fairTeams.Steamworks.Tests", "fairTeams.Steamworks.Tests\fairTeams.Steamworks.Tests.csproj", "{C6EDB64C-F741-46EA-B68E-F51589494326}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{E5E3BAE2-875C-455D-B0D2-84043CB9DB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5E3BAE2-875C-455D-B0D2-84043CB9DB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5E3BAE2-875C-455D-B0D2-84043CB9DB64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEF2114C-4134-4B99-8816-28B0C85B5F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEF2114C-4134-4B99-8816-28B0C85B5F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEF2114C-4134-4B99-8816-28B0C85B5F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEF2114C-4134-4B99-8816-28B0C85B5F94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6EDB64C-F741-46EA-B68E-F51589494326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EDB64C-F741-46EA-B68E-F51589494326}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6EDB64C-F741-46EA-B68E-F51589494326}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6EDB64C-F741-46EA-B68E-F51589494326}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
