@@ -10,7 +10,6 @@ namespace fairTeams.DemoAnalyzer
     {
         private readonly Demo myDemo;
         private DemoParser myDemoParser;
-        private readonly IList<Player> myIngamePlayers;
         private readonly Dictionary<Player, int> myKillsThisRound;
         private bool myHasMatchStarted;
 
@@ -21,7 +20,6 @@ namespace fairTeams.DemoAnalyzer
             myDemo = demo;
             myHasMatchStarted = false;
             myKillsThisRound = new Dictionary<Player, int>();
-            myIngamePlayers = new List<Player>();
 
             Match = new Match();
         }
@@ -41,7 +39,7 @@ namespace fairTeams.DemoAnalyzer
 
             myDemoParser.ParseToEnd();
 
-            ParseOverallStatistics();
+            ParseFinalTeamScores();
             ProcessMissingLastRound();
         }
 
@@ -49,7 +47,6 @@ namespace fairTeams.DemoAnalyzer
         {
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
-            myIngamePlayers.Clear();
 
             myHasMatchStarted = true;
 
@@ -70,15 +67,52 @@ namespace fairTeams.DemoAnalyzer
 
         private void HandlePlayerKilled(object sender, PlayerKilledEventArgs e)
         {
-            if (e.Killer != null)
+            if (!myHasMatchStarted)
             {
-                if (!myKillsThisRound.ContainsKey(e.Killer))
+                return;
+            }
+
+            if (e.Killer != null && !e.Killer.IsBot())
+            {
+                var killerWithStats = Match.PlayerResults.Single(x => x.Key.SteamID == e.Killer.SteamID);
+
+                if (e.IsSuicide())
                 {
-                    myKillsThisRound[e.Killer] = 0;
+                    killerWithStats.Value.Kills -= 1;
+                    killerWithStats.Value.Deaths += 1;
+                    return;
                 }
 
-                myKillsThisRound[e.Killer]++;
+                if (e.Victim.IsBot())
+                {
+                    killerWithStats.Value.Kills += 1;
+                    AddKillToMultipleKillTracking(e.Killer);
+                    return;
+                }
+
+                var victimWithStats = Match.PlayerResults.Single(x => x.Key.SteamID == e.Victim.SteamID);
+
+                if (e.IsTeamkill())
+                {
+                    killerWithStats.Value.Kills -= 1;
+                    victimWithStats.Value.Deaths += 1;
+                    return;
+                }
+
+                killerWithStats.Value.Kills += 1;
+                victimWithStats.Value.Deaths += 1;
+                AddKillToMultipleKillTracking(e.Killer);
             }
+        }
+
+        private void AddKillToMultipleKillTracking(Player killer)
+        {
+            if (!myKillsThisRound.ContainsKey(killer))
+            {
+                myKillsThisRound[killer] = 0;
+            }
+
+            myKillsThisRound[killer]++;
         }
 
         private void HandleRoundOfficiallyEnd(object sender, RoundOfficiallyEndedEventArgs e)
@@ -129,19 +163,11 @@ namespace fairTeams.DemoAnalyzer
             }
         }
 
-        private void ParseOverallStatistics()
+        private void ParseFinalTeamScores()
         {
             // At the end of the game, the initial CT team is T side and vice versa
             Match.TScore = myDemoParser.CTScore;
             Match.CTScore = myDemoParser.TScore;
-
-            foreach (var player in myIngamePlayers)
-            {
-                var correspondingMatchPlayer = Match.PlayerResults.Single(x => x.Key.SteamID == player.SteamID);
-
-                Match.PlayerResults[correspondingMatchPlayer.Key].Kills = player.AdditionaInformations.Kills;
-                Match.PlayerResults[correspondingMatchPlayer.Key].Deaths = player.AdditionaInformations.Deaths;
-            }
         }
 
         private void ProcessNewPlayers()
@@ -152,7 +178,6 @@ namespace fairTeams.DemoAnalyzer
             {
                 var matchPlayer = new MatchPlayer { SteamID = newPlayer.SteamID, Name = newPlayer.Name };
                 Match.PlayerResults.Add(matchPlayer, new MatchStatistics());
-                myIngamePlayers.Add(newPlayer);
             }
         }
 
