@@ -1,4 +1,4 @@
-﻿namespace fairTeams.Core
+namespace fairTeams.Core
 {
     public enum DemoState
     {

@@ -1,4 +1,4 @@
-﻿using fairTeams.API.Rating;
+using fairTeams.API.Rating;
 using fairTeams.API.SteamworksApi;
 using System;
 using System.Collections.Generic;
