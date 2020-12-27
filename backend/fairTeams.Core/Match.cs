@@ -5,6 +5,7 @@ namespace fairTeams.Core
 {
     public class Match
     {
+        public string Id => Demo.Id;
         public Demo Demo { get; set; }
         public IDictionary<MatchPlayer, MatchStatistics> PlayerResults { get; }
         public DateTime Date { get; set; }

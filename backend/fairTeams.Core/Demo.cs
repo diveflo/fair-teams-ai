@@ -9,6 +9,7 @@ namespace fairTeams.Core
 
     public class Demo
     {
+        public string Id { get; set; }
         public string ShareCode { get; set; }
         public string FilePath { get; set; }
         public DemoState State { get; set; }
