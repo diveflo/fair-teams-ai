@@ -1,26 +1,36 @@
-using Newtonsoft.Json;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace fairTeams.Steamworks
 {
-    internal class PlayerSummary
+    public class PlayerSummariesResponse
     {
-        [JsonProperty("steamid")]
-        internal string SteamID { get; set; }
-
-        [JsonProperty("personaname")]
-        internal string SteamName { get; set; }
+        [JsonPropertyName("response")]
+        public Response Response { get; set; }
     }
 
-    internal class PlayerSummaries
+    public class Response
     {
-        [JsonProperty("players")]
-        internal List<PlayerSummary> Players { get; set; }
+        [JsonPropertyName("players")]
+        public Player[] Players { get; set; }
     }
 
-    internal class GetPlayerSummariesResponse
+    public class Player
     {
-        [JsonProperty("response")]
-        internal PlayerSummaries PlayerSummaries { get; set; }
+        [JsonPropertyName("steamid")]
+        public string SteamID { get; set; }
+        public int communityvisibilitystate { get; set; }
+        public int profilestate { get; set; }
+        [JsonPropertyName("personaname")]
+        public string PersonaName { get; set; }
+        public string profileurl { get; set; }
+        public string avatar { get; set; }
+        public string avatarmedium { get; set; }
+        public string avatarfull { get; set; }
+        public string avatarhash { get; set; }
+        public int lastlogoff { get; set; }
+        public int personastate { get; set; }
+        public string primaryclanid { get; set; }
+        public int timecreated { get; set; }
+        public int personastateflags { get; set; }
     }
 }

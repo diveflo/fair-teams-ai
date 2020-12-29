@@ -1,8 +1,8 @@
-using Newtonsoft.Json;
+using fairTeams.Core;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace fairTeams.Steamworks
@@ -22,14 +22,14 @@ namespace fairTeams.Steamworks
             using var responseStream = response.GetResponseStream();
             using var responseStreamReader = new StreamReader(responseStream);
 
-            var parsedResponse = JsonConvert.DeserializeObject<GetPlayerSummariesResponse>(responseStreamReader.ReadToEnd());
-            var parsedPlayers = parsedResponse.PlayerSummaries.Players;
+            var parsedResponse = JsonSerializer.Deserialize<PlayerSummariesResponse>(responseStreamReader.ReadToEnd());
+            var parsedPlayers = parsedResponse.Response.Players;
 
             var steamIDsWithUsernames = new Dictionary<string, string>();
 
             foreach (var player in parsedPlayers)
             {
-                steamIDsWithUsernames.Add(player.SteamID, player.SteamName);
+                steamIDsWithUsernames.Add(player.SteamID, player.PersonaName);
             }
 
             return steamIDsWithUsernames;
@@ -46,7 +46,9 @@ namespace fairTeams.Steamworks
                 using var responseStream = response.GetResponseStream();
                 using var responseStreamReader = new StreamReader(responseStream);
 
-                return JsonConvert.DeserializeObject<PlayerStatistics>(responseStreamReader.ReadToEnd()).Statistics.Stats;
+                var content = responseStreamReader.ReadToEnd();
+
+                return JsonSerializer.Deserialize<UserStatsResponse>(content).Playerstats.Statistics;
             }
             catch (WebException)
             {
