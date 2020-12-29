@@ -9,7 +9,7 @@ namespace fairTeams.API.SteamworksApi
 {
     public static class SteamworksApi
     {
-        private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
+        private const string steamAPIKey = "1E7C82407DBE9BD03F2343B063713894";
 
         public static async Task<IList<Player>> ParseSteamUsernames(IList<Player> players)
         {
