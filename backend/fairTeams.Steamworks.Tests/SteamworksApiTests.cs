@@ -69,5 +69,16 @@ namespace fairTeams.Steamworks.Tests
                 Assert.True(statistics.Select(x => x.Name == expectedStatistic).Any());
             }
         }
+
+        [Fact]
+        public async Task GetNextMatchSharingCode_PreviousCodeIsNotNewest_ReturnsNextSharingCode()
+        {
+            var previousSharingCode = "CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ";
+            var authenticationToken = "7TDM-B27HW-THBQ";
+
+            var nextSharingCode = await SteamworksApi.GetNextMatchSharingCode(myPublicProfilePlayerSteamID, authenticationToken, previousSharingCode);
+
+            Assert.Equal("CSGO-k2TXT-9rmts-XE8G2-yqGVu-FhnEM", nextSharingCode);
+        }
     }
 }

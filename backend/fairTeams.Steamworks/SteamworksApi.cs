@@ -53,5 +53,19 @@ namespace fairTeams.Steamworks
                 throw new ProfileNotPublicException();
             }
         }
+
+        public static async Task<string> GetNextMatchSharingCode(string steamID, string authenticationCodeForUser, string previousSharingCodeForUser)
+        {
+            var webRequest = WebRequest.Create($"https://api.steampowered.com/ICSGOPlayers_730/GetNextMatchSharingCode/v1?key={Settings.SteamWebAPIKey}&steamid={steamID}&steamidkey={authenticationCodeForUser}&knowncode={previousSharingCodeForUser}");
+            webRequest.ContentType = "application/json";
+
+            using var response = await webRequest.GetResponseAsync();
+            using var responseStream = response.GetResponseStream();
+            using var responseStreamReader = new StreamReader(responseStream);
+
+            var content = responseStreamReader.ReadToEnd();
+
+            return JsonSerializer.Deserialize<NextMatchSharingCode>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).Result.NextCode;
+        }
     }
 }
