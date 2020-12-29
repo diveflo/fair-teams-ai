@@ -40,6 +40,9 @@ jobs:
       - name: run tests
         run: dotnet test
         working-directory: backend
+        env:
+          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+          STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
 
   code-analysis:
     runs-on: ubuntu-latest
