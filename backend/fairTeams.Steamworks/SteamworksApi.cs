@@ -9,13 +9,11 @@ namespace fairTeams.Steamworks
 {
     public static class SteamworksApi
     {
-        private const string steamAPIKey = "B0E3E0ED2572C01223E0ED7043E9678C";
-
         public static async Task<IDictionary<string, string>> ParseSteamUsernames(IList<string> steamIDs)
         {
             var commaDelimitedSteamIDs = string.Join(",", steamIDs);
 
-            var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steamAPIKey}&steamids={commaDelimitedSteamIDs}");
+            var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={Settings.SteamWebAPIKey}&steamids={commaDelimitedSteamIDs}");
             webRequest.ContentType = "application/json";
 
             using var response = await webRequest.GetResponseAsync();
@@ -37,7 +35,7 @@ namespace fairTeams.Steamworks
 
         public static async Task<IList<Statistic>> ParsePlayerStatistics(string steamID)
         {
-            var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key={steamAPIKey}&steamid={steamID}");
+            var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key={Settings.SteamWebAPIKey}&steamid={steamID}");
             webRequest.ContentType = "application/json";
 
             try
