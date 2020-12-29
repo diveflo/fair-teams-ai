@@ -5,11 +5,14 @@ using System.Threading;
 using fairTeams.Core;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace fairTeams.DemoHandling
 {
     public class GameCoordinatorClient
     {
+        private readonly ILogger myLogger;
+
         private readonly SteamClient mySteamClient;
         private readonly CallbackManager myCallbackManager;
 
@@ -19,8 +22,10 @@ namespace fairTeams.DemoHandling
 
         private TaskCompletionSource<bool> myIsLoggedIn = new();
 
-        public GameCoordinatorClient()
+        public GameCoordinatorClient(ILogger<GameCoordinatorClient> logger)
         {
+            myLogger = logger;
+
             mySteamClient = new SteamClient();
             myCallbackManager = new CallbackManager(mySteamClient);
 
@@ -31,6 +36,8 @@ namespace fairTeams.DemoHandling
             myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
             myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
         }
+
+        public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLogger<GameCoordinatorClient>()) { }
 
         public Task<string> GetDownloadURLForMatch(GameRequest request)
         {
@@ -57,11 +64,16 @@ namespace fairTeams.DemoHandling
 
         private void OnConnected(SteamClient.ConnectedCallback callback)
         {
-            mySteamUser.LogOn(new SteamUser.LogOnDetails
+            var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
+            try
             {
-                Username = Settings.SteamUsername,
-                Password = Settings.SteamPassword
-            });
+                mySteamUser.LogOn(steamCredentials);
+            }
+            catch (ArgumentException)
+            {
+                myLogger.LogCritical("You need to provide a Steam account via the environment variables STEAM_USERNAME and STEAM_PASSWORD");
+                throw new Exception("No steam account provided via environment variables STEAM_USERNAME and STEAM_PASSWORD");
+            }
         }
 
         private void OnDisconnected(SteamClient.DisconnectedCallback callback)
