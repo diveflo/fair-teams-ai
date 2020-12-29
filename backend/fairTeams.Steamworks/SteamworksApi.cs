@@ -20,7 +20,7 @@ namespace fairTeams.Steamworks
             using var responseStream = response.GetResponseStream();
             using var responseStreamReader = new StreamReader(responseStream);
 
-            var parsedResponse = JsonSerializer.Deserialize<PlayerSummariesResponse>(responseStreamReader.ReadToEnd());
+            var parsedResponse = JsonSerializer.Deserialize<PlayerSummariesResponse>(responseStreamReader.ReadToEnd(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             var parsedPlayers = parsedResponse.Response.Players;
 
             var steamIDsWithUsernames = new Dictionary<string, string>();
@@ -46,7 +46,7 @@ namespace fairTeams.Steamworks
 
                 var content = responseStreamReader.ReadToEnd();
 
-                return JsonSerializer.Deserialize<UserStatsResponse>(content).Playerstats.Statistics;
+                return JsonSerializer.Deserialize<UserStatsResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).Playerstats.Statistics;
             }
             catch (WebException)
             {

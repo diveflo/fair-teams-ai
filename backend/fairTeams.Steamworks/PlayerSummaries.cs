@@ -10,17 +10,14 @@ namespace fairTeams.Steamworks
 
     public class Response
     {
-        [JsonPropertyName("players")]
         public Player[] Players { get; set; }
     }
 
     public class Player
     {
-        [JsonPropertyName("steamid")]
         public string SteamID { get; set; }
         public int communityvisibilitystate { get; set; }
         public int profilestate { get; set; }
-        [JsonPropertyName("personaname")]
         public string PersonaName { get; set; }
         public string profileurl { get; set; }
         public string avatar { get; set; }
