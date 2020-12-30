@@ -19,17 +19,15 @@ namespace fairTeams.DemoParser.Tests
             Assert.Equal(16, demoReader.Match.CTScore);
             Assert.Equal(5, demoReader.Match.TScore);
 
-            var expectedStatisticsAndi = new MatchStatistics { Kills = 22, Deaths = 7, Rounds = 21, MultipleKills = new MultipleKills { OneKill = 12, TwoKill = 2, ThreeKill = 2 } };
-            Assert.Equal(expectedStatisticsAndi, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561199045573415).Value);
-            Assert.Equal(1.641, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561199045573415).Value.HLTVScore);
+            var statisticsAndi = demoReader.Match.PlayerResults.Single(x => x.SteamID == 76561199045573415);
+            Assert.Equal(22, statisticsAndi.Kills);
+            Assert.Equal(7, statisticsAndi.Deaths);
+            Assert.Equal(21, statisticsAndi.Rounds);
+            Assert.Equal(12, statisticsAndi.OneKill);
+            Assert.Equal(2, statisticsAndi.TwoKill);
+            Assert.Equal(2, statisticsAndi.ThreeKill);
+            Assert.Equal(1.641, statisticsAndi.HLTVScore);
 
-            var expectedStatisticsPhilip = new MatchStatistics { Kills = 19, Deaths = 15, Rounds = 21, MultipleKills = new MultipleKills { OneKill = 8, TwoKill = 4, ThreeKill = 1 } };
-            Assert.Equal(expectedStatisticsPhilip, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561198258023370).Value);
-            Assert.Equal(1.183, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561198258023370).Value.HLTVScore);
-
-            var expectedStatisticsMarkus = new MatchStatistics { Kills = 12, Deaths = 16, Rounds = 21, MultipleKills = new MultipleKills { OneKill = 4, TwoKill = 4 } };
-            Assert.Equal(expectedStatisticsMarkus, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561197984050254).Value);
-            Assert.Equal(0.783, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == 76561197984050254).Value.HLTVScore);
         }
 
         [Fact (Skip = "data only locally avaialble for now")]
@@ -43,23 +41,31 @@ namespace fairTeams.DemoParser.Tests
             Assert.Equal(11, demoReader.Match.CTScore);
             Assert.Equal(16, demoReader.Match.TScore);
 
-            var expectedStatisticsForSteamId = new Dictionary<long, MatchStatistics>
+            var expectedStatisticsForSteamId = new List<MatchStatistics>
             {
-                { 76561199051736738, new MatchStatistics { Kills = 33, Deaths = 20, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 8, TwoKill = 4, ThreeKill = 3, FourKill = 2 } } },
-                { 76561198011486180, new MatchStatistics { Kills = 15, Deaths = 22, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 8, TwoKill = 2, ThreeKill = 1 } } },
-                { 76561198449086269, new MatchStatistics { Kills = 15, Deaths = 22, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 9, TwoKill = 3 } } },
-                { 76561198308728638, new MatchStatistics { Kills = 24, Deaths = 21, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 10, TwoKill = 4, ThreeKill = 2 } } },
-                { 76561198322776705, new MatchStatistics { Kills = 14, Deaths = 21, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 9, TwoKill = 1, ThreeKill = 1 } } },
-                { 76561198449214703, new MatchStatistics { Kills = 37, Deaths = 20, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 3, TwoKill = 6, ThreeKill = 6, FourKill = 1 } } },
-                { 76561197984050254, new MatchStatistics { Kills = 12, Deaths = 22, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 8, TwoKill = 2 } } },
-                { 76561197973591119, new MatchStatistics { Kills = 29, Deaths = 18, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 6, TwoKill = 4, ThreeKill = 2, FourKill = 1, FiveKill = 1 } } },
-                { 76561198115219464, new MatchStatistics { Kills = 24, Deaths = 19, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 5, TwoKill = 8, ThreeKill = 1 } } },
-                { 76561198021024163, new MatchStatistics { Kills = 3, Deaths = 23, Rounds = 27, MultipleKills = new MultipleKills { OneKill = 4 } } }
+                new MatchStatistics { SteamID = 76561199051736738, Kills = 33, Deaths = 20, Rounds = 27, OneKill = 8, TwoKill = 4, ThreeKill = 3, FourKill = 2 },
+                new MatchStatistics { SteamID = 76561198011486180, Kills = 15, Deaths = 22, Rounds = 27, OneKill = 8, TwoKill = 2, ThreeKill = 1 },
+                new MatchStatistics { SteamID = 76561198449086269, Kills = 15, Deaths = 22, Rounds = 27, OneKill = 9, TwoKill = 3 },
+                new MatchStatistics { SteamID = 76561198308728638, Kills = 24, Deaths = 21, Rounds = 27, OneKill = 10, TwoKill = 4, ThreeKill = 2 },
+                new MatchStatistics { SteamID = 76561198322776705, Kills = 14, Deaths = 21, Rounds = 27, OneKill = 9, TwoKill = 1, ThreeKill = 1 },
+                new MatchStatistics { SteamID = 76561198449214703, Kills = 37, Deaths = 20, Rounds = 27, OneKill = 3, TwoKill = 6, ThreeKill = 6, FourKill = 1 },
+                new MatchStatistics { SteamID = 76561197984050254, Kills = 12, Deaths = 22, Rounds = 27, OneKill = 8, TwoKill = 2 },
+                new MatchStatistics { SteamID = 76561197973591119, Kills = 29, Deaths = 18, Rounds = 27, OneKill = 6, TwoKill = 4, ThreeKill = 2, FourKill = 1, FiveKill = 1 },
+                new MatchStatistics { SteamID = 76561198115219464, Kills = 24, Deaths = 19, Rounds = 27, OneKill = 5, TwoKill = 8, ThreeKill = 1 },
+                new MatchStatistics { SteamID = 76561198021024163, Kills = 3, Deaths = 23, Rounds = 27, OneKill = 4 }
             };
 
-            foreach (var expected in expectedStatisticsForSteamId)
+            foreach(var playerResult in demoReader.Match.PlayerResults)
             {
-                Assert.Equal(expected.Value, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == expected.Key).Value);
+                var expected = expectedStatisticsForSteamId.Single(x => x.SteamID == playerResult.SteamID);
+                Assert.Equal(expected.Kills, playerResult.Kills);
+                Assert.Equal(expected.Deaths, playerResult.Deaths);
+                Assert.Equal(expected.Rounds, playerResult.Rounds);
+                Assert.Equal(expected.OneKill, playerResult.OneKill);
+                Assert.Equal(expected.TwoKill, playerResult.TwoKill);
+                Assert.Equal(expected.ThreeKill, playerResult.ThreeKill);
+                Assert.Equal(expected.FourKill, playerResult.FourKill);
+                Assert.Equal(expected.FiveKill, playerResult.FiveKill);
             }
         }
 
@@ -67,14 +73,12 @@ namespace fairTeams.DemoParser.Tests
         public void Read_MatchWithTeamkills_CountedAsNegativeKill()
         {
             var teamkillerSteamID = 76561198021024163;
-            var expectedStatistics = new MatchStatistics { Kills = -1, Deaths = 17, Rounds = 17 };
-
             var demo = new Demo() { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455336292399710316_1349054772_183.dem" };
             var demoReader = new DemoReader(demo);
 
             demoReader.Read();
 
-            Assert.Equal(expectedStatistics, demoReader.Match.PlayerResults.Single(x => x.Key.SteamID == teamkillerSteamID).Value);
+            Assert.Equal(-1, demoReader.Match.PlayerResults.Single(x => x.SteamID == teamkillerSteamID).Kills);
         }
     }
 }

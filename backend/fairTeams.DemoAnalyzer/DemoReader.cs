@@ -21,7 +21,7 @@ namespace fairTeams.DemoAnalyzer
             myHasMatchStarted = false;
             myKillsThisRound = new Dictionary<Player, int>();
 
-            Match = new Match();
+            Match = new Match { Demo = myDemo };
         }
 
         public void Read()
@@ -31,6 +31,8 @@ namespace fairTeams.DemoAnalyzer
 
             myDemoParser.ParseHeader();
             Match.Map = myDemoParser.Map;
+            Match.Id = myDemoParser.Header.MapName.Replace("/", "") + "_" + myDemoParser.Header.SignonLength + myDemoParser.Header.PlaybackTicks + myDemoParser.Header.PlaybackFrames;
+            Match.Demo.Id = Match.Id;
 
             myDemoParser.MatchStarted += HandleMatchStarted;
             myDemoParser.RoundStart += HandleRoundStarted;
@@ -74,33 +76,33 @@ namespace fairTeams.DemoAnalyzer
 
             if (e.Killer != null && !e.Killer.IsBot())
             {
-                var killerWithStats = Match.PlayerResults.Single(x => x.Key.SteamID == e.Killer.SteamID);
+                var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Killer.SteamID);
 
                 if (e.IsSuicide())
                 {
-                    killerWithStats.Value.Kills -= 1;
-                    killerWithStats.Value.Deaths += 1;
+                    killerWithStats.Kills -= 1;
+                    killerWithStats.Deaths += 1;
                     return;
                 }
 
                 if (e.Victim.IsBot())
                 {
-                    killerWithStats.Value.Kills += 1;
+                    killerWithStats.Kills += 1;
                     AddKillToMultipleKillTracking(e.Killer);
                     return;
                 }
 
-                var victimWithStats = Match.PlayerResults.Single(x => x.Key.SteamID == e.Victim.SteamID);
+                var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Victim.SteamID);
 
                 if (e.IsTeamkill())
                 {
-                    killerWithStats.Value.Kills -= 1;
-                    victimWithStats.Value.Deaths += 1;
+                    killerWithStats.Kills -= 1;
+                    victimWithStats.Deaths += 1;
                     return;
                 }
 
-                killerWithStats.Value.Kills += 1;
-                victimWithStats.Value.Deaths += 1;
+                killerWithStats.Kills += 1;
+                victimWithStats.Deaths += 1;
                 AddKillToMultipleKillTracking(e.Killer);
             }
         }
@@ -135,31 +137,31 @@ namespace fairTeams.DemoAnalyzer
                 var player = kills.Key;
                 var numberOfKills = kills.Value;
 
-                var correspondingMatchPlayer = Match.PlayerResults.Single(x => x.Key.SteamID == player.SteamID);
+                var correspondingMatchPlayer = Match.PlayerResults.Single(x => x.SteamID == player.SteamID);
 
                 switch (numberOfKills)
                 {
                     case 1:
-                        Match.PlayerResults[correspondingMatchPlayer.Key].MultipleKills.OneKill += 1;
+                        correspondingMatchPlayer.OneKill += 1;
                         break;
                     case 2:
-                        Match.PlayerResults[correspondingMatchPlayer.Key].MultipleKills.TwoKill += 1;
+                        correspondingMatchPlayer.TwoKill += 1;
                         break;
                     case 3:
-                        Match.PlayerResults[correspondingMatchPlayer.Key].MultipleKills.ThreeKill += 1;
+                        correspondingMatchPlayer.ThreeKill += 1;
                         break;
                     case 4:
-                        Match.PlayerResults[correspondingMatchPlayer.Key].MultipleKills.FourKill += 1;
+                        correspondingMatchPlayer.FourKill += 1;
                         break;
                     case 5:
-                        Match.PlayerResults[correspondingMatchPlayer.Key].MultipleKills.FiveKill += 1;
+                        correspondingMatchPlayer.FiveKill += 1;
                         break;
                 }
             }
 
             foreach (var playerResult in Match.PlayerResults)
             {
-                playerResult.Value.Rounds += 1;
+                playerResult.Rounds += 1;
             }
         }
 
@@ -173,11 +175,10 @@ namespace fairTeams.DemoAnalyzer
         private void ProcessNewPlayers()
         {
             var playingParticipantsWithoutBots = myDemoParser.PlayingParticipants.Where(x => !(x.SteamID == 0));
-            var newPlayers = playingParticipantsWithoutBots.Where(x => !Match.PlayerResults.Keys.Select(x => x.SteamID).Contains(x.SteamID)).ToList();
+            var newPlayers = playingParticipantsWithoutBots.Where(x => !Match.PlayerResults.Select(x => x.SteamID).Contains(x.SteamID)).ToList();
             foreach (var newPlayer in newPlayers)
             {
-                var matchPlayer = new MatchPlayer { SteamID = newPlayer.SteamID, Name = newPlayer.Name };
-                Match.PlayerResults.Add(matchPlayer, new MatchStatistics());
+                Match.PlayerResults.Add(new MatchStatistics { SteamID = newPlayer.SteamID, Id = $"{newPlayer.SteamID}_{Match.Id}"});
             }
         }
 

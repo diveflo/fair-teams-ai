@@ -5,9 +5,9 @@ namespace fairTeams.Core
 {
     public class Match
     {
-        public string Id => Demo.Id;
+        public string Id { get; set; }
         public Demo Demo { get; set; }
-        public IDictionary<MatchPlayer, MatchStatistics> PlayerResults { get; }
+        public IList<MatchStatistics> PlayerResults { get; }
         public DateTime Date { get; set; }
         public string Map { get; set; }
         public int TScore { get; set; }
@@ -16,7 +16,7 @@ namespace fairTeams.Core
 
         public Match()
         {
-            PlayerResults = new Dictionary<MatchPlayer, MatchStatistics>();
+            PlayerResults = new List<MatchStatistics>();
         }
     }
 }
