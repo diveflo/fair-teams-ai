@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SteamKit2.GC;
+using System;
 using System.Collections.Generic;
-using SteamKit2.GC;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {

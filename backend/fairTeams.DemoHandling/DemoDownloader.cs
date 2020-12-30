@@ -30,7 +30,7 @@ namespace fairTeams.DemoHandling
 
             return await Task.Run(() =>
             {
-                 BZip2.Decompress(File.OpenRead(bz2FilePath), File.Create(destination), true);
+                BZip2.Decompress(File.OpenRead(bz2FilePath), File.Create(destination), true);
                 return destination;
             });
         }

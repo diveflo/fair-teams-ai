@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Timers;
-using SteamKit2;
+﻿using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using SteamKit2.Internal;
+using System;
+using System.Timers;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {

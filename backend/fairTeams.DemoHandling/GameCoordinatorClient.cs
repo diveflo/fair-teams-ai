@@ -1,11 +1,11 @@
-﻿using SteamKit2;
+﻿using fairTeams.Core;
 using fairTeams.DemoHandling.SteamKitExt;
-using System;
-using System.Threading;
-using fairTeams.Core;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.Extensions.Logging;
+using SteamKit2;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {

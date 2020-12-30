@@ -1,6 +1,6 @@
-﻿using System;
-using SteamKit2.GC;
+﻿using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
+using System;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {

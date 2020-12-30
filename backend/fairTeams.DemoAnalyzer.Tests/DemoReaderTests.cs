@@ -8,7 +8,7 @@ namespace fairTeams.DemoParser.Tests
 {
     public class DemoReaderTests
     {
-        [Fact (Skip = "data only locally avaialble for now")]
+        [Fact(Skip = "data only locally avaialble for now")]
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-205911-1208050719-de_vertigo-honigbiene_vs_waldfrosch.dem" };
@@ -30,7 +30,7 @@ namespace fairTeams.DemoParser.Tests
 
         }
 
-        [Fact (Skip = "data only locally avaialble for now")]
+        [Fact(Skip = "data only locally avaialble for now")]
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };
@@ -55,7 +55,7 @@ namespace fairTeams.DemoParser.Tests
                 new MatchStatistics { SteamID = 76561198021024163, Kills = 3, Deaths = 23, Rounds = 27, OneKill = 4 }
             };
 
-            foreach(var playerResult in demoReader.Match.PlayerResults)
+            foreach (var playerResult in demoReader.Match.PlayerResults)
             {
                 var expected = expectedStatisticsForSteamId.Single(x => x.SteamID == playerResult.SteamID);
                 Assert.Equal(expected.Kills, playerResult.Kills);
@@ -69,7 +69,7 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact (Skip = "data only locally avaialble for now")]
+        [Fact(Skip = "data only locally avaialble for now")]
         public void Read_MatchWithTeamkills_CountedAsNegativeKill()
         {
             var teamkillerSteamID = 76561198021024163;
