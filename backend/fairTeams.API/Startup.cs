@@ -1,8 +1,11 @@
+using fairTeams.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System.IO;
 
 namespace fairTeams.API
 {
@@ -34,7 +37,10 @@ namespace fairTeams.API
                 );
             });
 
-            services.AddSingleton<ITeamAssigner, SkillBasedAssigner>();
+            var databaseFullPath = Path.Combine(Settings.ApplicationFolder, "matches.db");
+            
+            services.AddDbContext<MatchRepository>(d => d.UseSqlite($"Data Source={databaseFullPath}"));
+            services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

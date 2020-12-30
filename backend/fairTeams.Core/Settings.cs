@@ -1,10 +1,13 @@
-﻿namespace fairTeams.Core
+﻿using System.IO;
+
+namespace fairTeams.Core
 {
     public static class Settings
     {
         public static string SteamUsername => GetEnvironmentVariableMachineAndProcess("STEAM_USERNAME");
         public static string SteamPassword => GetEnvironmentVariableMachineAndProcess("STEAM_PASSWORD");
         public static string SteamWebAPIKey => GetEnvironmentVariableMachineAndProcess("STEAM_WEBAPI_KEY");
+        public static string ApplicationFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "fairteamsai");
 
         private static string GetEnvironmentVariableMachineAndProcess(string environmentVariable)
         {
