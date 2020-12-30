@@ -1,6 +1,8 @@
 using Combinatorics.Collections;
 using fairTeams.API.Rating;
+using fairTeams.Core;
 using fairTeams.Steamworks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,16 @@ namespace fairTeams.API
 
     public class SkillBasedAssigner : ITeamAssigner
     {
+        private readonly MatchRepository myMatchRepository;
         private readonly ILogger myLogger;
 
-        public SkillBasedAssigner(ILogger<SkillBasedAssigner> logger)
+        public SkillBasedAssigner(MatchRepository matchRepository, ILogger<SkillBasedAssigner> logger)
         {
+            myMatchRepository = matchRepository;
             myLogger = logger;
         }
+
+        public SkillBasedAssigner(MatchRepository matchRepository) : this(matchRepository, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
@@ -166,9 +172,8 @@ namespace fairTeams.API
         {
             try
             {
-                var playerStatistics = await SteamworksApi.ParsePlayerStatistics(player.SteamID);
-                var kdRating = new KDRating(playerStatistics);
-                player.Skill.AddRating(kdRating);
+                var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
+                player.Skill.AddRating(await hltvRating);
                 player.ProfilePublic = true;
             }
             catch (ProfileNotPublicException)
