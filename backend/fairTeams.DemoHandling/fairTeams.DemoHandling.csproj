@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
+		<ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
 		<ProjectReference Include="..\fairTeams.Steamworks\fairTeams.Steamworks.csproj" />
 	</ItemGroup>
 
