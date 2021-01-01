@@ -1,4 +1,5 @@
-﻿using SteamKit2.GC;
+﻿using fairTeams.Core;
+using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using System;
 

@@ -1,4 +1,4 @@
-﻿namespace fairTeams.DemoHandling
+﻿namespace fairTeams.Core
 {
     /// <summary>
     /// Request object for RequestGame
@@ -8,14 +8,14 @@
         /// <summary>
         /// UNKNOWN
         /// </summary>
-        public uint Token;
+        public uint Token { get; set; }
         /// <summary>
         /// ID of match
         /// </summary>
-        public ulong MatchId;
+        public ulong MatchId { get; set; }
         /// <summary>
         /// ID of outcome of match
         /// </summary>
-        public ulong OutcomeId;
+        public ulong OutcomeId { get; set; }
     }
 }

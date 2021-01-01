@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using fairTeams.Core;
 using Xunit;
 
 namespace fairTeams.DemoHandling.Tests
