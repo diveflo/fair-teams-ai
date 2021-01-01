@@ -40,19 +40,35 @@ namespace fairTeams.DemoHandling
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLogger<GameCoordinatorClient>()) { }
 
-        public Task<string> GetDownloadURLForMatch(GameRequest request)
+        public Match GetMatchInfo(Demo demo)
         {
             myGotMatch = false;
             mySteamClient.Connect();
             Task.Run(() => HandleCallbacks());
-            var connectWaitTimeInMilliseconds = 10000;
-            if (!myIsLoggedIn.Task.Wait(connectWaitTimeInMilliseconds))
+            var waitTimeInMilliseconds = 10000;
+            if (!myIsLoggedIn.Task.Wait(waitTimeInMilliseconds))
             {
                 myIsLoggedIn = new TaskCompletionSource<bool>();
-                throw new Exception($"Steam client didn't connect after {connectWaitTimeInMilliseconds} milliseconds.");
+                throw new Exception($"Steam client didn't connect after {waitTimeInMilliseconds} milliseconds.");
             }
 
-            return RequestGame(request);
+            var requestGameTask = RequestGame(demo.GameRequest);
+            if (!requestGameTask.Wait(waitTimeInMilliseconds))
+            {
+                mySteamClient.Disconnect();
+                myGotMatch = true;
+                throw new Exception($"Steam didn't answer our request for the game download url after 10000 milliseconds.");
+            }
+
+            var matchInfo = requestGameTask.Result;
+            demo.DownloadURL = GetDownloadURL(matchInfo);
+            var match = new Match
+            {
+                Demo = demo,
+                Date = GetMatchDate(matchInfo)
+            };
+
+            return match;
         }
 
         private void HandleCallbacks()
@@ -87,9 +103,9 @@ namespace fairTeams.DemoHandling
             myIsLoggedIn.SetResult(true);
         }
 
-        private Task<string> RequestGame(GameRequest request)
+        private Task<CDataGCCStrike15_v2_MatchInfo> RequestGame(GameRequest request)
         {
-            var taskCompletionSource = new TaskCompletionSource<string>();
+            var taskCompletionSource = new TaskCompletionSource<CDataGCCStrike15_v2_MatchInfo>();
 
             var csgo = new CsgoClient(mySteamClient, myCallbackManager, true);
             csgo.Launch(protobuf =>
@@ -97,10 +113,8 @@ namespace fairTeams.DemoHandling
                 Thread.Sleep(1000);
                 csgo.RequestGame(request, list =>
                 {
-                    var downloadUrl = list.matches.First().roundstatsall.First(x => !string.IsNullOrEmpty(x.map)).map;
-                    taskCompletionSource.SetResult(downloadUrl);
-                    myGotMatch = true;
-                    mySteamClient.Disconnect();
+                    var matchInfo = list.matches.First();
+                    taskCompletionSource.SetResult(matchInfo);
                 });
             });
 
