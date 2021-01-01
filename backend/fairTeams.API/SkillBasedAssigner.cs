@@ -2,7 +2,6 @@ using Combinatorics.Collections;
 using fairTeams.API.Rating;
 using fairTeams.Core;
 using fairTeams.Steamworks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
