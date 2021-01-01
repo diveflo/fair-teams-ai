@@ -12,7 +12,7 @@ namespace fairTeams.DemoParser.Tests
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-205911-1208050719-de_vertigo-honigbiene_vs_waldfrosch.dem" };
-            var demoReader = new DemoReader(demo);
+            var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.Read();
 
@@ -34,7 +34,7 @@ namespace fairTeams.DemoParser.Tests
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };
-            var demoReader = new DemoReader(demo);
+            var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.Read();
 
@@ -74,7 +74,7 @@ namespace fairTeams.DemoParser.Tests
         {
             var teamkillerSteamID = 76561198021024163;
             var demo = new Demo() { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455336292399710316_1349054772_183.dem" };
-            var demoReader = new DemoReader(demo);
+            var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.Read();
 

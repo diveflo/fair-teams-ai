@@ -15,19 +15,19 @@ namespace fairTeams.DemoAnalyzer
 
         public Match Match { get; }
 
-        public DemoReader(Demo demo)
+        public DemoReader(Match match)
         {
-            myDemo = demo;
+            Match = match;
+
+            myDemo = match.Demo;
             myHasMatchStarted = false;
             myKillsThisRound = new Dictionary<Player, int>();
-
-            Match = new Match { Demo = myDemo };
         }
 
         public void Read()
         {
             using var fileStream = File.OpenRead(myDemo.FilePath);
-            myDemoParser = new DemoInfo.DemoParser(fileStream);
+            myDemoParser = new DemoParser(fileStream);
 
             myDemoParser.ParseHeader();
             Match.Map = myDemoParser.Map;
