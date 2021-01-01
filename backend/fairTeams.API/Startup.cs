@@ -1,4 +1,5 @@
 using fairTeams.Core;
+using fairTeams.DemoHandling;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,12 @@ namespace fairTeams.API
                 );
             });
 
-            var databaseFullPath = Path.Combine(Settings.ApplicationFolder, "matches.db");
-            
-            services.AddDbContext<MatchRepository>(d => d.UseSqlite($"Data Source={databaseFullPath}"));
+            var matchesDatabasePath = Path.Combine(Settings.ApplicationFolder, "matches.db");
+            services.AddDbContext<MatchRepository>(d => d.UseSqlite($"Data Source={matchesDatabasePath}"));
+
+            var steamUserDatabasePath = Path.Combine(Settings.ApplicationFolder, "users.db");
+            services.AddDbContext<SteamUserRepository>(d => d.UseSqlite($"Data Source={steamUserDatabasePath}"));
+
             services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }
 

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\fairTeams.DemoHandling\fairTeams.DemoHandling.csproj" />
     <ProjectReference Include="..\fairTeams.Steamworks\fairTeams.Steamworks.csproj" />
   </ItemGroup>
 
