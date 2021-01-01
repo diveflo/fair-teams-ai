@@ -13,6 +13,7 @@ namespace fairTeams.Core
         public string ShareCode { get; set; }
         public GameRequest GameRequest { get; set; }
         public string FilePath { get; set; }
+        public string DownloadURL { get; set; }
         public DemoState State { get; set; }
     }
 }
