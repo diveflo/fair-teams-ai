@@ -1,7 +1,8 @@
-﻿using fairTeams.Core;
+using fairTeams.Core;
 using fairTeams.DemoHandling.SteamKitExt;
 using Microsoft.Extensions.Logging;
 using SteamKit2;
+using SteamKit2.GC.CSGO.Internal;
 using System;
 using System.Linq;
 using System.Threading;
@@ -104,6 +105,27 @@ namespace fairTeams.DemoHandling
             });
 
             return taskCompletionSource.Task;
+        }
+
+        private static DateTime GetMatchDate(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return date.AddSeconds(matchInfo.matchtime);
+        }
+
+        private string GetDownloadURL(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            try
+            {
+                var downloadUrl = roundStats.First(x => !string.IsNullOrEmpty(x.map)).map;
+                return downloadUrl;
+            }
+            catch (InvalidOperationException)
+            {
+                myLogger.LogDebug("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
+                throw new GameCoordinatorException("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
+            }
         }
     }
 }
