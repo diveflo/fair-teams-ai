@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace fairTeams.Core
 {
@@ -16,6 +16,10 @@ namespace fairTeams.Core
                 .HasKey(m => m.Id);
             modelBuilder.Entity<Match>()
                 .HasMany(m => m.PlayerResults);
+            modelBuilder.Entity<Demo>()
+                .HasOne(d => d.GameRequest);
+            modelBuilder.Entity<GameRequest>()
+                .HasKey(g => g.MatchId);
         }
     }
 }
