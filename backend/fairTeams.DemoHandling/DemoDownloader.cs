@@ -8,6 +8,31 @@ namespace fairTeams.DemoHandling
 {
     public class DemoDownloader
     {
+        public static async Task<string> DownloadAndDecompressDemo(string downloadUrl)
+        {
+            string archivedDemoFilePath;
+            try
+            {
+                archivedDemoFilePath = DownloadDemoArchive(downloadUrl);
+            }
+            catch (WebException)
+            {
+                throw new DemoNotAvailableException();
+            }
+
+            string demoFilePath;
+            try
+            {
+                demoFilePath = await DecompressDemoArchive(archivedDemoFilePath);
+            }
+            catch (ArgumentException)
+            {
+                throw new DemoDownloaderException($"The downloaded demo archive file ({archivedDemoFilePath} does not exist.");
+            }
+
+            return demoFilePath;
+        }
+
         public static string DownloadDemoArchive(string downloadUrl)
         {
             var realFileExtension = GetRealFileExtensionFromBZip2DownloadURL(downloadUrl);
