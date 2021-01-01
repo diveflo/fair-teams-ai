@@ -1,4 +1,4 @@
-using fairTeams.Core;
+﻿using fairTeams.Core;
 using fairTeams.DemoHandling.SteamKitExt;
 using Microsoft.Extensions.Logging;
 using SteamKit2;
@@ -44,6 +44,7 @@ namespace fairTeams.DemoHandling
         {
             myGotMatch = false;
             mySteamClient.Connect();
+            myLogger.LogTrace("Connecting to Steam...");
             Task.Run(() => HandleCallbacks());
             var waitTimeInMilliseconds = 10000;
             if (!myIsLoggedIn.Task.Wait(waitTimeInMilliseconds))
@@ -55,6 +56,7 @@ namespace fairTeams.DemoHandling
             var requestGameTask = RequestGame(demo.GameRequest);
             if (!requestGameTask.Wait(waitTimeInMilliseconds))
             {
+                myLogger.LogDebug($"Game coordinator didn't provide match details after {waitTimeInMilliseconds} milliseconds. Aborting.");
                 mySteamClient.Disconnect();
                 myGotMatch = true;
                 throw new Exception($"Steam didn't answer our request for the game download url after 10000 milliseconds.");
@@ -81,6 +83,8 @@ namespace fairTeams.DemoHandling
 
         private void OnConnected(SteamClient.ConnectedCallback callback)
         {
+            myLogger.LogTrace("Connected to Steam. Logging in now...");
+
             var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
             try
             {
@@ -95,11 +99,13 @@ namespace fairTeams.DemoHandling
 
         private void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
+            myLogger.LogTrace("Disconnected from Steam.");
             myIsLoggedIn = new TaskCompletionSource<bool>();
         }
 
         private void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
+            myLogger.LogTrace("Logged in to Steam.");
             myIsLoggedIn.SetResult(true);
         }
 
@@ -108,8 +114,10 @@ namespace fairTeams.DemoHandling
             var taskCompletionSource = new TaskCompletionSource<CDataGCCStrike15_v2_MatchInfo>();
 
             var csgo = new CsgoClient(mySteamClient, myCallbackManager, true);
+            myLogger.LogTrace("Telling Steam we're playing CS:GO to connect to game coordinator.");
             csgo.Launch(protobuf =>
             {
+                myLogger.LogTrace("Asking game coordinator for match details.");
                 Thread.Sleep(1000);
                 csgo.RequestGame(request, list =>
                 {
