@@ -195,7 +195,7 @@ namespace fairTeams.DemoAnalyzer
 
             Match.CTScore = myDemoParser.CTScore;
             Match.TScore = myDemoParser.TScore;
-            
+
         }
 
         private void ProcessNewPlayers()

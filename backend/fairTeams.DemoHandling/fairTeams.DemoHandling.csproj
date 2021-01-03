@@ -1,30 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
 
-	<PropertyGroup>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>../bin/$(Configuration)</OutputPath>
-	</PropertyGroup>
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>../bin/$(Configuration)</OutputPath>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-		<PackageReference Include="SharpZipLib" Version="1.3.1" />
-		<PackageReference Include="SteamKit2" Version="2.4.0-Alpha.1" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+        <PackageReference Include="SharpZipLib" Version="1.3.1" />
+        <PackageReference Include="SteamKit2" Version="2.4.0-Alpha.1" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
-		<ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
-		<ProjectReference Include="..\fairTeams.Steamworks\fairTeams.Steamworks.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
+        <ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
+        <ProjectReference Include="..\fairTeams.Steamworks\fairTeams.Steamworks.csproj" />
+    </ItemGroup>
 
 </Project>
