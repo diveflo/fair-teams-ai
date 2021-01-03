@@ -44,6 +44,8 @@ namespace fairTeams.API
             var steamUserDatabasePath = Path.Combine(Settings.ApplicationFolder, "users.db");
             services.AddDbContext<SteamUserRepository>(d => d.UseSqlite($"Data Source={steamUserDatabasePath}", x => x.MigrationsAssembly("fairTeams.API")));
 
+            services.AddHostedService<MatchMakingDemoCollector>();
+            services.AddHostedService<LocalDemoCollector>();
 
             services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }
