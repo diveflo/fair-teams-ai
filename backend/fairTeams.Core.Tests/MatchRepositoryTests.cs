@@ -27,6 +27,7 @@ namespace fairTeams.Core.Tests
         public void Matches_ReadExisitingRepository_CorrectAverageHLTVScore(long steamID, double expectedHLTVScore)
         {
             using var repository = ReadTestRepository("TestData" + Path.DirectorySeparatorChar + "matchRepository_0.db");
+            repository.Matches.Load();
 
             var actualAverageHLTVScore = repository.Matches.SelectMany(x => x.PlayerResults).Where(y => y.SteamID == steamID).ToList().Average(z => z.HLTVScore);
 
