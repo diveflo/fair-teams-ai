@@ -8,12 +8,13 @@ namespace fairTeams.DemoParser.Tests
 {
     public class DemoReaderTests
     {
-        [Fact(Skip = "data only locally avaialble for now")]
+        [Fact]
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
-            var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-205911-1208050719-de_vertigo-honigbiene_vs_waldfrosch.dem" };
+            var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003456667023591866681_0500725829_189.dem" };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
+            demoReader.ReadHeader();
             demoReader.Read();
 
             Assert.Equal(16, demoReader.Match.CTScore);
@@ -30,12 +31,13 @@ namespace fairTeams.DemoParser.Tests
 
         }
 
-        [Fact(Skip = "data only locally avaialble for now")]
+        [Fact]
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
+            demoReader.ReadHeader();
             demoReader.Read();
 
             Assert.Equal(11, demoReader.Match.CTScore);
@@ -69,13 +71,14 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "data only locally avaialble for now")]
+        [Fact]
         public void Read_MatchWithTeamkills_CountedAsNegativeKill()
         {
             var teamkillerSteamID = 76561198021024163;
             var demo = new Demo() { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455336292399710316_1349054772_183.dem" };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
+            demoReader.ReadHeader();
             demoReader.Read();
 
             Assert.Equal(-1, demoReader.Match.PlayerResults.Single(x => x.SteamID == teamkillerSteamID).Kills);

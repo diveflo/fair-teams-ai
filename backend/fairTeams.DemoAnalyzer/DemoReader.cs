@@ -1,14 +1,16 @@
 using DemoInfo;
 using fairTeams.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace fairTeams.DemoAnalyzer
 {
-    public class DemoReader
+    public class DemoReader : IDisposable
     {
         private readonly Demo myDemo;
+        private FileStream myDemoFileStream;
         private DemoParser myDemoParser;
         private readonly Dictionary<Player, int> myKillsThisRound;
         private bool myHasMatchStarted;
@@ -24,16 +26,19 @@ namespace fairTeams.DemoAnalyzer
             myKillsThisRound = new Dictionary<Player, int>();
         }
 
-        public void Read()
+        public void ReadHeader()
         {
-            using var fileStream = File.OpenRead(myDemo.FilePath);
-            myDemoParser = new DemoParser(fileStream);
+            myDemoFileStream = File.OpenRead(myDemo.FilePath);
+            myDemoParser = new DemoParser(myDemoFileStream);
 
             myDemoParser.ParseHeader();
             Match.Map = myDemoParser.Map;
             Match.Id = myDemoParser.Header.MapName.Replace("/", "") + "_" + myDemoParser.Header.SignonLength + myDemoParser.Header.PlaybackTicks + myDemoParser.Header.PlaybackFrames;
             Match.Demo.Id = Match.Id;
+        }
 
+        public void Read()
+        {
             myDemoParser.MatchStarted += HandleMatchStarted;
             myDemoParser.RoundStart += HandleRoundStarted;
             myDemoParser.PlayerKilled += HandlePlayerKilled;
@@ -125,9 +130,8 @@ namespace fairTeams.DemoAnalyzer
             }
 
             ProcessNewPlayers();
-
             UpdateKillCounts();
-            Match.Rounds += 1;
+            UpdateRounds();
         }
 
         private void UpdateKillCounts()
@@ -137,27 +141,46 @@ namespace fairTeams.DemoAnalyzer
                 var player = kills.Key;
                 var numberOfKills = kills.Value;
 
-                var correspondingMatchPlayer = Match.PlayerResults.Single(x => x.SteamID == player.SteamID);
+                if (player.IsBot())
+                {
+                    continue;
+                }
+
+                if (!IsPlayerRegistered(player.SteamID))
+                {
+                    ProcessNewPlayers();
+                    if (!IsPlayerRegistered(player.SteamID))
+                    {
+                        throw new PlayerNotYetRegisteredException(player.SteamID, Match.PlayerResults.Select(x => x.SteamID));
+                    }
+                }
+
+                var playerMatchStatistics = Match.PlayerResults.Single(x => x.SteamID == player.SteamID);
 
                 switch (numberOfKills)
                 {
                     case 1:
-                        correspondingMatchPlayer.OneKill += 1;
+                        playerMatchStatistics.OneKill += 1;
                         break;
                     case 2:
-                        correspondingMatchPlayer.TwoKill += 1;
+                        playerMatchStatistics.TwoKill += 1;
                         break;
                     case 3:
-                        correspondingMatchPlayer.ThreeKill += 1;
+                        playerMatchStatistics.ThreeKill += 1;
                         break;
                     case 4:
-                        correspondingMatchPlayer.FourKill += 1;
+                        playerMatchStatistics.FourKill += 1;
                         break;
                     case 5:
-                        correspondingMatchPlayer.FiveKill += 1;
+                        playerMatchStatistics.FiveKill += 1;
                         break;
                 }
             }
+        }
+
+        private void UpdateRounds()
+        {
+            Match.Rounds += 1;
 
             foreach (var playerResult in Match.PlayerResults)
             {
@@ -187,8 +210,26 @@ namespace fairTeams.DemoAnalyzer
             if (Match.Rounds != Match.CTScore + Match.TScore)
             {
                 UpdateKillCounts();
-                Match.Rounds += 1;
+                UpdateRounds();
             }
+        }
+
+        private bool IsPlayerRegistered(long steamid)
+        {
+            return Match.PlayerResults.Any(x => x.SteamID == steamid);
+        }
+
+        public void Dispose()
+        {
+            myDemoParser.MatchStarted -= HandleMatchStarted;
+            myDemoParser.RoundStart -= HandleRoundStarted;
+            myDemoParser.PlayerKilled -= HandlePlayerKilled;
+            myDemoParser.RoundOfficiallyEnd -= HandleRoundOfficiallyEnd;
+            myDemoParser.Dispose();
+
+            myDemoFileStream.Dispose();
+
+            myDemoParser = null;
         }
     }
 }
