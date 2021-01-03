@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/candidate.dart';
-import 'package:frontend/model/player.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 import 'package:frontend/thunks/scramble.dart';
+import 'package:frontend/views/finalTeam.dart';
 import 'package:frontend/views/mapPool.dart';
 
 class PlayerSelection extends StatelessWidget {
@@ -220,6 +220,47 @@ class CandidatesColumnWidget extends StatefulWidget {
 }
 
 class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
+  int _getActivePlayer(List<Candidate> players) {
+    int count = 0;
+    players.forEach((element) {
+      if (element.isSelected) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(
+        flex: 2,
+        child: CandidatesWidget(),
+      ),
+      Expanded(
+        child: StoreConnector<AppState, List<Candidate>>(
+            converter: (store) => store.state.gameConfigState.candidates,
+            builder: (context, count) {
+              return Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Count: ${_getActivePlayer(count)}",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              );
+            }),
+        flex: 1,
+      )
+    ]);
+  }
+}
+
+class CandidatesWidget extends StatefulWidget {
+  @override
+  _CandidatesWidgetState createState() => _CandidatesWidgetState();
+}
+
+class _CandidatesWidgetState extends State<CandidatesWidget> {
   ScrollController _scrollController;
 
   @override
@@ -303,75 +344,6 @@ class MyButton extends StatelessWidget {
       onPressed: onPressed,
       color: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    );
-  }
-}
-
-class FinalTeamWidget extends StatelessWidget {
-  const FinalTeamWidget({
-    Key key,
-    @required this.team,
-    @required this.color,
-    @required this.name,
-    @required this.imagePath,
-  }) : super(key: key);
-
-  final List<Player> team;
-  final Color color;
-  final String name;
-  final String imagePath;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          name,
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, fontSize: 30),
-        ),
-        Expanded(
-          child: Container(
-            child: ListView.builder(
-              itemCount: team.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: color, width: 2),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: Image(
-                          image: AssetImage(imagePath),
-                        ),
-                        title: Text(
-                          team[index].name,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(team[index].steamName,
-                                style: TextStyle(
-                                    color: color, fontWeight: FontWeight.bold)),
-                            Text(
-                              team[index].skillScore.toString(),
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.purple),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        )
-      ],
     );
   }
 }
