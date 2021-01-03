@@ -24,15 +24,15 @@ class PlayerSelection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 5,
                   child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 4,
                   child: CandidatesColumnWidget(),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 4,
                   child: NewPlayerColumnWidget(),
                 )
               ],
@@ -220,6 +220,8 @@ class CandidatesColumnWidget extends StatefulWidget {
 }
 
 class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
+  ScrollController _scrollController;
+
   int _getActivePlayer(List<Candidate> players) {
     int count = 0;
     players.forEach((element) {
@@ -229,39 +231,6 @@ class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
     });
     return count;
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      Expanded(
-        flex: 2,
-        child: CandidatesWidget(),
-      ),
-      Expanded(
-        child: StoreConnector<AppState, List<Candidate>>(
-            converter: (store) => store.state.gameConfigState.candidates,
-            builder: (context, count) {
-              return Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "Count: ${_getActivePlayer(count)}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              );
-            }),
-        flex: 1,
-      )
-    ]);
-  }
-}
-
-class CandidatesWidget extends StatefulWidget {
-  @override
-  _CandidatesWidgetState createState() => _CandidatesWidgetState();
-}
-
-class _CandidatesWidgetState extends State<CandidatesWidget> {
-  ScrollController _scrollController;
 
   @override
   initState() {
@@ -278,15 +247,19 @@ class _CandidatesWidgetState extends State<CandidatesWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 60),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: Text(
-              "Players",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
+            child: StoreConnector<AppState, List<Candidate>>(
+                converter: (store) => store.state.gameConfigState.candidates,
+                builder: (context, count) {
+                  return Text(
+                    "Players: ${_getActivePlayer(count)}",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  );
+                }),
           ),
           Expanded(
             child: Container(
