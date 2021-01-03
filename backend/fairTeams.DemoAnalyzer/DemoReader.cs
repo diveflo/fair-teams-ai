@@ -81,6 +81,7 @@ namespace fairTeams.DemoAnalyzer
 
             if (e.Killer != null && !e.Killer.IsBot())
             {
+                EnsurePlayerRegistered(e.Killer.SteamID);
                 var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Killer.SteamID);
 
                 if (e.IsSuicide())
@@ -97,6 +98,7 @@ namespace fairTeams.DemoAnalyzer
                     return;
                 }
 
+                EnsurePlayerRegistered(e.Victim.SteamID);
                 var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Victim.SteamID);
 
                 if (e.IsTeamkill())
@@ -146,14 +148,7 @@ namespace fairTeams.DemoAnalyzer
                     continue;
                 }
 
-                if (!IsPlayerRegistered(player.SteamID))
-                {
-                    ProcessNewPlayers();
-                    if (!IsPlayerRegistered(player.SteamID))
-                    {
-                        throw new PlayerNotYetRegisteredException(player.SteamID, Match.PlayerResults.Select(x => x.SteamID));
-                    }
-                }
+                EnsurePlayerRegistered(player.SteamID);
 
                 var playerMatchStatistics = Match.PlayerResults.Single(x => x.SteamID == player.SteamID);
 
@@ -211,6 +206,18 @@ namespace fairTeams.DemoAnalyzer
             {
                 UpdateKillCounts();
                 UpdateRounds();
+            }
+        }
+
+        private void EnsurePlayerRegistered(long steamid)
+        {
+            if (!IsPlayerRegistered(steamid))
+            {
+                ProcessNewPlayers();
+                if (!IsPlayerRegistered(steamid))
+                {
+                    throw new PlayerNotYetRegisteredException(steamid, Match.PlayerResults.Select(x => x.SteamID));
+                }
             }
         }
 
