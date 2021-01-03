@@ -220,6 +220,47 @@ class CandidatesColumnWidget extends StatefulWidget {
 }
 
 class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
+  int _getActivePlayer(List<Candidate> players) {
+    int count = 0;
+    players.forEach((element) {
+      if (element.isSelected) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(
+        flex: 2,
+        child: CandidatesWidget(),
+      ),
+      Expanded(
+        child: StoreConnector<AppState, List<Candidate>>(
+            converter: (store) => store.state.gameConfigState.candidates,
+            builder: (context, count) {
+              return Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Count: ${_getActivePlayer(count)}",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              );
+            }),
+        flex: 1,
+      )
+    ]);
+  }
+}
+
+class CandidatesWidget extends StatefulWidget {
+  @override
+  _CandidatesWidgetState createState() => _CandidatesWidgetState();
+}
+
+class _CandidatesWidgetState extends State<CandidatesWidget> {
   ScrollController _scrollController;
 
   @override
