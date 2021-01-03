@@ -4,31 +4,28 @@ using System.Collections.Generic;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {
-    /// <summary>
-    ///     Stores all callbacks based on time it was places, first created -> first executed
-    /// </summary>
     internal class CallbackStore
     {
-        private readonly Dictionary<uint, Queue<Action<IPacketGCMsg>>> _dict =
-            new Dictionary<uint, Queue<Action<IPacketGCMsg>>>();
+        private readonly Dictionary<uint, Queue<Action<IPacketGCMsg>>> myCallbacks = new();
 
         public bool TryGetValue(uint key, out Action<IPacketGCMsg> func)
         {
-            if (_dict.ContainsKey(key) && (_dict[key].Count != 0))
+            if (myCallbacks.ContainsKey(key) && (myCallbacks[key].Count != 0))
             {
-                func = _dict[key].Dequeue();
+                func = myCallbacks[key].Dequeue();
                 return true;
             }
+
             func = null;
             return false;
         }
 
         public void Add(uint key, Action<IPacketGCMsg> action)
         {
-            if (!_dict.ContainsKey(key))
-                _dict.Add(key, new Queue<Action<IPacketGCMsg>>());
+            if (!myCallbacks.ContainsKey(key))
+                myCallbacks.Add(key, new Queue<Action<IPacketGCMsg>>());
 
-            _dict[key].Enqueue(action);
+            myCallbacks[key].Enqueue(action);
         }
     }
 }

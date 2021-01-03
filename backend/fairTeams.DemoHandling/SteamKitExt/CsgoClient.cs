@@ -8,38 +8,35 @@ using System.Timers;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {
-    /// <summary>
-    ///     Client for CSGO, allows basic operations such as requesting ranks
-    /// </summary>
     public partial class CsgoClient
     {
-        //APP ID for csgo
         private const int CsgoAppid = 730;
-        private readonly SteamGameCoordinator _gameCoordinator;
+        private readonly SteamGameCoordinator myGameCoordinator;
 
-        //Contains the callbacks
-        private readonly CallbackStore _gcMap = new CallbackStore();
+        private readonly CallbackStore myCallbackStore = new();
 
-        private readonly SteamClient _steamClient;
-        private readonly SteamUser _steamUser;
+        private readonly SteamClient mySteamClient;
+        private readonly SteamUser mySteamUser;
 
-        private readonly System.Timers.Timer HelloTimer;
+        private readonly Timer HelloTimer;
 
         private readonly ILogger<CsgoClient> myLogger;
 
 
         public CsgoClient(SteamClient steamClient, CallbackManager callbackManager, ILogger<CsgoClient> logger)
         {
-            _steamClient = steamClient;
-            _steamUser = steamClient.GetHandler<SteamUser>();
-            _gameCoordinator = steamClient.GetHandler<SteamGameCoordinator>();
+            mySteamClient = steamClient;
+            mySteamUser = steamClient.GetHandler<SteamUser>();
+            myGameCoordinator = steamClient.GetHandler<SteamGameCoordinator>();
 
             myLogger = logger;
 
             callbackManager.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
 
-            HelloTimer = new System.Timers.Timer(1000);
-            HelloTimer.AutoReset = true;
+            HelloTimer = new Timer(1000)
+            {
+                AutoReset = true
+            };
             HelloTimer.Elapsed += Knock;
         }
 
@@ -47,7 +44,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
         {
             Console.WriteLine("Knocking");
             var clientmsg = new ClientGCMsgProtobuf<CMsgClientHello>((uint)EGCBaseClientMsg.k_EMsgGCClientHello);
-            _gameCoordinator.Send(clientmsg, CsgoAppid);
+            myGameCoordinator.Send(clientmsg, CsgoAppid);
         }
 
         private void OnGcMessage(SteamGameCoordinator.MessageCallback obj)
@@ -55,22 +52,21 @@ namespace fairTeams.DemoHandling.SteamKitExt
             myLogger.LogTrace($"GC Message: {Enum.GetName(typeof(ECsgoGCMsg), obj.EMsg) ?? Enum.GetName(typeof(EMsg), obj.EMsg)}");
 
             if (obj.EMsg == (uint)EGCBaseClientMsg.k_EMsgGCClientWelcome)
+            {
                 HelloTimer.Stop();
+            }
 
-            Action<IPacketGCMsg> func;
-            if (!_gcMap.TryGetValue(obj.EMsg, out func))
+            if (!myCallbackStore.TryGetValue(obj.EMsg, out Action<IPacketGCMsg> func))
+            {
                 return;
+            }
 
             func(obj.Message);
         }
 
-        /// <summary>
-        ///     Launches the game
-        /// </summary>
-        /// <param name="callback">The callback to be executed when the operation finishes</param>
         public void Launch(Action<CMsgClientWelcome> callback)
         {
-            _gcMap.Add((uint)EGCBaseClientMsg.k_EMsgGCClientWelcome,
+            myCallbackStore.Add((uint)EGCBaseClientMsg.k_EMsgGCClientWelcome,
                 msg => callback(new ClientGCMsgProtobuf<CMsgClientWelcome>(msg).Body));
 
             myLogger.LogTrace("Launching CSGO");
@@ -82,7 +78,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
                 game_id = CsgoAppid
             });
 
-            _steamClient.Send(playGame);
+            mySteamClient.Send(playGame);
 
             HelloTimer.Start();
         }

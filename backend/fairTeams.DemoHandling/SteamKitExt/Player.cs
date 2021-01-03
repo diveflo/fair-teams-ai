@@ -7,27 +7,15 @@ namespace fairTeams.DemoHandling.SteamKitExt
 {
     public partial class CsgoClient
     {
-        /// <summary>
-        ///     Request a player profile.
-        /// </summary>
-        /// <param name="accountId">AccountID (SteamID32) of the player.</param>
-        /// <param name="callback">The callback to be executed when the operation finishes.</param>
         public void PlayerProfileRequest(uint accountId, Action<CMsgGCCStrike15_v2_PlayersProfile> callback)
         {
             // For gods sake don't ask what the 32 is, i just copied it
             PlayerProfileRequest(accountId, 32, callback);
         }
 
-        /// <summary>
-        ///     Request a player profile.
-        /// </summary>
-        /// <param name="accountId">AccountID (SteamID32) of the player.</param>
-        /// <param name="requestLevel">To be honest i have no idea what this does, default is 32</param>
-        /// <param name="callback">The callback to be executed when the operation finishes.</param>
-        public void PlayerProfileRequest(uint accountId, uint requestLevel,
-            Action<CMsgGCCStrike15_v2_PlayersProfile> callback)
+        public void PlayerProfileRequest(uint accountId, uint requestLevel, Action<CMsgGCCStrike15_v2_PlayersProfile> callback)
         {
-            _gcMap.Add((uint)ECsgoGCMsg.k_EMsgGCCStrike15_v2_PlayersProfile,
+            myCallbackStore.Add((uint)ECsgoGCMsg.k_EMsgGCCStrike15_v2_PlayersProfile,
                 msg => callback(new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_PlayersProfile>(msg).Body));
 
             myLogger.LogTrace($"Requesting profile for account: {accountId}");
@@ -43,7 +31,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
                     }
                 };
 
-            _gameCoordinator.Send(clientMsgProtobuf, CsgoAppid);
+            myGameCoordinator.Send(clientMsgProtobuf, CsgoAppid);
         }
     }
 }
