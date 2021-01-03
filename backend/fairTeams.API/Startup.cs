@@ -39,10 +39,11 @@ namespace fairTeams.API
             });
 
             var matchesDatabasePath = Path.Combine(Settings.ApplicationFolder, "matches.db");
-            services.AddDbContext<MatchRepository>(d => d.UseSqlite($"Data Source={matchesDatabasePath}"));
+            services.AddDbContext<MatchRepository>(d => d.UseSqlite($"Data Source={matchesDatabasePath}", x => x.MigrationsAssembly("fairTeams.API")));
 
             var steamUserDatabasePath = Path.Combine(Settings.ApplicationFolder, "users.db");
-            services.AddDbContext<SteamUserRepository>(d => d.UseSqlite($"Data Source={steamUserDatabasePath}"));
+            services.AddDbContext<SteamUserRepository>(d => d.UseSqlite($"Data Source={steamUserDatabasePath}", x => x.MigrationsAssembly("fairTeams.API")));
+
 
             services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }
