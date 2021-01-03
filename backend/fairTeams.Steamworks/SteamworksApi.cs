@@ -59,13 +59,21 @@ namespace fairTeams.Steamworks
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ICSGOPlayers_730/GetNextMatchSharingCode/v1?key={Settings.SteamWebAPIKey}&steamid={steamID}&steamidkey={authenticationCodeForUser}&knowncode={previousSharingCodeForUser}");
             webRequest.ContentType = "application/json";
 
-            using var response = await webRequest.GetResponseAsync();
-            using var responseStream = response.GetResponseStream();
-            using var responseStreamReader = new StreamReader(responseStream);
+            try
+            {
+                using var response = await webRequest.GetResponseAsync();
+                using var responseStream = response.GetResponseStream();
+                using var responseStreamReader = new StreamReader(responseStream);
 
-            var content = responseStreamReader.ReadToEnd();
+                var content = responseStreamReader.ReadToEnd();
 
-            return JsonSerializer.Deserialize<NextMatchSharingCode>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).Result.NextCode;
+                return JsonSerializer.Deserialize<NextMatchSharingCode>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).Result.NextCode;
+            }
+            catch (WebException)
+            {
+                throw new SteamIdAuthCodeShareCodeMismatchException(
+                    $"Steam API request returned forbidden for steam id: {steamID}, auth code: {authenticationCodeForUser}, previous share code: {previousSharingCodeForUser}");
+            }
         }
     }
 }
