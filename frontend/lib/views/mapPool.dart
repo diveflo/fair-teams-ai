@@ -47,16 +47,19 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(children: [
-          Text(
-            "Maps",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-          ),
-          IconButton(
-            icon: Icon(Icons.cached),
-            onPressed: _onNextMap,
-          ),
-        ]),
+        Container(
+          margin: EdgeInsets.only(bottom: 5),
+          child: Row(children: [
+            Text(
+              "Maps",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+            IconButton(
+              icon: Icon(Icons.cached),
+              onPressed: _onNextMap,
+            ),
+          ]),
+        ),
         Container(
           child: Expanded(
             child: StoreConnector<AppState, MapPool>(
