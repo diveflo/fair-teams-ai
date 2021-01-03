@@ -9,6 +9,8 @@ namespace fairTeams.Core
         public static string SteamWebAPIKey => GetEnvironmentVariableMachineAndProcess("STEAM_WEBAPI_KEY");
         public static string ApplicationFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "fairteamsai");
 
+        public static string DemoWatchFolder => Path.Combine(ApplicationFolder, "demowatch");
+
         private static string GetEnvironmentVariableMachineAndProcess(string environmentVariable)
         {
             var machine = System.Environment.GetEnvironmentVariable(environmentVariable, System.EnvironmentVariableTarget.Machine);
