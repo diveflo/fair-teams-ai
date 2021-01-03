@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:frontend/state/appState.dart';
 import 'package:frontend/views/playerSelection.dart';
 import 'package:frontend/state/store.dart';
+import 'package:redux/redux.dart';
 
-void main() {
+Store<AppState> store;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  store = await createStore();
   runApp(MyApp());
 }
 

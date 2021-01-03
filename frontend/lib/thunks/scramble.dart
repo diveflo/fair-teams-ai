@@ -1,3 +1,4 @@
+import 'package:frontend/model/candidate.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/model/team.dart';
 import 'package:frontend/reducer/gameReducer.dart';
@@ -11,8 +12,8 @@ ThunkAction scrambleTeams() {
   return (Store store) async {
     Future(() {
       store.dispatch(ToggleIsLoadingAction());
-      List<Player> candidates = store.state.gameConfigState.candidates;
-      List<Player> activeCandidates =
+      List<Candidate> candidates = store.state.gameConfigState.candidates;
+      List<Candidate> activeCandidates =
           candidates.where((element) => element.isSelected).toList();
 
       api.fetchScrambledTeams(activeCandidates).then((game) {
@@ -25,9 +26,9 @@ ThunkAction scrambleTeams() {
 
 ThunkAction scrambleTeamsRandom() {
   return (Store store) {
-    List<Player> candidates = store.state.gameConfigState.candidates;
+    List<Candidate> candidates = store.state.gameConfigState.candidates;
 
-    List<Player> activePlayers =
+    List<Candidate> activePlayers =
         candidates.where((element) => element.isSelected).toList();
     if (activePlayers.length > 0) {
       List<Player> _team1 = List<Player>();
@@ -35,9 +36,9 @@ ThunkAction scrambleTeamsRandom() {
       activePlayers.shuffle();
       for (int i = 0; i < activePlayers.length; i++) {
         if (i % 2 == 0) {
-          _team1.add(activePlayers[i]);
+          _team1.add(Player(name: activePlayers[i].name));
         } else {
-          _team2.add(activePlayers[i]);
+          _team2.add(Player(name: activePlayers[i].name));
         }
       }
       Team a = Team(_team1, "tt");

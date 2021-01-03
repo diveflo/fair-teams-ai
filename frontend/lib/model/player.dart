@@ -15,7 +15,7 @@ class Player {
       this.profilePublic = false,
       this.steamID = "",
       this.isSelected = false,
-      skillScore = double.maxFinite});
+      this.skillScore = double.maxFinite});
 
   Player.fromJson(dynamic json) {
     name = json["name"] != null ? json["name"] : "no name found";
@@ -34,8 +34,9 @@ class Player {
 
   Map<String, dynamic> toJson() => {
         'name': name,
+        'steamName': steamName,
         'profilePublic': profilePublic,
         'steamID': steamID,
-        'skill': {},
+        'skill': {'skillScore': skillScore},
       };
 }

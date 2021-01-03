@@ -19,4 +19,9 @@ class Team {
     players = playersJson.map((player) => Player.fromJson(player)).toList();
     name = json["name"];
   }
+
+  dynamic toJson() => {
+        "players": this.players.map((player) => player.toJson()).toList(),
+        "name": name,
+      };
 }

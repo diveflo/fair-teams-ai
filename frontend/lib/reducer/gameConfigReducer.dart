@@ -1,4 +1,4 @@
-import 'package:frontend/model/player.dart';
+import 'package:frontend/model/candidate.dart';
 import 'package:frontend/state/gameConfigState.dart';
 import 'package:redux/redux.dart';
 
@@ -9,24 +9,24 @@ final gameConfigReducer = combineReducers<GameConfigState>([
 ]);
 
 class AddPlayerAction {
-  final Player player;
+  final Candidate player;
   AddPlayerAction(this.player);
 }
 
 class TogglePlayerSelectionAction {
-  final Player player;
+  final Candidate player;
   TogglePlayerSelectionAction(this.player);
 }
 
 GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
-  List<Player> newCandidates = state.candidates;
+  List<Candidate> newCandidates = state.candidates;
   newCandidates.add(action.player);
   return state.copyWith(candidates: newCandidates);
 }
 
 GameConfigState _togglePlayerSelection(
     GameConfigState state, TogglePlayerSelectionAction action) {
-  List<Player> updatedCandidates = state.candidates;
+  List<Candidate> updatedCandidates = state.candidates;
   updatedCandidates.forEach((element) {
     if (element.steamID == action.player.steamID) {
       element.isSelected = !element.isSelected;

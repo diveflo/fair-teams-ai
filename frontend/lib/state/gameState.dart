@@ -17,16 +17,22 @@ class GameState {
   }
 
   factory GameState.fromJson(dynamic json) {
-    Map<String, dynamic> jsonT = json["terrorists"];
-    Map<String, dynamic> jsonCT = json["counterTerrorists"];
+    if (json != null) {
+      Map<String, dynamic> jsonT = json["terrorists"];
+      Map<String, dynamic> jsonCT = json["counterTerrorists"];
 
-    var t = Team.fromJson(jsonT);
-    var ct = Team.fromJson(jsonCT);
+      var t = Team.fromJson(jsonT);
+      var ct = Team.fromJson(jsonCT);
+      return GameState(ct: ct, t: t, isLoading: false);
+    }
 
-    return json != null
-        ? GameState(ct: ct, t: t, isLoading: false)
-        : GameState.initial();
+    return GameState.initial();
   }
+
+  dynamic toJson() => {
+        "terrorists": this.t.toJson(),
+        "counterTerrorists": this.ct.toJson(),
+      };
 
   GameState copyWith({Team t, Team ct, bool isLoading}) {
     return GameState(

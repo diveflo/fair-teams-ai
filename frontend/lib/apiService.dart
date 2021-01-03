@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:frontend/model/candidate.dart';
 import 'package:frontend/model/game.dart';
-import 'package:frontend/model/player.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -9,8 +9,9 @@ import 'dart:async';
 class PlayerApi {
   ApiBaseHelper _helper = ApiBaseHelper();
 
-  Future<Game> fetchScrambledTeams(List<Player> players) async {
-    final Map<String, dynamic> response = await _helper.post("Player", players);
+  Future<Game> fetchScrambledTeams(List<Candidate> candidates) async {
+    final Map<String, dynamic> response =
+        await _helper.post("Player", candidates);
     return Game.fromJson(response);
   }
 }
@@ -18,8 +19,8 @@ class PlayerApi {
 class ApiBaseHelper {
   final String _baseUrl = "https://fairteamsai.backend.entertainment720.eu/";
 
-  Future<dynamic> post(String url, List<Player> players) async {
-    final content = jsonEncode(players);
+  Future<dynamic> post(String url, List<Candidate> candidates) async {
+    final content = jsonEncode(candidates);
     print("Api Post, url $url");
     var responseJson;
     try {
