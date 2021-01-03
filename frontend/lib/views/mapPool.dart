@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/map.dart';
+import 'package:frontend/state/appState.dart';
 
 class MapPoolWidget extends StatefulWidget {
   @override
@@ -9,12 +11,6 @@ class MapPoolWidget extends StatefulWidget {
 
 class _MapPoolWidgetState extends State<MapPoolWidget> {
   MapPool mapPool;
-
-  @override
-  void initState() {
-    mapPool = MapPool();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +22,36 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
         ),
         Container(
           child: Expanded(
-            child: ListView.builder(
-              itemCount: mapPool.maps.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(
-                          color: mapPool.maps[index].isDismissed
-                              ? Colors.grey
-                              : Colors.green,
-                          width: 2),
-                    ),
-                    child: CheckboxListTile(
-                      value: mapPool.maps[index].isDismissed,
-                      onChanged: (bool value) {
-                        setState(() {
-                          mapPool.maps[index].isDismissed =
-                              !mapPool.maps[index].isDismissed;
-                        });
-                      },
-                      secondary: Image.asset(
-                        mapPool.maps[index].imagePath,
-                      ),
-                      title: Text(mapPool.maps[index].name),
-                    ));
+            child: StoreConnector<AppState, MapPool>(
+              converter: (store) => store.state.gameConfigState.mapPool,
+              builder: (context, mapPool) {
+                return ListView.builder(
+                  itemCount: mapPool.maps.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                              color: mapPool.maps[index].isDismissed
+                                  ? Colors.grey
+                                  : Colors.green,
+                              width: 2),
+                        ),
+                        child: CheckboxListTile(
+                          value: mapPool.maps[index].isDismissed,
+                          onChanged: (bool value) {
+                            setState(() {
+                              mapPool.maps[index].isDismissed =
+                                  !mapPool.maps[index].isDismissed;
+                            });
+                          },
+                          secondary: Image.asset(
+                            mapPool.maps[index].imagePath,
+                          ),
+                          title: Text(mapPool.maps[index].name),
+                        ));
+                  },
+                );
               },
             ),
           ),

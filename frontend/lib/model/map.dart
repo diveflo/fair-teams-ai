@@ -3,6 +3,10 @@ import 'package:flutter/widgets.dart';
 class MapPool {
   List<CsMap> maps;
 
+  MapPool.fromMaps(List<CsMap> maps) {
+    this.maps = maps;
+  }
+
   MapPool() {
     this.maps = [
       CsMap(name: "Inferno", imagePath: "inferno.jpg"),
@@ -14,12 +18,31 @@ class MapPool {
       CsMap(name: "Vertigo", imagePath: "vertigo.jpg"),
     ];
   }
+
+  MapPool.fromJson(Map<String, dynamic> json) {
+    List<dynamic> mapPoolJson = json["mapPool"];
+    maps = mapPoolJson.map((map) => CsMap.fromJson(map)).toList();
+  }
+
+  dynamic toJson() => this.maps.map((map) => map.toJson()).toList();
 }
 
 class CsMap {
-  final String name;
-  final String imagePath;
+  String name;
+  String imagePath;
   bool isDismissed;
 
   CsMap({this.imagePath = "", @required this.name, this.isDismissed = false});
+
+  CsMap.fromJson(dynamic json) {
+    name = json["name"] != null ? json["name"] : null;
+    imagePath = json["imagePath"] != null ? json["imagePath"] : null;
+    isDismissed = json["isDismissed"] != null ? json["isDismissed"] : false;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'imagePath': imagePath,
+        'isDismissed': isDismissed,
+      };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/model/candidate.dart';
+import 'package:frontend/model/map.dart';
 import 'package:frontend/state/gameConfigState.dart';
 
 void main() {
@@ -26,6 +27,13 @@ void main() {
           isSelected: false,
         )
       ],
+      mapPool: MapPool.fromMaps([
+        CsMap(
+          name: "inferno",
+          imagePath: "inferno.png",
+          isDismissed: true,
+        )
+      ]),
     );
 
     var gameConfigJson = {
@@ -42,6 +50,13 @@ void main() {
           "isProfilePublic": false,
           "isSelected": false,
         }
+      ],
+      "mapPool": [
+        {
+          "name": "inferno",
+          "imagePath": "inferno.png",
+          "isDismissed": true,
+        }
       ]
     };
     test("convert state to json", () {
@@ -54,6 +69,7 @@ void main() {
       var convertedAppState = GameConfigState.fromJson(gameConfigJson);
 
       expect(convertedAppState.candidates.length, 2);
+      expect(convertedAppState.mapPool.maps.length, 1);
     });
   });
 }
