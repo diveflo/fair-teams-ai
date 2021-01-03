@@ -24,15 +24,15 @@ class PlayerSelection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 5,
                   child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 4,
                   child: CandidatesColumnWidget(),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 4,
                   child: NewPlayerColumnWidget(),
                 )
               ],
@@ -247,7 +247,7 @@ class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 60),
       child: Column(
         children: [
           Padding(
