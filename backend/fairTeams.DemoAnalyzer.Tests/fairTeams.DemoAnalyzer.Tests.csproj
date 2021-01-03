@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -6,6 +6,11 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>../bin/$(Configuration)</OutputPath>
+	</PropertyGroup>
+	
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201123-03" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -22,6 +27,12 @@
   <ItemGroup>
     <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
     <ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

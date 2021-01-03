@@ -1,6 +1,7 @@
 using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -11,27 +12,30 @@ namespace fairTeams.DemoParser.Tests
         [Fact]
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
-            var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003456667023591866681_0500725829_189.dem" };
+            var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.ReadHeader();
             demoReader.Read();
 
-            Assert.Equal(16, demoReader.Match.CTScore);
-            Assert.Equal(5, demoReader.Match.TScore);
+            Assert.Equal(0, demoReader.Match.CTScore);
+            Assert.Equal(3, demoReader.Match.TScore);
 
-            var statisticsAndi = demoReader.Match.PlayerResults.Single(x => x.SteamID == 76561199045573415);
-            Assert.Equal(22, statisticsAndi.Kills);
-            Assert.Equal(7, statisticsAndi.Deaths);
-            Assert.Equal(21, statisticsAndi.Rounds);
-            Assert.Equal(12, statisticsAndi.OneKill);
-            Assert.Equal(2, statisticsAndi.TwoKill);
-            Assert.Equal(2, statisticsAndi.ThreeKill);
-            Assert.Equal(1.641, statisticsAndi.HLTVScore);
+            var expectedStatisticsAlex = demoReader.Match.PlayerResults.Single(x => x.SteamID == 76561198011775117);
+            Assert.Equal(1, expectedStatisticsAlex.Kills);
+            Assert.Equal(0, expectedStatisticsAlex.Deaths);
+            Assert.Equal(3, expectedStatisticsAlex.Rounds);
+            Assert.Equal(1, expectedStatisticsAlex.OneKill);
+            Assert.Equal(1.096, expectedStatisticsAlex.HLTVScore);
 
+            var expectedStatisticsFlo = demoReader.Match.PlayerResults.Single(x => x.SteamID == 76561197973591119);
+            Assert.Equal(-1, expectedStatisticsFlo.Kills);
+            Assert.Equal(2, expectedStatisticsFlo.Deaths);
+            Assert.Equal(3, expectedStatisticsFlo.Rounds);
+            Assert.Equal(0.091, expectedStatisticsFlo.HLTVScore);
         }
 
-        [Fact]
+        [Fact(Skip = "Data only locally available")]
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };
@@ -71,7 +75,7 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Data only locally available")]
         public void Read_MatchWithTeamkills_CountedAsNegativeKill()
         {
             var teamkillerSteamID = 76561198021024163;
