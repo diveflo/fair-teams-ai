@@ -10,16 +10,53 @@ class MapPoolWidget extends StatefulWidget {
 }
 
 class _MapPoolWidgetState extends State<MapPoolWidget> {
-  MapPool mapPool;
+  CsMap _nextMap;
+
+  @override
+  initState() {
+    _nextMap = null;
+    super.initState();
+  }
+
+  void _onNextMap() {
+    List<CsMap> playableMaps = StoreProvider.of<AppState>(context)
+        .state
+        .gameConfigState
+        .mapPool
+        .getPlayableMaps();
+    if (playableMaps.length > 0) {
+      playableMaps.shuffle();
+      setState(() {
+        _nextMap = playableMaps.first;
+      });
+    }
+  }
+
+  Color _getBorderColor(CsMap map) {
+    if (map.isDismissed) {
+      return Colors.grey;
+    }
+    if (_nextMap != null && map.name == _nextMap.name) {
+      return Colors.red;
+    }
+
+    return Colors.green;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          "Maps",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-        ),
+        Row(children: [
+          Text(
+            "Maps",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          ),
+          IconButton(
+            icon: Icon(Icons.cached),
+            onPressed: _onNextMap,
+          ),
+        ]),
         Container(
           child: Expanded(
             child: StoreConnector<AppState, MapPool>(
@@ -32,9 +69,7 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                           side: BorderSide(
-                              color: mapPool.maps[index].isDismissed
-                                  ? Colors.grey
-                                  : Colors.green,
+                              color: _getBorderColor(mapPool.maps[index]),
                               width: 2),
                         ),
                         child: CheckboxListTile(

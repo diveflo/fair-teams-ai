@@ -19,6 +19,16 @@ class MapPool {
     ];
   }
 
+  List<CsMap> getPlayableMaps() {
+    List<CsMap> playableMaps = List<CsMap>();
+    this.maps.forEach((element) {
+      if (!element.isDismissed) {
+        playableMaps.add(element);
+      }
+    });
+    return playableMaps;
+  }
+
   MapPool.fromJson(Map<String, dynamic> json) {
     List<dynamic> mapPoolJson = json["mapPool"];
     maps = mapPoolJson.map((map) => CsMap.fromJson(map)).toList();
