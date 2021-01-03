@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:frontend/model/candidate.dart';
+import 'package:frontend/model/map.dart';
 
 class GameConfigState {
   final List<Candidate> candidates;
+  final MapPool mapPool;
 
-  GameConfigState({@required this.candidates});
+  GameConfigState({@required this.candidates, @required this.mapPool});
 
   factory GameConfigState.initial() {
     return GameConfigState(
@@ -22,25 +24,29 @@ class GameConfigState {
         Candidate(name: "Stefan", steamID: "76561198058595736"),
         Candidate(name: "Uwe", steamID: "76561198053826525"),
       ],
+      mapPool: MapPool(),
     );
   }
 
   factory GameConfigState.fromJson(dynamic json) {
     if (json != null) {
       List<Candidate> _candidates = parseList(json);
-      return GameConfigState(candidates: _candidates);
+      return GameConfigState(
+          candidates: _candidates, mapPool: MapPool.fromJson(json));
     }
     return GameConfigState.initial();
   }
 
   dynamic toJson() => {
         "candidates":
-            this.candidates.map((candidate) => candidate.saveState()).toList()
+            this.candidates.map((candidate) => candidate.saveState()).toList(),
+        "mapPool": this.mapPool.toJson(),
       };
 
   GameConfigState copyWith({List<Candidate> candidates}) {
     return new GameConfigState(
       candidates: candidates ?? this.candidates,
+      mapPool: mapPool ?? this.mapPool,
     );
   }
 }
