@@ -53,25 +53,26 @@ namespace fairTeams.DemoHandling
             foreach (char c in code.ToCharArray().Reverse())
                 big = BigInteger.Multiply(big, DICTIONARY.Length) + DICTIONARY.IndexOf(c);
 
-            byte[] matchIdBytes = new byte[sizeof(ulong)];
-            byte[] outcomeIdBytes = new byte[sizeof(ulong)];
-            byte[] tvPortIdBytes = new byte[sizeof(uint)];
+            big = SwapEndianness(big);
+            var bitmask64 = BigInteger.Pow(2, 64) - 1;
 
-            byte[] all = big.ToByteArray().ToArray();
-            // sometimes the number isn't unsigned, add a 00 byte at the end of the array to make sure it is
-            if (all.Length != 2 * sizeof(ulong) + sizeof(ushort))
-                all = all.Concat(new byte[] { 0 }).ToArray();
-            all = all.Reverse().ToArray();
-            Array.Copy(all, 0, matchIdBytes, 0, sizeof(ulong));
-            Array.Copy(all, sizeof(ulong), outcomeIdBytes, 0, sizeof(ulong));
-            Array.Copy(all, 2 * sizeof(ulong), tvPortIdBytes, 0, sizeof(ushort));
+            var matchId = big & bitmask64;
+            var outcomdeId = big >> 64 & bitmask64;
+            var token = big >> 128;// & 0xFFF;
 
-            return new GameRequest
+            return new GameRequest { MatchId = (ulong)matchId, OutcomeId = (ulong)outcomdeId, Token = (uint)token };
+        }
+
+        private static BigInteger SwapEndianness(BigInteger number)
+        {
+            BigInteger result = 0;
+
+            for (var i = 0; i < 144; i += 8)
             {
-                MatchId = BitConverter.ToUInt64(matchIdBytes, 0),
-                OutcomeId = BitConverter.ToUInt64(outcomeIdBytes, 0),
-                Token = BitConverter.ToUInt32(tvPortIdBytes, 0),
-            };
+                result = (result << 8) + ((number >> i) & 0xFF);
+            }
+
+            return result;
         }
 
         public class ShareCodePatternException : Exception
