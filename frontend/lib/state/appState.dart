@@ -23,4 +23,24 @@ class AppState {
         gameConfigState: GameConfigState.initial(),
         gameState: GameState.initial());
   }
+
+  static AppState fromJson(dynamic json) {
+    if (json != null) {
+      print(json);
+      return AppState(
+          gameConfigState: GameConfigState.fromJson(json["gameConfigState"]),
+          gameState: GameState.fromJson(json["gameState"]));
+    } else {
+      return AppState(
+          gameConfigState: GameConfigState.initial(),
+          gameState: GameState.initial());
+    }
+  }
+
+  dynamic toJson() {
+    return {
+      "gameConfigState": gameConfigState.toJson(),
+      "gameState": gameState.toJson()
+    };
+  }
 }

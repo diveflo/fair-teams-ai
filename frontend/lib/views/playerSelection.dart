@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:frontend/model/candidate.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
@@ -114,7 +115,7 @@ class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
 
   void _addPlayer() {
     if (_isValid) {
-      StoreProvider.of<AppState>(context).dispatch(AddPlayerAction(Player(
+      StoreProvider.of<AppState>(context).dispatch(AddPlayerAction(Candidate(
           name: _nameController.text, steamID: _steamIdController.text)));
       setState(() {
         _nameController.clear();
@@ -251,7 +252,7 @@ class _CandidatesColumnWidgetState extends State<CandidatesColumnWidget> {
               child: Scrollbar(
                 isAlwaysShown: true,
                 controller: _scrollController,
-                child: StoreConnector<AppState, List<Player>>(
+                child: StoreConnector<AppState, List<Candidate>>(
                   converter: (store) => store.state.gameConfigState.candidates,
                   builder: (context, players) {
                     return ListView.builder(
