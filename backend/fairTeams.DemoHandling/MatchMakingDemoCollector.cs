@@ -100,17 +100,10 @@ namespace fairTeams.DemoHandling
 
             myLogger.LogInformation($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
 
-            if (newMatches.Any())
-            {
-                using (var scope = myScopeFactory.CreateScope())
-                {
-                    myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
-                    var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
-                    matchRepository.Matches.AddRange(newMatches);
-                    myLogger.LogTrace("Saving new matches");
-                    matchRepository.SaveChanges();
-                }
-            }
+            using var scope = myScopeFactory.CreateScope();
+            myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
+            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+            matchRepository.AddMatchesAndSave(newMatches);
         }
 
         private async Task<List<string>> GetNewSharingCodes()

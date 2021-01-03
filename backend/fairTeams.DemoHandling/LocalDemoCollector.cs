@@ -81,33 +81,10 @@ namespace fairTeams.DemoHandling
                 File.Delete(demoFile);
             }
 
-            if (newMatches.Any())
-            {
-                using var scope = myScopeFactory.CreateScope();
-                myLogger.LogInformation($"Getting match repository to save {newMatches.Count} potentially new matches.");
-                var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
-
-                foreach (var match in newMatches)
-                {
-                    try
-                    {
-                        matchRepository.Matches.Add(match);
-                        matchRepository.SaveChanges();
-                    }
-                    catch (DbUpdateException e)
-                    {
-                        var innerSqlException = e.InnerException as SqliteException;
-                        var isAlreadyAdded = innerSqlException.SqliteErrorCode == 19;
-                        if (isAlreadyAdded)
-                        {
-                            myLogger.LogDebug($"Match with id: {match.Id} already exists in repository.");
-                            continue;
-                        }
-
-                        throw;
-                    }
-                }
-            }
+            using var scope = myScopeFactory.CreateScope();
+            myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
+            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+            matchRepository.AddMatchesAndSave(newMatches);
         }
     }
 }

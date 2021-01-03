@@ -41,7 +41,7 @@ namespace fairTeams.Core.Tests
                 .UseSqlite($"Data Source={databasePath}")
                 .Options;
 
-            var repository = new MatchRepository(databaseOptions);
+            var repository = new MatchRepository(databaseOptions, UnitTestLoggerCreator.CreateUnitTestLogger<MatchRepository>());
             repository.Database.EnsureDeleted();
             repository.Database.EnsureCreated();
 
@@ -54,7 +54,7 @@ namespace fairTeams.Core.Tests
                 .UseSqlite($"Data Source={fileName}")
                 .Options;
 
-            return new MatchRepository(databaseOptions);
+            return new MatchRepository(databaseOptions, UnitTestLoggerCreator.CreateUnitTestLogger<MatchRepository>());
         }
     }
 }
