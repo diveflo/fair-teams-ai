@@ -14,5 +14,16 @@ namespace fairTeams.Core
 
             return loggerFactory.CreateLogger<T>();
         }
+
+        public static ILoggerFactory CreateUnitTestLoggerFactory()
+        {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+            });
+
+            return loggerFactory;
+        }
     }
 }

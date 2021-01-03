@@ -1,4 +1,5 @@
 ﻿using fairTeams.Core;
+using Microsoft.Extensions.Logging;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using System;
@@ -16,8 +17,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
             _gcMap.Add((uint)ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchmakingGC2ClientHello,
                 msg => callback(new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingGC2ClientHello>(msg).Body));
 
-            if (_debug)
-                Console.WriteLine("Requesting Matchmaking stats");
+            myLogger.LogTrace("Requesting Matchmaking stats");
 
             var clientGcMsgProtobuf =
                 new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchmakingClient2GCHello>(
@@ -110,9 +110,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
         /// <param name="callback">The callback to be executed when the operation finishes.</param>
         public void RequestRecentGames(Action<CMsgGCCStrike15_v2_MatchList> callback)
         {
-#pragma warning disable 618 //b-b-but we're doing it the right way!
             RequestRecentGames(_steamUser.SteamID.AccountID, callback);
-#pragma warning restore 618
         }
     }
 }

@@ -2,35 +2,51 @@
 using fairTeams.DemoAnalyzer;
 using fairTeams.Steamworks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class MatchMakingDemoCollector
+    public class MatchMakingDemoCollector : IHostedService
     {
-        private readonly DbContextOptions<MatchRepository> myMatchRepositoryOptions;
-        private readonly DbContextOptions<SteamUserRepository> mySteamUserRepositoryOptions;
+        private readonly IServiceScopeFactory myScopeFactory;
+        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
+        private const int myEveryMinutesToTriggerProcessing = 30;
+        private Timer myTimer;
 
-        public MatchMakingDemoCollector(DbContextOptions<MatchRepository> matchRepositoryOptions, DbContextOptions<SteamUserRepository> steamUserRepositoryOptions, ILogger<MatchMakingDemoCollector> logger)
+        public MatchMakingDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
         {
-            myMatchRepositoryOptions = matchRepositoryOptions;
-            mySteamUserRepositoryOptions = steamUserRepositoryOptions;
-            myLogger = logger;
+            myScopeFactory = scopeFactory;
+            myLoggerFactory = loggerFactory;
+            myLogger = loggerFactory.CreateLogger<MatchMakingDemoCollector>();
         }
 
-        public MatchMakingDemoCollector(DbContextOptions<MatchRepository> matchRepositoryOptions, DbContextOptions<SteamUserRepository> steamUserRepositoryOptions)
-            : this(matchRepositoryOptions, steamUserRepositoryOptions, UnitTestLoggerCreator.CreateUnitTestLogger<MatchMakingDemoCollector>()) { }
+        public MatchMakingDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
 
-        public async Task ProcessNewMatches()
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            using var matchRepository = new MatchRepository(myMatchRepositoryOptions);
+            myLogger.LogInformation("MatchMakingDemoCollector timed hosted service started");
+            myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
+            return Task.CompletedTask;
+        }
 
-            var newSharingCodes = await GetNewSharingCodes();
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            myLogger.LogInformation("MatchMakingDemoCollector timed hosted service is stopping");
+            myTimer?.Change(Timeout.Infinite, 0);
+            return Task.CompletedTask;
+        }
+
+        public void ProcessNewMatches(object state)
+        {
+            var newSharingCodes = GetNewSharingCodes().Result;
             myLogger.LogInformation($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes)}");
             var newMatches = new List<Match>();
 
@@ -41,45 +57,67 @@ namespace fairTeams.DemoHandling
                 var demo = new Demo { ShareCode = sharingCode, GameRequest = gameRequest };
                 Match match;
 
-                var gameCoordinatorClient = new GameCoordinatorClient();
+                var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
                 try
                 {
                     match = gameCoordinatorClient.GetMatchInfo(demo);
                 }
-                catch (Exception)
+                catch (GameCoordinatorException)
                 {
-                    myLogger.LogDebug($"Couldn't get download url for sharing code {sharingCode}. See previous logs/exceptions for explanation. Continuing.");
+                    myLogger.LogWarning($"Couldn't get download url for sharing code {sharingCode}. See previous logs/exceptions for explanation. Continuing.");
                     continue;
                 }
 
                 string demoFilePath;
                 try
                 {
-                    demoFilePath = await DemoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
+                    demoFilePath = DemoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
                 }
                 catch (DemoDownloaderException exception)
                 {
-                    myLogger.LogDebug($"Demo downloading or decompressing failed: {exception.Message}");
+                    myLogger.LogWarning($"Demo downloading or decompressing failed: {exception.Message}");
                     continue;
                 }
 
                 myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode}. Analyzing now.");
                 match.Demo.FilePath = demoFilePath;
 
-                var demoReader = new DemoReader(match);
-                demoReader.Read();
+                using var demoReader = new DemoReader(match);
+                try
+                {
+                    demoReader.ReadHeader();
+                    demoReader.Read();
+                }
+                catch (DemoReaderException e)
+                {
+                    myLogger.LogWarning($"Analyzing demo for share code {sharingCode} failed: {e.Message}");
+                    continue;
+                }
+
+                myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode}");
                 newMatches.Add(demoReader.Match);
             }
 
-            myLogger.LogInformation($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes). Adding to database...");
-            matchRepository.Matches.AddRange(newMatches);
-            matchRepository.SaveChanges();
+            myLogger.LogInformation($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
+
+            if (newMatches.Any())
+            {
+                using (var scope = myScopeFactory.CreateScope())
+                {
+                    myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
+                    var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+                    matchRepository.Matches.AddRange(newMatches);
+                    myLogger.LogTrace("Saving new matches");
+                    matchRepository.SaveChanges();
+                }
+            }
         }
 
         private async Task<List<string>> GetNewSharingCodes()
         {
-            using var userRepository = new SteamUserRepository(mySteamUserRepositoryOptions);
-            using var matchRepository = new MatchRepository(myMatchRepositoryOptions);
+            using var scope = myScopeFactory.CreateScope();
+            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+            var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
 
             var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
             var newSharingCodes = new List<string>();

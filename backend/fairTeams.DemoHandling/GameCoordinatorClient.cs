@@ -12,6 +12,7 @@ namespace fairTeams.DemoHandling
 {
     public class GameCoordinatorClient
     {
+        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
 
         private readonly SteamClient mySteamClient;
@@ -23,9 +24,10 @@ namespace fairTeams.DemoHandling
 
         private TaskCompletionSource<bool> myIsLoggedIn = new();
 
-        public GameCoordinatorClient(ILogger<GameCoordinatorClient> logger)
+        public GameCoordinatorClient(ILoggerFactory loggerFactory)
         {
-            myLogger = logger;
+            myLoggerFactory = loggerFactory;
+            myLogger = myLoggerFactory.CreateLogger<GameCoordinatorClient>();
 
             mySteamClient = new SteamClient();
             myCallbackManager = new CallbackManager(mySteamClient);
@@ -38,7 +40,7 @@ namespace fairTeams.DemoHandling
             myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
         }
 
-        public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLogger<GameCoordinatorClient>()) { }
+        public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
 
         public Match GetMatchInfo(Demo demo)
         {
@@ -46,20 +48,39 @@ namespace fairTeams.DemoHandling
             mySteamClient.Connect();
             myLogger.LogTrace("Connecting to Steam...");
             Task.Run(() => HandleCallbacks());
-            var waitTimeInMilliseconds = 10000;
+            var waitTimeInMilliseconds = 20000;
             if (!myIsLoggedIn.Task.Wait(waitTimeInMilliseconds))
             {
                 myIsLoggedIn = new TaskCompletionSource<bool>();
-                throw new Exception($"Steam client didn't connect after {waitTimeInMilliseconds} milliseconds.");
+                throw new GameCoordinatorException($"Steam client didn't connect after {waitTimeInMilliseconds} milliseconds.");
             }
 
             var requestGameTask = RequestGame(demo.GameRequest);
-            if (!requestGameTask.Wait(waitTimeInMilliseconds))
+
+            try
             {
-                myLogger.LogDebug($"Game coordinator didn't provide match details after {waitTimeInMilliseconds} milliseconds. Aborting.");
+                var successWithinTimeout = requestGameTask.Wait(waitTimeInMilliseconds);
+                if (!successWithinTimeout)
+                {
+                    myLogger.LogWarning($"Game coordinator didn't provide match details after {waitTimeInMilliseconds} milliseconds. Aborting.");
+                    throw new GameCoordinatorException($"Steam didn't answer our request for the game download url after 10000 milliseconds.");
+                }
+            }
+            catch (AggregateException e)
+            {
+                var innerExceptions = e.InnerExceptions;
+                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                {
+                    throw innerExceptions.Single(x => x is GameCoordinatorException);
+                }
+
+                myLogger.LogWarning($"Game coordinator threw unexpected exceptions: {e.InnerExceptions}");
+                throw new GameCoordinatorException($"Unexpected exception(s) thrown from game coordinator: {e.Message}");
+            }
+            finally
+            {
                 mySteamClient.Disconnect();
                 myGotMatch = true;
-                throw new Exception($"Steam didn't answer our request for the game download url after 10000 milliseconds.");
             }
 
             var matchInfo = requestGameTask.Result;
@@ -113,14 +134,21 @@ namespace fairTeams.DemoHandling
         {
             var taskCompletionSource = new TaskCompletionSource<CDataGCCStrike15_v2_MatchInfo>();
 
-            var csgo = new CsgoClient(mySteamClient, myCallbackManager, true);
+            var csgo = new CsgoClient(mySteamClient, myCallbackManager, myLoggerFactory.CreateLogger<CsgoClient>());
             myLogger.LogTrace("Telling Steam we're playing CS:GO to connect to game coordinator.");
             csgo.Launch(protobuf =>
             {
                 myLogger.LogTrace("Asking game coordinator for match details.");
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
                 csgo.RequestGame(request, list =>
                 {
+                    if (!list.matches.Any())
+                    {
+                        myLogger.LogWarning("Game coordinator doesn't have match details (probably expired).");
+                        taskCompletionSource.SetException(new GameCoordinatorException("Game coordinator doesn't have match details (probably expired)."));
+                        return;
+                    }
+
                     var matchInfo = list.matches.First();
                     taskCompletionSource.SetResult(matchInfo);
                 });
@@ -145,7 +173,7 @@ namespace fairTeams.DemoHandling
             }
             catch (InvalidOperationException)
             {
-                myLogger.LogDebug("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
+                myLogger.LogWarning("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
                 throw new GameCoordinatorException("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
             }
         }

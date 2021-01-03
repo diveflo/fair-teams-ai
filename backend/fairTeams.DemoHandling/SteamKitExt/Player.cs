@@ -1,4 +1,5 @@
-﻿using SteamKit2.GC;
+﻿using Microsoft.Extensions.Logging;
+using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
 using System;
 
@@ -29,8 +30,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
             _gcMap.Add((uint)ECsgoGCMsg.k_EMsgGCCStrike15_v2_PlayersProfile,
                 msg => callback(new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_PlayersProfile>(msg).Body));
 
-            if (_debug)
-                Console.WriteLine($"Requesting profile for account: {accountId}");
+            myLogger.LogTrace($"Requesting profile for account: {accountId}");
 
             var clientMsgProtobuf =
                 new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_ClientRequestPlayersProfile>(
