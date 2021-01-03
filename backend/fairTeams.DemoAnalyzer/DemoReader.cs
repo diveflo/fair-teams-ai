@@ -210,6 +210,8 @@ namespace fairTeams.DemoAnalyzer
 
         private void ProcessMissingLastRound()
         {
+            // RoundOfficiallyEnded event is more stable than RoundEnd but isn't fired for the last round of a match.
+            // Hence, we process one more round if have a mismatch between our counted rounds and the sum of both teams scores.
             if (Match.Rounds != Match.CTScore + Match.TScore)
             {
                 UpdateKillCounts();
