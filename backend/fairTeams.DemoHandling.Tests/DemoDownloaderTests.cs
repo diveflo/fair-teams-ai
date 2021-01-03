@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace fairTeams.DemoHandling.Tests
@@ -22,12 +21,12 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
-        public async Task DecompressDemoArchive_SmallTestFile_SuccessfullyDecompressedAsync()
+        public void DecompressDemoArchive_SmallTestFile_SuccessfullyDecompressedAsync()
         {
             var downloadUrl = @"https://fairteamsai.backend.files.entertainment720.eu/test.txt.bz2";
             var locallyDownloadedDemoFile = DemoDownloader.DownloadDemoArchive(downloadUrl);
 
-            var decompressedFile = await DemoDownloader.DecompressDemoArchive(locallyDownloadedDemoFile);
+            var decompressedFile = DemoDownloader.DecompressDemoArchive(locallyDownloadedDemoFile);
 
             var content = File.ReadAllText(decompressedFile);
             Assert.Equal("hi", content);

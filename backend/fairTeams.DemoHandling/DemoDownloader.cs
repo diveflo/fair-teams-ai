@@ -2,13 +2,12 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
     public class DemoDownloader
     {
-        public static async Task<string> DownloadAndDecompressDemo(string downloadUrl)
+        public static string DownloadAndDecompressDemo(string downloadUrl)
         {
             string archivedDemoFilePath;
             try
@@ -23,7 +22,7 @@ namespace fairTeams.DemoHandling
             string demoFilePath;
             try
             {
-                demoFilePath = await DecompressDemoArchive(archivedDemoFilePath);
+                demoFilePath = DecompressDemoArchive(archivedDemoFilePath);
             }
             catch (ArgumentException)
             {
@@ -43,21 +42,18 @@ namespace fairTeams.DemoHandling
             return downloadLocation;
         }
 
-        public static async Task<string> DecompressDemoArchive(string bz2FilePath)
+        public static string DecompressDemoArchive(string bz2FilePath)
         {
             if (!File.Exists(bz2FilePath))
             {
                 throw new ArgumentException($"The archive file {bz2FilePath} does not exist.");
             }
 
-            var taskCompletitionSource = new TaskCompletionSource<string>();
             string destination = bz2FilePath.Replace(".bz2", "");
 
-            return await Task.Run(() =>
-            {
-                BZip2.Decompress(File.OpenRead(bz2FilePath), File.Create(destination), true);
-                return destination;
-            });
+            BZip2.Decompress(File.OpenRead(bz2FilePath), File.Create(destination), true);
+
+            return destination;
         }
 
         private static string GetRealFileExtensionFromBZip2DownloadURL(string url)
