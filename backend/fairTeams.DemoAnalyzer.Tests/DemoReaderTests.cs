@@ -36,6 +36,73 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact(Skip = "Data only locally available")]
+        public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountEventsBeforeRealMatchStart()
+        {
+            var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem" };
+            var demoReader = new DemoReader(new Match { Demo = demo });
+
+            demoReader.ReadHeader();
+            demoReader.Read();
+
+            Assert.Equal(15, demoReader.Match.CTScore);
+            Assert.Equal(15, demoReader.Match.TScore);
+
+            var expectedStatisticsForSteamId = new List<MatchStatistics>
+            {
+                new MatchStatistics { SteamID = 76561197984050254, Kills = 26, Deaths = 24, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197973591119, Kills = 24, Deaths = 27, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197978519504, Kills = 21, Deaths = 22, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198011775117, Kills = 21, Deaths = 18, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198011654217, Kills = 15, Deaths = 23, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561199045573415, Kills = 37, Deaths = 19, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198258023370, Kills = 25, Deaths = 19, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197995643389, Kills = 21, Deaths = 23, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198031200891, Kills = 17, Deaths = 21, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198053826525, Kills = 14, Deaths = 25, Rounds = 30 }
+            };
+
+            foreach (var playerResult in demoReader.Match.PlayerResults)
+            {
+                var expected = expectedStatisticsForSteamId.Single(x => x.SteamID == playerResult.SteamID);
+                Assert.Equal(expected.Kills, playerResult.Kills);
+                Assert.Equal(expected.Deaths, playerResult.Deaths);
+                Assert.Equal(expected.Rounds, playerResult.Rounds);
+            }
+        }
+
+        [Fact(Skip = "Data only locally available")]
+        public void Read_WarumupIsRestarted_DoesNotCountEventsFromAnyWarmup()
+        {
+            var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-215342-2066393818-de_inferno-honigbiene_vs_waldfrosch.dem" };
+            var demoReader = new DemoReader(new Match { Demo = demo });
+
+            demoReader.ReadHeader();
+            demoReader.Read();
+
+            var expectedStatisticsForSteamId = new List<MatchStatistics>
+            {
+                new MatchStatistics { SteamID = 76561197984050254, Kills = 20, Deaths = 25, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197973591119, Kills = 20, Deaths = 22, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197978519504, Kills = 21, Deaths = 24, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198011775117, Kills = 32, Deaths = 23, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198011654217, Kills = 14, Deaths = 26, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561199045573415, Kills = 35, Deaths = 19, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198258023370, Kills = 36, Deaths = 20, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561197995643389, Kills = 17, Deaths = 20, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198031200891, Kills = 11, Deaths = 23, Rounds = 30 },
+                new MatchStatistics { SteamID = 76561198053826525, Kills = 21, Deaths = 25, Rounds = 30 }
+            };
+
+            foreach (var playerResult in demoReader.Match.PlayerResults)
+            {
+                var expected = expectedStatisticsForSteamId.Single(x => x.SteamID == playerResult.SteamID);
+                Assert.Equal(expected.Kills, playerResult.Kills);
+                Assert.Equal(expected.Deaths, playerResult.Deaths);
+                Assert.Equal(expected.Rounds, playerResult.Rounds);
+            }
+        }
+
+        [Fact(Skip = "Data only locally available")]
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };

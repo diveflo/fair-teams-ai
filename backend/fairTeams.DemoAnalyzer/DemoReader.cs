@@ -40,6 +40,9 @@ namespace fairTeams.DemoAnalyzer
         public void Read()
         {
             myDemoParser.MatchStarted += HandleMatchStarted;
+            // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
+            // and doesn't correctly handle the case that the game is restarted (e.g. on our server)
+            myDemoParser.RoundAnnounceMatchStarted += HandleRoundAnnounceMatchStarted;
             myDemoParser.RoundStart += HandleRoundStarted;
             myDemoParser.PlayerKilled += HandlePlayerKilled;
             myDemoParser.RoundOfficiallyEnd += HandleRoundOfficiallyEnd;
@@ -48,6 +51,12 @@ namespace fairTeams.DemoAnalyzer
 
             ParseFinalTeamScores();
             ProcessMissingLastRound();
+        }
+
+        private void HandleRoundAnnounceMatchStarted(object sender, RoundAnnounceMatchStartedEventArgs e)
+        {
+            myKillsThisRound.Clear();
+            Match.PlayerResults.Clear();
         }
 
         private void HandleMatchStarted(object sender, MatchStartedEventArgs e)
