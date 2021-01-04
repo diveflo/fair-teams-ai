@@ -49,16 +49,19 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
       children: [
         Container(
           margin: EdgeInsets.only(bottom: 5),
-          child: Row(children: [
-            Text(
-              "Maps",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-            ),
-            IconButton(
-              icon: Icon(Icons.cached),
-              onPressed: _onNextMap,
-            ),
-          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Maps",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+              IconButton(
+                icon: Icon(Icons.cached),
+                onPressed: _onNextMap,
+              ),
+            ],
+          ),
         ),
         Container(
           child: Expanded(
@@ -69,25 +72,26 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
                   itemCount: mapPool.maps.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                              color: _getBorderColor(mapPool.maps[index]),
-                              width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(
+                            color: _getBorderColor(mapPool.maps[index]),
+                            width: 2),
+                      ),
+                      child: CheckboxListTile(
+                        value: mapPool.maps[index].isDismissed,
+                        onChanged: (bool value) {
+                          setState(() {
+                            mapPool.maps[index].isDismissed =
+                                !mapPool.maps[index].isDismissed;
+                          });
+                        },
+                        secondary: Image.asset(
+                          mapPool.maps[index].imagePath,
                         ),
-                        child: CheckboxListTile(
-                          value: mapPool.maps[index].isDismissed,
-                          onChanged: (bool value) {
-                            setState(() {
-                              mapPool.maps[index].isDismissed =
-                                  !mapPool.maps[index].isDismissed;
-                            });
-                          },
-                          secondary: Image.asset(
-                            mapPool.maps[index].imagePath,
-                          ),
-                          title: Text(mapPool.maps[index].name),
-                        ));
+                        title: Text(mapPool.maps[index].name),
+                      ),
+                    );
                   },
                 );
               },
