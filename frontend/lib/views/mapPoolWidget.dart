@@ -32,15 +32,26 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
     }
   }
 
-  Color _getBorderColor(CsMap map) {
-    if (map.isDismissed) {
+  Color _getCardColor(CsMap map) {
+    if (!map.isChecked) {
       return Colors.grey;
     }
     if (_nextMap != null && map.name == _nextMap.name) {
-      return Colors.red;
+      return Colors.green;
     }
 
-    return Colors.green;
+    return Colors.white;
+  }
+
+  Color _getBorderColor(CsMap map) {
+    if (!map.isChecked) {
+      return Colors.grey;
+    }
+    if (_nextMap != null && map.name == _nextMap.name) {
+      return Colors.green;
+    }
+
+    return Colors.grey;
   }
 
   @override
@@ -72,6 +83,7 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
                   itemCount: mapPool.maps.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
+                      color: _getCardColor(mapPool.maps[index]),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide(
@@ -79,11 +91,11 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
                             width: 2),
                       ),
                       child: CheckboxListTile(
-                        value: mapPool.maps[index].isDismissed,
+                        value: mapPool.maps[index].isChecked,
                         onChanged: (bool value) {
                           setState(() {
-                            mapPool.maps[index].isDismissed =
-                                !mapPool.maps[index].isDismissed;
+                            mapPool.maps[index].isChecked =
+                                !mapPool.maps[index].isChecked;
                           });
                         },
                         secondary: Image.asset(
