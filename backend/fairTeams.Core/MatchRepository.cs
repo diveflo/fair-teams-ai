@@ -9,7 +9,7 @@ namespace fairTeams.Core
     public class MatchRepository : DbContext
     {
         private readonly ILogger<MatchRepository> myLogger;
-        public DbSet<Match> Matches { get; set; }
+        public virtual DbSet<Match> Matches { get; set; }
 
         public MatchRepository(DbContextOptions<MatchRepository> options, ILogger<MatchRepository> logger) : base(options)
         {
