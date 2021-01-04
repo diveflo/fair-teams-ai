@@ -6,12 +6,12 @@ import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/views/scrambleWidget.dart';
 
-class NewPlayerColumnWidget extends StatefulWidget {
+class NewPlayerWidget extends StatefulWidget {
   @override
-  _NewPlayerColumnWidgetState createState() => _NewPlayerColumnWidgetState();
+  _NewPlayerWidgetState createState() => _NewPlayerWidgetState();
 }
 
-class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
+class _NewPlayerWidgetState extends State<NewPlayerWidget> {
   bool _isValid;
 
   TextEditingController _nameController;

@@ -32,7 +32,7 @@ class PlayerSelection extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 4,
-                  child: NewPlayerColumnWidget(),
+                  child: NewPlayerWidget(),
                 )
               ],
             ),
