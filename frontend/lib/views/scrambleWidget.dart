@@ -44,6 +44,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: MyButtonWidget(
                 buttonText: "ScrambleApi",
+                isDisabled: true,
                 onPressed: _scrambleApi,
                 color: Colors.lime,
               ),
@@ -52,10 +53,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: MyButtonWidget(
                 buttonText: "ScrambleApi HLTV",
-                isDisabled: true,
-                onPressed: () {
-                  _scrambleApi(hltv: true);
-                },
+                onPressed: _scrambleApi,
                 color: Colors.lime,
               ),
             ),
