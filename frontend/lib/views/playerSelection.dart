@@ -8,6 +8,7 @@ import 'package:frontend/state/gameState.dart';
 import 'package:frontend/views/finalTeam.dart';
 import 'package:frontend/views/mapPool.dart';
 import 'package:frontend/views/newPlayerWidget.dart';
+import 'package:frontend/views/scrambleWidget.dart';
 
 class PlayerSelection extends StatelessWidget {
   @override
@@ -32,7 +33,13 @@ class PlayerSelection extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 4,
-                  child: NewPlayerWidget(),
+                  child: Column(children: [
+                    NewPlayerWidget(),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    ScrambleWidget(),
+                  ]),
                 )
               ],
             ),

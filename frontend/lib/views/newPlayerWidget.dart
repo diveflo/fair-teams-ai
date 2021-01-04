@@ -97,14 +97,6 @@ class _NewPlayerWidgetState extends State<NewPlayerWidget> {
               ),
             ),
           ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ScrambleWidget(),
-              ],
-            ),
-          ),
         ],
       ),
     );
