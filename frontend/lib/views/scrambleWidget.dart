@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/thunks/scramble.dart';
-import 'package:frontend/views/appLayoutWidget.dart';
+import 'package:frontend/views/myButtonWidget.dart';
 
 class ScrambleWidget extends StatefulWidget {
   const ScrambleWidget({
@@ -33,7 +33,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: MyButton(
+              child: MyButtonWidget(
                 buttonText: "Scramble",
                 onPressed: _scramblePlayers,
                 color: Colors.lime,
@@ -42,7 +42,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
             isLoading ? CircularProgressIndicator() : Container(),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: MyButton(
+              child: MyButtonWidget(
                 buttonText: "ScrambleApi",
                 onPressed: _scrambleApi,
                 color: Colors.lime,
