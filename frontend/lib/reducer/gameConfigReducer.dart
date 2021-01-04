@@ -1,4 +1,5 @@
 import 'package:frontend/model/candidate.dart';
+import 'package:frontend/model/map.dart';
 import 'package:frontend/state/gameConfigState.dart';
 import 'package:redux/redux.dart';
 
@@ -6,6 +7,7 @@ final gameConfigReducer = combineReducers<GameConfigState>([
   TypedReducer<GameConfigState, AddPlayerAction>(_addPlayer),
   TypedReducer<GameConfigState, TogglePlayerSelectionAction>(
       _togglePlayerSelection),
+  TypedReducer<GameConfigState, ToggleMapSelectionAction>(_toggleMapSelection)
 ]);
 
 class AddPlayerAction {
@@ -16,6 +18,11 @@ class AddPlayerAction {
 class TogglePlayerSelectionAction {
   final Candidate player;
   TogglePlayerSelectionAction(this.player);
+}
+
+class ToggleMapSelectionAction {
+  final CsMap map;
+  ToggleMapSelectionAction(this.map);
 }
 
 GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
@@ -33,4 +40,15 @@ GameConfigState _togglePlayerSelection(
     }
   });
   return state.copyWith(candidates: updatedCandidates);
+}
+
+GameConfigState _toggleMapSelection(
+    GameConfigState state, ToggleMapSelectionAction action) {
+  MapPool updatedMapPool = state.mapPool;
+  updatedMapPool.maps.forEach((element) {
+    if (element.name == action.map.name) {
+      element.isChecked = !element.isChecked;
+    }
+  });
+  return state.copyWith(mapPool: updatedMapPool);
 }

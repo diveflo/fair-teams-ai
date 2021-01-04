@@ -43,7 +43,7 @@ class GameConfigState {
         "mapPool": this.mapPool.toJson(),
       };
 
-  GameConfigState copyWith({List<Candidate> candidates}) {
+  GameConfigState copyWith({List<Candidate> candidates, MapPool mapPool}) {
     return new GameConfigState(
       candidates: candidates ?? this.candidates,
       mapPool: mapPool ?? this.mapPool,
