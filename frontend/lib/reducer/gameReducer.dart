@@ -6,6 +6,7 @@ final gameReducer = combineReducers<GameState>([
   TypedReducer<GameState, SetTeamsFromJsonAction>(_setTeamsFromJson),
   TypedReducer<GameState, SetTeamsAction>(_setTeams),
   TypedReducer<GameState, ToggleIsLoadingAction>(_toggleIsLoading),
+  TypedReducer<GameState, SwapTeamsAction>(_swapTeams)
 ]);
 
 class SetTeamsFromJsonAction {
@@ -23,6 +24,10 @@ class ToggleIsLoadingAction {
   ToggleIsLoadingAction();
 }
 
+class SwapTeamsAction {
+  SwapTeamsAction();
+}
+
 GameState _setTeamsFromJson(GameState state, SetTeamsFromJsonAction action) {
   return GameState.fromJson(action.json);
 }
@@ -33,4 +38,8 @@ GameState _setTeams(GameState state, SetTeamsAction action) {
 
 GameState _toggleIsLoading(GameState state, ToggleIsLoadingAction action) {
   return state.copyWith(isLoading: !state.isLoading);
+}
+
+GameState _swapTeams(GameState state, SwapTeamsAction action) {
+  return state.copyWith(ct: state.t, t: state.ct);
 }

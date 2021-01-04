@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/map.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
+import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/state/appState.dart';
 
 class MapPoolWidget extends StatefulWidget {
@@ -30,6 +31,7 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
       setState(() {
         _nextMap = playableMaps.first;
       });
+      StoreProvider.of<AppState>(context).dispatch(SwapTeamsAction());
     }
   }
 
