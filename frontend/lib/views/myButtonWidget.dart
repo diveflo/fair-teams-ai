@@ -6,11 +6,13 @@ class MyButtonWidget extends StatelessWidget {
     @required this.onPressed,
     @required this.color,
     @required this.buttonText,
+    this.isDisabled = false,
   }) : super(key: key);
 
   final VoidCallback onPressed;
   final Color color;
   final String buttonText;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class MyButtonWidget extends StatelessWidget {
       child: Text(
         buttonText,
       ),
-      onPressed: onPressed,
+      onPressed: isDisabled ? null : onPressed,
       color: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );

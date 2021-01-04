@@ -8,7 +8,7 @@ import 'package:frontend/apiService.dart';
 
 PlayerApi api = PlayerApi();
 
-ThunkAction scrambleTeams() {
+ThunkAction scrambleTeams(bool hltv) {
   return (Store store) async {
     Future(() {
       store.dispatch(ToggleIsLoadingAction());
@@ -16,7 +16,7 @@ ThunkAction scrambleTeams() {
       List<Candidate> activeCandidates =
           candidates.where((element) => element.isSelected).toList();
 
-      api.fetchScrambledTeams(activeCandidates).then((game) {
+      api.fetchScrambledTeams(activeCandidates, hltv).then((game) {
         store.dispatch(ToggleIsLoadingAction());
         store.dispatch(SetTeamsAction(game.t, game.ct));
       }).catchError((e) {

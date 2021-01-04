@@ -19,8 +19,8 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
     StoreProvider.of<AppState>(context).dispatch(scrambleTeamsRandom());
   }
 
-  void _scrambleApi() {
-    StoreProvider.of<AppState>(context).dispatch(scrambleTeams());
+  void _scrambleApi({bool hltv = false}) {
+    StoreProvider.of<AppState>(context).dispatch(scrambleTeams(hltv));
   }
 
   @override
@@ -45,6 +45,17 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
               child: MyButtonWidget(
                 buttonText: "ScrambleApi",
                 onPressed: _scrambleApi,
+                color: Colors.lime,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: MyButtonWidget(
+                buttonText: "ScrambleApi HLTV",
+                isDisabled: true,
+                onPressed: () {
+                  _scrambleApi(hltv: true);
+                },
                 color: Colors.lime,
               ),
             ),
