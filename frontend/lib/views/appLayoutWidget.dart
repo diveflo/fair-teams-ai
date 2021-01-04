@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/model/candidate.dart';
-import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 import 'package:frontend/views/candidatesWidget.dart';
