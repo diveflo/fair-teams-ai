@@ -5,7 +5,7 @@ import 'package:frontend/model/candidate.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
-import 'package:frontend/views/finalTeam.dart';
+import 'package:frontend/views/teamWidget.dart';
 import 'package:frontend/views/mapPool.dart';
 import 'package:frontend/views/newPlayerWidget.dart';
 import 'package:frontend/views/scrambleWidget.dart';
@@ -57,7 +57,7 @@ class AppLayoutWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: FinalTeamWidget(
+                      child: TeamWidget(
                         imagePath: 't.png',
                         team: game.t.players,
                         name: "Terrorists",
@@ -66,7 +66,7 @@ class AppLayoutWidget extends StatelessWidget {
                     ),
                     Expanded(
                       flex: 1,
-                      child: FinalTeamWidget(
+                      child: TeamWidget(
                         imagePath: 'ct.png',
                         team: game.ct.players,
                         name: "Counter Terrorists",
