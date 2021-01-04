@@ -20,10 +20,13 @@ class TeamWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          name,
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, fontSize: 30),
+        Container(
+          margin: EdgeInsets.only(bottom: 5),
+          child: Text(
+            name,
+            style: TextStyle(
+                color: color, fontWeight: FontWeight.bold, fontSize: 30),
+          ),
         ),
         Expanded(
           child: Container(
