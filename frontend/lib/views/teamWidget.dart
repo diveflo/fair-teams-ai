@@ -54,7 +54,7 @@ class TeamWidget extends StatelessWidget {
                                 style: TextStyle(
                                     color: color, fontWeight: FontWeight.bold)),
                             Text(
-                              team[index].skillScore.toString(),
+                              team[index].skillScore.toStringAsFixed(3),
                               style: TextStyle(
                                   fontStyle: FontStyle.italic,
                                   color: Colors.purple),
