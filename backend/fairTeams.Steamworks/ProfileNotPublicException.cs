@@ -1,6 +1,6 @@
 using System;
 
-namespace fairTeams.API
+namespace fairTeams.Steamworks
 {
     public class ProfileNotPublicException : Exception
     { }

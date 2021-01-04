@@ -1,5 +1,7 @@
 using Combinatorics.Collections;
 using fairTeams.API.Rating;
+using fairTeams.Core;
+using fairTeams.Steamworks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,16 @@ namespace fairTeams.API
 
     public class SkillBasedAssigner : ITeamAssigner
     {
+        private readonly MatchRepository myMatchRepository;
         private readonly ILogger myLogger;
 
-        public SkillBasedAssigner(ILogger<SkillBasedAssigner> logger)
+        public SkillBasedAssigner(MatchRepository matchRepository, ILogger<SkillBasedAssigner> logger)
         {
+            myMatchRepository = matchRepository;
             myLogger = logger;
         }
+
+        public SkillBasedAssigner(MatchRepository matchRepository) : this(matchRepository, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
@@ -31,6 +37,7 @@ namespace fairTeams.API
         private async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
         {
             var playersList = players.ToList();
+            myLogger.LogInformation($"Computing optimal assignment for players: {string.Join(", ", playersList.Select(x => x.SteamName))}");
 
             for (var i = 0; i < playersList.Count; i++)
             {
@@ -52,6 +59,7 @@ namespace fairTeams.API
 
                 var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
                 bot.Skill.AddRating(new DummyRating { Score = averageScoreHumanPlayers / 2.0 });
+                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {averageScoreHumanPlayers / 2.0}");
 
                 sortedByScore.Add(bot);
                 var bestPlayer = sortedByScore[0];
@@ -66,7 +74,7 @@ namespace fairTeams.API
             switch (option)
             {
                 case SolverOptions.Optimal:
-                    (terrorists, counterTerrorists) = OptimalAssigner(sortedByScore, 0.1);
+                    (terrorists, counterTerrorists) = OptimalAssigner(sortedByScore);
                     break;
                 case SolverOptions.Greedy:
                     (terrorists, counterTerrorists) = GreedyAssigner(sortedByScore);
@@ -116,7 +124,7 @@ namespace fairTeams.API
             return (terrorists, counterTerrorists);
         }
 
-        private static (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players, double skillDifferenceCutoff)
+        private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
         {
             var playersList = players.ToList();
 
@@ -128,9 +136,9 @@ namespace fairTeams.API
             var playersPerTeam = playersList.Count / 2;
 
             var firstTeamCombinations = new Combinations<Player>(playersList, playersPerTeam);
+            myLogger.LogInformation($"{firstTeamCombinations.Count} possible combinations of teams. Computing their skill differences.");
 
             var assignmentAndCost = new Dictionary<(Team, Team), double>((int)firstTeamCombinations.Count);
-
             Parallel.ForEach(firstTeamCombinations, combination =>
             {
                 var terrorists = new Team("Terrorists")
@@ -147,10 +155,8 @@ namespace fairTeams.API
                 assignmentAndCost.Add((terrorists, counterTerrorists), skillDifference);
             });
 
-            var assignmentsSortedBySkillDifference = assignmentAndCost.OrderBy(x => x.Value).TakeWhile(x => x.Value < skillDifferenceCutoff).ToList();
-            var indexOfRandomlySelectedAssignment = new Random().Next(0, assignmentsSortedBySkillDifference.Count);
-
-            return assignmentsSortedBySkillDifference.ElementAt(indexOfRandomlySelectedAssignment).Key;
+            var smallSubsetOfOptimalAssinments = GetSmallSubsetOfBestAssignments(assignmentAndCost);
+            return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
         }
 
         private static double GetSkillDifference(Team terrorists, Team counterTerrorists)
@@ -165,9 +171,8 @@ namespace fairTeams.API
         {
             try
             {
-                var playerStatistics = await SteamworksApi.SteamworksApi.ParsePlayerStatistics(player.SteamID);
-                var kdRating = new KDRating(playerStatistics);
-                player.Skill.AddRating(kdRating);
+                var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
+                player.Skill.AddRating(await hltvRating);
                 player.ProfilePublic = true;
             }
             catch (ProfileNotPublicException)
@@ -179,6 +184,30 @@ namespace fairTeams.API
             }
 
             return player;
+        }
+
+        private List<(Team, Team)> GetSmallSubsetOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
+        {
+            var orderedByCosts = assignmentsAndCosts.OrderBy(x => x.Value);
+            var numberOfAssignments = orderedByCosts.Count();
+            const int minimumNumberOfAssignments = 3;
+
+            if (numberOfAssignments >= minimumNumberOfAssignments)
+            {
+                myLogger.LogInformation($"Using subset of best {minimumNumberOfAssignments} (hard-coded value!) assignments.");
+                return orderedByCosts.Take(minimumNumberOfAssignments).Select(x => x.Key).ToList();
+            }
+
+            myLogger.LogInformation($"Using all possible assignments as there are so few.");
+
+            return orderedByCosts.Take(numberOfAssignments).Select(x => x.Key).ToList();
+        }
+
+        private (Team, Team) GetRandomlySelectedAssignment(List<(Team, Team)> smallSubsetOfOptimalAssignments)
+        {
+            myLogger.LogInformation("Returning randomly selected assignment.");
+            var indexOfAssignment = new Random().Next(0, smallSubsetOfOptimalAssignments.Count);
+            return smallSubsetOfOptimalAssignments.ElementAt(indexOfAssignment);
         }
     }
 }

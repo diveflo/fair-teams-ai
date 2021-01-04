@@ -13,7 +13,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201123-03" />
-        <PackageReference Include="Moq" Version="4.15.2" />
         <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,7 +25,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\fairTeams.API\fairTeams.API.csproj" />
+        <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
+        <ProjectReference Include="..\fairTeams.DemoHandling\fairTeams.DemoHandling.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="TestData\matches_empty.db">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\users.db">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
