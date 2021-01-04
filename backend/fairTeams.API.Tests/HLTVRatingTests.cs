@@ -37,10 +37,17 @@ namespace fairTeams.API.Tests
                 new MatchStatistics { Id = "12", SteamID = 76561198053826525, Kills = 18, Deaths = 23, Rounds = 30, OneKill = 12, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
                 new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 22, Deaths = 25, Rounds = 29, OneKill = 10, TwoKill = 3, ThreeKill = 2, FourKill = 0, FiveKill = 0 },
                 new MatchStatistics { Id = "14", SteamID = 76561198053826525, Kills = 14, Deaths = 15, Rounds = 21, OneKill = 5, TwoKill = 3, ThreeKill = 1, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 19, Deaths = 21, Rounds = 27, OneKill = 6, TwoKill = 2, ThreeKill = 3, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 5, Deaths = 21, Rounds = 22, OneKill = 3, TwoKill = 1, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 16, Deaths = 24, Rounds = 30, OneKill = 10, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 9, Deaths = 23, Rounds = 23, OneKill = 7, TwoKill = 1, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 16, Deaths = 24, Rounds = 28, OneKill = 10, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 12, Deaths = 18, Rounds = 21, OneKill = 6, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
                 new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 16, Deaths = 19, Rounds = 29, OneKill = 9, TwoKill = 2, ThreeKill = 1, FourKill = 0, FiveKill = 0 },
                 new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 15, Deaths = 19, Rounds = 23, OneKill = 7, TwoKill = 1, ThreeKill = 2, FourKill = 0, FiveKill = 0 },
-                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 16, Deaths = 24, Rounds = 29, OneKill = 11, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
-                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 27, Deaths = 25, Rounds = 29, OneKill = 10, TwoKill = 3, ThreeKill = 2, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 14, Deaths = 25, Rounds = 30, OneKill = 8, TwoKill = 3, ThreeKill = 0, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 21, Deaths = 25, Rounds = 30, OneKill = 14, TwoKill = 2, ThreeKill = 1, FourKill = 0, FiveKill = 0 },
+                new MatchStatistics { Id = "13", SteamID = 76561198053826525, Kills = 19, Deaths = 22, Rounds = 30, OneKill = 9, TwoKill = 5, ThreeKill = 0, FourKill = 0, FiveKill = 0 }
             };
 
             var matches = CreateMultipleMatchesWithStatistics(statistics).AsQueryable();
@@ -56,7 +63,7 @@ namespace fairTeams.API.Tests
 
             var hltvRating = new HLTVRating(76561198053826525, matchRepositoryMock.Object);
 
-            Assert.Equal(0.674, hltvRating.Score);
+            Assert.Equal(0.724, hltvRating.Score, 3);
         }
 
         private Mock<MatchRepository> CreateMockMatchRepository()
