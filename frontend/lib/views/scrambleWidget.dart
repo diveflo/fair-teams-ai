@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/thunks/scramble.dart';
-import 'package:frontend/views/playerSelection.dart';
+import 'package:frontend/views/appLayoutWidget.dart';
 
 class ScrambleWidget extends StatefulWidget {
   const ScrambleWidget({

@@ -10,7 +10,7 @@ import 'package:frontend/views/mapPool.dart';
 import 'package:frontend/views/newPlayerWidget.dart';
 import 'package:frontend/views/scrambleWidget.dart';
 
-class PlayerSelection extends StatelessWidget {
+class AppLayoutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(

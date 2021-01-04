@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/state/appState.dart';
-import 'package:frontend/views/playerSelection.dart';
+import 'package:frontend/views/appLayoutWidget.dart';
 import 'package:frontend/state/store.dart';
 import 'package:redux/redux.dart';
 
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: PlayerSelection()),
+          child: AppLayoutWidget()),
     );
   }
 }
