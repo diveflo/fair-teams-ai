@@ -8,7 +8,6 @@ Future<Store<AppState>> createStore() async {
   final persistor = Persistor<AppState>(
     storage: WebStorage(),
     serializer: JsonSerializer<AppState>(AppState.fromJson),
-    debug: true,
   );
 
   var initialState;

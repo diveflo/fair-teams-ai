@@ -9,23 +9,34 @@ import 'dart:async';
 class PlayerApi {
   ApiBaseHelper _helper = ApiBaseHelper();
 
-  Future<Game> fetchScrambledTeams(List<Candidate> candidates) async {
+  Future<Game> fetchScrambledTeams(
+      List<Candidate> candidates, bool hltv) async {
+    var queryParameters = {'hltv': hltv};
+
     final Map<String, dynamic> response =
-        await _helper.post("Player", candidates);
+        await _helper.post("/Player", candidates, queryParameters);
     return Game.fromJson(response);
   }
 }
 
 class ApiBaseHelper {
-  final String _baseUrl = "https://fairteamsai.backend.entertainment720.eu/";
+  final String _baseUrl = "fairteamsai.backend.entertainment720.eu";
 
-  Future<dynamic> post(String url, List<Candidate> candidates) async {
+  Future<dynamic> post(
+      String uriPath, List<Candidate> candidates, var queryParameters) async {
+    Uri uri;
+    if (queryParameters == true) {
+      uri = Uri.https(_baseUrl, uriPath, queryParameters);
+    } else {
+      uri = Uri.https(_baseUrl, uriPath);
+    }
     final content = jsonEncode(candidates);
-    print("Api Post, url $url");
+    print("Api Post, url $uri");
+    print(uri.host + uri.path);
     var responseJson;
     try {
       final response = await http.post(
-        _baseUrl + url,
+        uri,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -45,7 +56,6 @@ class ApiBaseHelper {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        print(responseJson);
         return responseJson;
 
       default:

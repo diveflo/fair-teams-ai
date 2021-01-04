@@ -5,7 +5,7 @@ import 'package:frontend/state/gameConfigState.dart';
 
 void main() {
   test('AddPlayerAction', () {
-    GameConfigState inputState = GameConfigState(candidates: []);
+    GameConfigState inputState = GameConfigState(candidates: [], mapPool: null);
     Candidate newCandidate = Candidate(name: "player1", steamID: "player1id");
     var addAction = AddPlayerAction(newCandidate);
 
@@ -13,15 +13,29 @@ void main() {
 
     expect(outputState.candidates.length, 1);
   });
-  test('TogglePlayerSelectionAction', () {
-    GameConfigState inputState = GameConfigState(candidates: [
-      Candidate(name: "player1", steamID: "player1id", isSelected: false)
-    ]);
-    var toggleAction = TogglePlayerSelectionAction(
-        Candidate(name: "player1", steamID: "player1id"));
 
-    GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+  group('TogglePlayerSelectionAction', () {
+    test('from false to true', () {
+      GameConfigState inputState = GameConfigState(candidates: [
+        Candidate(name: "player1", steamID: "player1id", isSelected: false)
+      ], mapPool: null);
+      var toggleAction = TogglePlayerSelectionAction(
+          Candidate(name: "player1", steamID: "player1id"));
 
-    expect(outputState.candidates.first.isSelected, true);
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.candidates.first.isSelected, true);
+    });
+    test('from true to false', () {
+      GameConfigState inputState = GameConfigState(candidates: [
+        Candidate(name: "player1", steamID: "player1id", isSelected: true)
+      ], mapPool: null);
+      var toggleAction = TogglePlayerSelectionAction(
+          Candidate(name: "player1", steamID: "player1id"));
+
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.candidates.first.isSelected, false);
+    });
   });
 }

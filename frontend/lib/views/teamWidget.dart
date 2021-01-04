@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/model/player.dart';
 
-class FinalTeamWidget extends StatelessWidget {
-  const FinalTeamWidget({
+class TeamWidget extends StatelessWidget {
+  const TeamWidget({
     Key key,
     @required this.team,
     @required this.color,
