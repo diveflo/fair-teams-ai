@@ -4,7 +4,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/candidate.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
-import 'package:frontend/views/playerSelection.dart';
 import 'package:frontend/views/scrambleWidget.dart';
 
 class NewPlayerColumnWidget extends StatefulWidget {
@@ -86,15 +85,22 @@ class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
                 labelText: "SteamID",
                 errorText: _isValid ? null : "invalid steam ID"),
           ),
+          Container(
+            margin: EdgeInsets.only(top: 5),
+            child: SizedBox(
+              width: double.infinity,
+              height: 40,
+              child: RaisedButton(
+                color: Colors.pink,
+                onPressed: _isValid ? _addPlayer : null,
+                child: Text("Add new player"),
+              ),
+            ),
+          ),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                MyButton(
-                  onPressed: _addPlayer,
-                  color: Colors.pink,
-                  buttonText: "Add Player",
-                ),
                 ScrambleWidget(),
               ],
             ),
