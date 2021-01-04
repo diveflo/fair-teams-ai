@@ -6,7 +6,7 @@ import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
 import 'package:frontend/state/gameState.dart';
 import 'package:frontend/views/teamWidget.dart';
-import 'package:frontend/views/mapPool.dart';
+import 'package:frontend/views/mapPoolWidget.dart';
 import 'package:frontend/views/newPlayerWidget.dart';
 import 'package:frontend/views/scrambleWidget.dart';
 
