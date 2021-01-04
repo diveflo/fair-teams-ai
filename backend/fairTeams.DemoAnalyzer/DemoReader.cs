@@ -57,12 +57,14 @@ namespace fairTeams.DemoAnalyzer
         {
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
+            Match.Rounds = 0;
         }
 
         private void HandleMatchStarted(object sender, MatchStartedEventArgs e)
         {
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
+            Match.Rounds = 0;
 
             myHasMatchStarted = true;
 
@@ -184,6 +186,11 @@ namespace fairTeams.DemoAnalyzer
 
         private void UpdateRounds()
         {
+            if (!myHasMatchStarted)
+            {
+                return;
+            }
+
             Match.Rounds += 1;
 
             foreach (var playerResult in Match.PlayerResults)
