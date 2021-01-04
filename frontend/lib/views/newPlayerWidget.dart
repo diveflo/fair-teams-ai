@@ -4,8 +4,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:frontend/model/candidate.dart';
 import 'package:frontend/reducer/gameConfigReducer.dart';
 import 'package:frontend/state/appState.dart';
-import 'package:frontend/thunks/scramble.dart';
 import 'package:frontend/views/playerSelection.dart';
+import 'package:frontend/views/scrambleWidget.dart';
 
 class NewPlayerColumnWidget extends StatefulWidget {
   @override
@@ -47,14 +47,6 @@ class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
         _steamIdController.clear();
       });
     }
-  }
-
-  void _scramblePlayers() {
-    StoreProvider.of<AppState>(context).dispatch(scrambleTeamsRandom());
-  }
-
-  void _scrambleApi() {
-    StoreProvider.of<AppState>(context).dispatch(scrambleTeams());
   }
 
   @override
@@ -103,33 +95,7 @@ class _NewPlayerColumnWidgetState extends State<NewPlayerColumnWidget> {
                   color: Colors.pink,
                   buttonText: "Add Player",
                 ),
-                StoreConnector<AppState, bool>(
-                  converter: (store) => store.state.gameState.isLoading,
-                  builder: (context, isLoading) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: MyButton(
-                            buttonText: "Scramble",
-                            onPressed: _scramblePlayers,
-                            color: Colors.lime,
-                          ),
-                        ),
-                        isLoading ? CircularProgressIndicator() : Container(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: MyButton(
-                            buttonText: "ScrambleApi",
-                            onPressed: _scrambleApi,
-                            color: Colors.lime,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                ScrambleWidget(),
               ],
             ),
           ),
