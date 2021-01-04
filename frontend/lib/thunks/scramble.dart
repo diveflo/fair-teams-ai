@@ -19,6 +19,9 @@ ThunkAction scrambleTeams() {
       api.fetchScrambledTeams(activeCandidates).then((game) {
         store.dispatch(ToggleIsLoadingAction());
         store.dispatch(SetTeamsAction(game.t, game.ct));
+      }).catchError((e) {
+        print(e);
+        store.dispatch(ToggleIsLoadingAction());
       });
     });
   };
