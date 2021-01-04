@@ -22,7 +22,7 @@ class MapPool {
   List<CsMap> getPlayableMaps() {
     List<CsMap> playableMaps = List<CsMap>();
     this.maps.forEach((element) {
-      if (!element.isDismissed) {
+      if (element.isChecked) {
         playableMaps.add(element);
       }
     });
@@ -40,19 +40,19 @@ class MapPool {
 class CsMap {
   String name;
   String imagePath;
-  bool isDismissed;
+  bool isChecked;
 
-  CsMap({this.imagePath = "", @required this.name, this.isDismissed = false});
+  CsMap({this.imagePath = "", @required this.name, this.isChecked = true});
 
   CsMap.fromJson(dynamic json) {
     name = json["name"] != null ? json["name"] : null;
     imagePath = json["imagePath"] != null ? json["imagePath"] : null;
-    isDismissed = json["isDismissed"] != null ? json["isDismissed"] : false;
+    isChecked = json["isChecked"] != null ? json["isChecked"] : true;
   }
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'imagePath': imagePath,
-        'isDismissed': isDismissed,
+        'isChecked': isChecked,
       };
 }

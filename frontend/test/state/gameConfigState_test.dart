@@ -31,7 +31,7 @@ void main() {
         CsMap(
           name: "inferno",
           imagePath: "inferno.png",
-          isDismissed: true,
+          isChecked: true,
         )
       ]),
     );
@@ -55,7 +55,7 @@ void main() {
         {
           "name": "inferno",
           "imagePath": "inferno.png",
-          "isDismissed": true,
+          "isChecked": true,
         }
       ]
     };

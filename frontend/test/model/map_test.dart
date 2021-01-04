@@ -12,8 +12,8 @@ void main() {
 
   group("convert", () {
     MapPool mapPool = MapPool.fromMaps([
-      CsMap(name: "inferno", imagePath: "i.png", isDismissed: false),
-      CsMap(name: "nuke", imagePath: "n.png", isDismissed: true)
+      CsMap(name: "inferno", imagePath: "i.png", isChecked: false),
+      CsMap(name: "nuke", imagePath: "n.png", isChecked: true)
     ]);
 
     var mapPoolJson = {
@@ -21,12 +21,12 @@ void main() {
         {
           "name": "inferno",
           "imagePath": "i.png",
-          "isDismissed": false,
+          "isChecked": false,
         },
         {
           "name": "nuke",
           "imagePath": "n.png",
-          "isDismissed": true,
+          "isChecked": true,
         }
       ]
     };
@@ -43,16 +43,16 @@ void main() {
       expect(convertedMapPool.maps.length, 2);
       expect(convertedMapPool.maps.first.name, "inferno");
       expect(convertedMapPool.maps.last.imagePath, "n.png");
-      expect(convertedMapPool.maps.first.isDismissed, false);
-      expect(convertedMapPool.maps.last.isDismissed, true);
+      expect(convertedMapPool.maps.first.isChecked, false);
+      expect(convertedMapPool.maps.last.isChecked, true);
     });
   });
 
   group("getPlayableMaps", () {
     test("all maps are playable", () {
       MapPool mapPool = MapPool.fromMaps([
-        CsMap(name: "inferno", imagePath: "i.png", isDismissed: false),
-        CsMap(name: "nuke", imagePath: "n.png", isDismissed: false)
+        CsMap(name: "inferno", imagePath: "i.png", isChecked: true),
+        CsMap(name: "nuke", imagePath: "n.png", isChecked: true)
       ]);
 
       List<CsMap> playable = mapPool.getPlayableMaps();
@@ -64,8 +64,8 @@ void main() {
 
     test("one map is playable", () {
       MapPool mapPool = MapPool.fromMaps([
-        CsMap(name: "inferno", imagePath: "i.png", isDismissed: false),
-        CsMap(name: "nuke", imagePath: "n.png", isDismissed: true)
+        CsMap(name: "inferno", imagePath: "i.png", isChecked: true),
+        CsMap(name: "nuke", imagePath: "n.png", isChecked: false)
       ]);
 
       List<CsMap> playable = mapPool.getPlayableMaps();
@@ -76,8 +76,8 @@ void main() {
 
     test("no map is playable", () {
       MapPool mapPool = MapPool.fromMaps([
-        CsMap(name: "inferno", imagePath: "i.png", isDismissed: true),
-        CsMap(name: "nuke", imagePath: "n.png", isDismissed: true)
+        CsMap(name: "inferno", imagePath: "i.png", isChecked: false),
+        CsMap(name: "nuke", imagePath: "n.png", isChecked: false)
       ]);
 
       List<CsMap> playable = mapPool.getPlayableMaps();

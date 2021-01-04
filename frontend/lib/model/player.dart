@@ -29,7 +29,6 @@ class Player {
           ? json["skill"]["skillScore"]
           : [0.0];
     }
-    skillScore = double.parse((skillScore).toStringAsFixed(3));
   }
 
   Map<String, dynamic> toJson() => {
