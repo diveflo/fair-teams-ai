@@ -13,4 +13,9 @@ namespace fairTeams.DemoAnalyzer
         public PlayerNotYetRegisteredException(long playerSteamID, IEnumerable<long> registeredPlayersSteamIDs)
             : base($"Player with steam id: {playerSteamID} not yet registered in PlayerResults. Registered players steam ids: {string.Join(", ", registeredPlayersSteamIDs)}") { }
     }
+
+    public class InconsistentStatisticsException : DemoReaderException
+    {
+        public InconsistentStatisticsException(string message) : base(message) { }
+    }
 }
