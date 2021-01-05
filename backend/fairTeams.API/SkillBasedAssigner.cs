@@ -53,7 +53,7 @@ namespace fairTeams.API
                     Name = "BOT",
                     SteamName = "BOT",
                     ProfilePublic = true,
-                    SteamID = "1",
+                    SteamID = "0",
                     Skill = new SkillLevel()
                 };
 
