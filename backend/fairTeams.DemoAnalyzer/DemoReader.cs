@@ -95,8 +95,12 @@ namespace fairTeams.DemoAnalyzer
             // Race condition in DemoInfo library:
             // Sometimes PlayerKilledEventArgs.Killer is defined while adding +1 to the player's kills, but null when setting the multiple kill stats
             // --> Copy killer and victim here to ensure we don't run into inconsistencies
-            var killer = e.Killer?.Copy();
-            var victim = e.Victim?.Copy();
+            if (e.Killer == null || e.Victim == null)
+            {
+                return;
+            }
+            var killer = e.Killer.Copy();
+            var victim = e.Victim.Copy();
 
             if (!killer.IsBot())
             {
