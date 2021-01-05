@@ -51,6 +51,8 @@ namespace fairTeams.DemoAnalyzer
 
             ParseFinalTeamScores();
             ProcessMissingLastRound();
+
+            CheckResultConsistency();
         }
 
         private void HandleRoundAnnounceMatchStarted(object sender, RoundAnnounceMatchStartedEventArgs e)
@@ -250,6 +252,37 @@ namespace fairTeams.DemoAnalyzer
         private bool IsPlayerRegistered(long steamid)
         {
             return Match.PlayerResults.Any(x => x.SteamID == steamid);
+        }
+
+        private void CheckResultConsistency()
+        {
+            CheckNumberOfRoundsConsistency();
+            CheckNumberOfKillsConsistency();
+        }
+
+        private void CheckNumberOfRoundsConsistency()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                if (player.Rounds != Match.Rounds)
+                {
+                    throw new InconsistentStatisticsException($"Number of rounds differs between Match ({Match.Rounds}) and player ({player.Rounds}) with steam id {player.SteamID}");
+                }
+            }
+        }
+
+        // The overall number of kills can be lower than the sum of the multiple kill statistic (b.c. of teamkills, suicide) but not the other way round
+        private void CheckNumberOfKillsConsistency()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                var sumOfKills = player.OneKill + 2 * player.TwoKill + 3 * player.ThreeKill + 4 * player.FourKill + 5 * player.FiveKill;
+                if (player.Kills > sumOfKills)
+                {
+                    throw new InconsistentStatisticsException($"The sum of the multiple kill statistic ({sumOfKills}) must be larger-than or equal" +
+                        $"to the overall number of kills ({player.Kills}) for player with steamid: {player.SteamID}");
+                }
+            }
         }
 
         public void Dispose()
