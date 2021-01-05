@@ -71,6 +71,43 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact(Skip = "Data only locally available")]
+        public void Read_OnlyFourRounds_CorrectStatistics()
+        {
+            var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem" };
+            var demoReader = new DemoReader(new Match { Demo = demo });
+
+            demoReader.ReadHeader();
+            demoReader.Read();
+
+            Assert.Equal(2, demoReader.Match.CTScore);
+            Assert.Equal(2, demoReader.Match.TScore);
+            Assert.Equal(4, demoReader.Match.Rounds);
+
+            var expectedStatisticsForSteamId = new List<MatchStatistics>
+            {
+                new MatchStatistics { SteamID = 76561198011775117, Kills = 1, Deaths = 3, Rounds = 4, OneKill = 0, TwoKill = 1 },
+                new MatchStatistics { SteamID = 76561197984050254, Kills = 1, Deaths = 4, Rounds = 4, OneKill = 1 },
+                new MatchStatistics { SteamID = 76561198053826525, Kills = -1, Deaths = 4, Rounds = 4 },
+                new MatchStatistics { SteamID = 76561199045573415, Kills = 8, Deaths = 1, Rounds = 4, OneKill = 2, TwoKill = 0, ThreeKill = 2 },
+                new MatchStatistics { SteamID = 76561197973591119, Kills = 0, Deaths = 2, Rounds = 4 },
+                new MatchStatistics { SteamID = 76561198258023370, Kills = -1, Deaths = 2, Rounds = 4, OneKill = 1 }
+            };
+
+            foreach (var playerResult in demoReader.Match.PlayerResults)
+            {
+                var expected = expectedStatisticsForSteamId.Single(x => x.SteamID == playerResult.SteamID);
+                Assert.Equal(expected.Kills, playerResult.Kills);
+                Assert.Equal(expected.Deaths, playerResult.Deaths);
+                Assert.Equal(expected.Rounds, playerResult.Rounds);
+                Assert.Equal(expected.OneKill, playerResult.OneKill);
+                Assert.Equal(expected.TwoKill, playerResult.TwoKill);
+                Assert.Equal(expected.ThreeKill, playerResult.ThreeKill);
+                Assert.Equal(expected.FourKill, playerResult.FourKill);
+                Assert.Equal(expected.FiveKill, playerResult.FiveKill);
+            }
+        }
+
+        [Fact(Skip = "Data only locally available")]
         public void Read_WarumupIsRestarted_DoesNotCountEventsFromAnyWarmup()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-215342-2066393818-de_inferno-honigbiene_vs_waldfrosch.dem" };

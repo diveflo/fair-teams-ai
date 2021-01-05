@@ -23,7 +23,7 @@ namespace fairTeams.DemoAnalyzer
 
             myDemo = match.Demo;
             myHasMatchStarted = false;
-            myKillsThisRound = new Dictionary<Player, int>();
+            myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
 
         public void ReadHeader()
@@ -40,8 +40,6 @@ namespace fairTeams.DemoAnalyzer
         public void Read()
         {
             myDemoParser.MatchStarted += HandleMatchStarted;
-            // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
-            // and doesn't correctly handle the case that the game is restarted (e.g. on our server)
             myDemoParser.RoundAnnounceMatchStarted += HandleRoundAnnounceMatchStarted;
             myDemoParser.RoundStart += HandleRoundStarted;
             myDemoParser.PlayerKilled += HandlePlayerKilled;
@@ -51,8 +49,12 @@ namespace fairTeams.DemoAnalyzer
 
             ParseFinalTeamScores();
             ProcessMissingLastRound();
+
+            CheckResultConsistency();
         }
 
+        // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
+        // and doesn't correctly handle the case that the game is restarted (e.g. on our server)
         private void HandleRoundAnnounceMatchStarted(object sender, RoundAnnounceMatchStartedEventArgs e)
         {
             myKillsThisRound.Clear();
@@ -90,29 +92,40 @@ namespace fairTeams.DemoAnalyzer
                 return;
             }
 
-            if (e.Killer != null && !e.Killer.IsBot())
+            // Race condition in DemoInfo library:
+            // Sometimes PlayerKilledEventArgs.Killer is defined while adding +1 to the player's kills, but null when setting the multiple kill stats
+            // --> Copy killer and victim here to ensure we don't run into inconsistencies
+            if (e.Killer == null || e.Victim == null)
             {
-                EnsurePlayerRegistered(e.Killer.SteamID);
-                var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Killer.SteamID);
+                return;
+            }
+            var killer = e.Killer.Copy();
+            var victim = e.Victim.Copy();
 
-                if (e.IsSuicide())
+            if (!killer.IsBot())
+            {
+                EnsurePlayerRegistered(killer.SteamID);
+
+                var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == killer.SteamID);
+
+                if (IsSuicide(killer, victim))
                 {
                     killerWithStats.Kills -= 1;
                     killerWithStats.Deaths += 1;
                     return;
                 }
 
-                if (e.Victim.IsBot())
+                if (victim.IsBot())
                 {
                     killerWithStats.Kills += 1;
-                    AddKillToMultipleKillTracking(e.Killer);
+                    AddKillToMultipleKillTracking(killer);
                     return;
                 }
 
-                EnsurePlayerRegistered(e.Victim.SteamID);
-                var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Victim.SteamID);
+                EnsurePlayerRegistered(victim.SteamID);
+                var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == victim.SteamID);
 
-                if (e.IsTeamkill())
+                if (IsTeamkill(killer, victim))
                 {
                     killerWithStats.Kills -= 1;
                     victimWithStats.Deaths += 1;
@@ -121,8 +134,18 @@ namespace fairTeams.DemoAnalyzer
 
                 killerWithStats.Kills += 1;
                 victimWithStats.Deaths += 1;
-                AddKillToMultipleKillTracking(e.Killer);
+                AddKillToMultipleKillTracking(killer);
             }
+        }
+
+        private static bool IsSuicide(Player killer, Player victim)
+        {
+            return killer.SteamID == victim.SteamID;
+        }
+
+        private static bool IsTeamkill(Player killer, Player victim)
+        {
+            return killer.Team == victim.Team;
         }
 
         private void AddKillToMultipleKillTracking(Player killer)
@@ -250,6 +273,37 @@ namespace fairTeams.DemoAnalyzer
         private bool IsPlayerRegistered(long steamid)
         {
             return Match.PlayerResults.Any(x => x.SteamID == steamid);
+        }
+
+        private void CheckResultConsistency()
+        {
+            CheckNumberOfRoundsConsistency();
+            CheckNumberOfKillsConsistency();
+        }
+
+        private void CheckNumberOfRoundsConsistency()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                if (player.Rounds != Match.Rounds)
+                {
+                    throw new InconsistentStatisticsException($"Number of rounds differs between Match ({Match.Rounds}) and player ({player.Rounds}) with steam id {player.SteamID}");
+                }
+            }
+        }
+
+        // The overall number of kills can be lower than the sum of the multiple kill statistic (b.c. of teamkills, suicide) but not the other way round
+        private void CheckNumberOfKillsConsistency()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                var sumOfKills = player.OneKill + 2 * player.TwoKill + 3 * player.ThreeKill + 4 * player.FourKill + 5 * player.FiveKill;
+                if (player.Kills > sumOfKills)
+                {
+                    throw new InconsistentStatisticsException($"The sum of the multiple kill statistic ({sumOfKills}) must be larger-than or equal" +
+                        $"to the overall number of kills ({player.Kills}) for player with steamid: {player.SteamID}");
+                }
+            }
         }
 
         public void Dispose()

@@ -1,4 +1,6 @@
 using DemoInfo;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace fairTeams.DemoAnalyzer
 {
@@ -10,16 +12,16 @@ namespace fairTeams.DemoAnalyzer
         }
     }
 
-    public static class PlayerKilledEventArgsExtensions
+    public class SteamIdBasedPlayerEqualityComparer : IEqualityComparer<Player>
     {
-        public static bool IsSuicide(this PlayerKilledEventArgs eventArgs)
+        public bool Equals(Player x, Player y)
         {
-            return eventArgs.Killer.SteamID == eventArgs.Victim.SteamID;
+            return x.SteamID == y.SteamID;
         }
 
-        public static bool IsTeamkill(this PlayerKilledEventArgs eventArgs)
+        public int GetHashCode([DisallowNull] Player obj)
         {
-            return eventArgs.Killer.Team == eventArgs.Victim.Team;
+            return obj.SteamID.GetHashCode();
         }
     }
 }
