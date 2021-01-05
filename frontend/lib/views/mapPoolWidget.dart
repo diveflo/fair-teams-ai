@@ -77,8 +77,8 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
             ],
           ),
         ),
-        Container(
-          child: Expanded(
+        Expanded(
+          child: Container(
             child: StoreConnector<AppState, MapPool>(
               converter: (store) => store.state.gameConfigState.mapPool,
               builder: (context, mapPool) {
