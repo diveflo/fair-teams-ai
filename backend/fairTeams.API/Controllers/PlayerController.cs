@@ -2,6 +2,7 @@ using fairTeams.Steamworks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -12,6 +13,7 @@ namespace fairTeams.API.Controllers
     [ApiController]
     [Route("[controller]")]
     [EnableCors]
+    [Obsolete("Please use the /FairTeams endpoint instead")]
     public class PlayerController : ControllerBase
     {
         private readonly ITeamAssigner myAssigner;
