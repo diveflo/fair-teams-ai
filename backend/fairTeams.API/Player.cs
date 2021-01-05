@@ -11,9 +11,12 @@ namespace fairTeams.API
         public string SteamID { get; set; }
         public SkillLevel Skill { get; set; }
 
-        public Player() { }
+        public Player()
+        {
+            Skill = new SkillLevel();
+        }
 
-        public Player(RequestPlayer obj)
+        public Player(RequestPlayer obj) : this()
         {
             Name = obj.Name;
             SteamID = obj.SteamID;
