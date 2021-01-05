@@ -1,11 +1,9 @@
-using fairTeams.Steamworks;
+﻿using fairTeams.Steamworks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace fairTeams.API.Controllers
@@ -13,42 +11,44 @@ namespace fairTeams.API.Controllers
     [ApiController]
     [Route("[controller]")]
     [EnableCors]
-    [Obsolete("Please use the /FairTeams endpoint instead")]
-    public class PlayerController : ControllerBase
+    public class FairTeamsController : ControllerBase
     {
         private readonly ITeamAssigner myAssigner;
         private readonly ILogger myLogger;
 
-        public PlayerController(ITeamAssigner teamAssigner, ILogger<PlayerController> logger)
+        public FairTeamsController(ITeamAssigner teamAssigner, ILogger<FairTeamsController> logger)
         {
             myAssigner = teamAssigner;
             myLogger = logger;
         }
 
         [HttpPost]
-        public async Task<Assignment> GetAssignedTeams(IEnumerable<Player> players)
+        public async Task<Assignment> GetAssignedTeams(IEnumerable<RequestPlayer> players)
         {
-            players = await SetSteamUsernames(players);
-            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(players);
+            var extendedPlayers = await GetSteamUsernames(players);
+
+            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(extendedPlayers);
 
             return new Assignment(terrorists, counterTerrorists);
         }
 
-        private async Task<IEnumerable<Player>> SetSteamUsernames(IEnumerable<Player> players)
+        private async Task<IEnumerable<Player>> GetSteamUsernames(IEnumerable<RequestPlayer> players)
         {
             var steamIDsWithUsernames = await SteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
+            var extendedPlayers = new List<Player>();
 
             foreach (var player in players)
             {
-                player.SteamName = steamIDsWithUsernames.SingleOrDefault(x => x.Key == player.SteamID).Value;
+                var steamUsername = steamIDsWithUsernames.SingleOrDefault(x => x.Key == player.SteamID).Value;
+                extendedPlayers.Add(new Player(player) { SteamName = steamUsername });
             }
 
-            foreach (var notFoundPlayer in players.Where(x => string.IsNullOrEmpty(x.SteamName)))
+            foreach (var notFoundPlayer in extendedPlayers.Where(x => string.IsNullOrEmpty(x.SteamName)))
             {
                 myLogger.LogWarning($"Player's {notFoundPlayer.Name} Steam ID ({notFoundPlayer.SteamID}) seems to be invalid.");
             }
 
-            return players;
+            return extendedPlayers;
         }
     }
 }
