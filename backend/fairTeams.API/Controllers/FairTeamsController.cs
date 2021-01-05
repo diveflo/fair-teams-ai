@@ -25,36 +25,30 @@ namespace fairTeams.API.Controllers
         [HttpPost]
         public async Task<Assignment> GetAssignedTeams(IEnumerable<RequestPlayer> players)
         {
-            players = await SetSteamUsernames(players);
+            var extendedPlayers = await GetSteamUsernames(players);
 
-            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(Convert(players));
+            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(extendedPlayers);
 
             return new Assignment(terrorists, counterTerrorists);
         }
 
-        private async Task<IEnumerable<RequestPlayer>> SetSteamUsernames(IEnumerable<RequestPlayer> players)
+        private async Task<IEnumerable<Player>> GetSteamUsernames(IEnumerable<RequestPlayer> players)
         {
             var steamIDsWithUsernames = await SteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
+            var extendedPlayers = new List<Player>();
 
             foreach (var player in players)
             {
-                player.SteamName = steamIDsWithUsernames.SingleOrDefault(x => x.Key == player.SteamID).Value;
+                var steamUsername = steamIDsWithUsernames.SingleOrDefault(x => x.Key == player.SteamID).Value;
+                extendedPlayers.Add(new Player(player) { SteamName = steamUsername });
             }
 
-            foreach (var notFoundPlayer in players.Where(x => string.IsNullOrEmpty(x.SteamName)))
+            foreach (var notFoundPlayer in extendedPlayers.Where(x => string.IsNullOrEmpty(x.SteamName)))
             {
                 myLogger.LogWarning($"Player's {notFoundPlayer.Name} Steam ID ({notFoundPlayer.SteamID}) seems to be invalid.");
             }
 
-            return players;
-        }
-
-        private static IEnumerable<Player> Convert(IEnumerable<RequestPlayer> requestPlayers)
-        {
-            foreach (var requestPlayer in requestPlayers)
-            {
-                yield return new Player(requestPlayer);
-            }
+            return extendedPlayers;
         }
     }
 }

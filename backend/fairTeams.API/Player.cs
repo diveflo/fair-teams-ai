@@ -16,7 +16,6 @@ namespace fairTeams.API
         public Player(RequestPlayer obj)
         {
             Name = obj.Name;
-            SteamName = obj.SteamName;
             SteamID = obj.SteamID;
         }
     }
@@ -24,7 +23,6 @@ namespace fairTeams.API
     public class RequestPlayer
     {
         public string Name { get; set; }
-        public string SteamName { get; set; }
         public string SteamID { get; set; }
     }
 }
