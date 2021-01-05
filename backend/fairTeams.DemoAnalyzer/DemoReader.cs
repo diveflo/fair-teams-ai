@@ -92,29 +92,36 @@ namespace fairTeams.DemoAnalyzer
                 return;
             }
 
-            if (e.Killer != null && !e.Killer.IsBot())
-            {
-                EnsurePlayerRegistered(e.Killer.SteamID);
-                var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Killer.SteamID);
+            // Race condition in DemoInfo library:
+            // Sometimes PlayerKilledEventArgs.Killer is defined while adding +1 to the player's kills, but null when setting the multiple kill stats
+            // --> Copy killer and victim here to ensure we don't run into inconsistencies
+            var killer = e.Killer?.Copy();
+            var victim = e.Victim?.Copy();
 
-                if (e.IsSuicide())
+            if (killer.IsBot())
+            {
+                EnsurePlayerRegistered(killer.SteamID);
+
+                var killerWithStats = Match.PlayerResults.Single(x => x.SteamID == killer.SteamID);
+
+                if (IsSuicide(killer, victim))
                 {
                     killerWithStats.Kills -= 1;
                     killerWithStats.Deaths += 1;
                     return;
                 }
 
-                if (e.Victim.IsBot())
+                if (victim.IsBot())
                 {
                     killerWithStats.Kills += 1;
-                    AddKillToMultipleKillTracking(e.Killer);
+                    AddKillToMultipleKillTracking(killer);
                     return;
                 }
 
-                EnsurePlayerRegistered(e.Victim.SteamID);
-                var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == e.Victim.SteamID);
+                EnsurePlayerRegistered(victim.SteamID);
+                var victimWithStats = Match.PlayerResults.Single(x => x.SteamID == victim.SteamID);
 
-                if (e.IsTeamkill())
+                if (IsTeamkill(killer, victim))
                 {
                     killerWithStats.Kills -= 1;
                     victimWithStats.Deaths += 1;
@@ -123,8 +130,18 @@ namespace fairTeams.DemoAnalyzer
 
                 killerWithStats.Kills += 1;
                 victimWithStats.Deaths += 1;
-                AddKillToMultipleKillTracking(e.Killer);
+                AddKillToMultipleKillTracking(killer);
             }
+        }
+
+        private static bool IsSuicide(Player killer, Player victim)
+        {
+            return killer.SteamID == victim.SteamID;
+        }
+
+        private static bool IsTeamkill(Player killer, Player victim)
+        {
+            return killer.Team == victim.Team;
         }
 
         private void AddKillToMultipleKillTracking(Player killer)
