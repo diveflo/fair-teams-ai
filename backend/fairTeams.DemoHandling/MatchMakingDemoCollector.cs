@@ -47,6 +47,12 @@ namespace fairTeams.DemoHandling
         public void ProcessNewMatches(object state)
         {
             var newSharingCodes = GetNewSharingCodes().Result;
+
+            if (!newSharingCodes.Any())
+            {
+                return;
+            }
+
             myLogger.LogInformation($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes)}");
             var newMatches = new List<Match>();
 
