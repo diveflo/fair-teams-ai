@@ -59,7 +59,7 @@ namespace fairTeams.API
 
                 var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
                 var minimumScoreHumanPlayers = sortedByScore.Min(x => x.Skill.SkillScore);
-                var botScore = averageScoreHumanPlayers / 2.0;
+                var botScore = averageScoreHumanPlayers * 0.75;
 
                 if (minimumScoreHumanPlayers <= botScore)
                 {
