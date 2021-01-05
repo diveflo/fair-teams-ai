@@ -58,8 +58,16 @@ namespace fairTeams.API
                 };
 
                 var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
-                bot.Skill.AddRating(new DummyRating { Score = averageScoreHumanPlayers / 2.0 });
-                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {averageScoreHumanPlayers / 2.0}");
+                var minimumScoreHumanPlayers = sortedByScore.Min(x => x.Skill.SkillScore);
+                var botScore = averageScoreHumanPlayers / 2.0;
+
+                if (minimumScoreHumanPlayers <= botScore)
+                {
+                    botScore = 0.9 * minimumScoreHumanPlayers;
+                }
+
+                bot.Skill.AddRating(new DummyRating { Score = botScore });
+                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
 
                 sortedByScore.Add(bot);
                 var bestPlayer = sortedByScore[0];
