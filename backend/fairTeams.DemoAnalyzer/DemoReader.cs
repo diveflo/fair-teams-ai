@@ -98,7 +98,7 @@ namespace fairTeams.DemoAnalyzer
             var killer = e.Killer?.Copy();
             var victim = e.Victim?.Copy();
 
-            if (killer.IsBot())
+            if (!killer.IsBot())
             {
                 EnsurePlayerRegistered(killer.SteamID);
 
