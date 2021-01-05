@@ -61,4 +61,42 @@ void main() {
       expect(outputState.t.players.first.steamName, "player1");
     });
   });
+
+  test("SwapTeamsAction", () {
+    Team t = Team(
+      [
+        Player(
+            name: 'playert',
+            steamName: 'playert',
+            steamID: "playertid",
+            skillScore: 1),
+        Player(
+            name: 'playert2',
+            steamName: 'playert2',
+            steamID: "playert2id",
+            skillScore: 1)
+      ],
+      "t",
+    );
+    Team ct = Team(
+      [
+        Player(
+            name: 'playerct',
+            steamName: 'playerct',
+            steamID: "playerctid",
+            skillScore: 2)
+      ],
+      "ct",
+    );
+    GameState inputState = GameState(isLoading: false, ct: ct, t: t);
+    var swapTeamsAction = SwapTeamsAction();
+
+    GameState outputState = gameReducer(inputState, swapTeamsAction);
+
+    expect(outputState.ct.players.length, 2);
+    expect(outputState.t.players.length, 1);
+    expect(outputState.ct.players.first.name, "playert");
+    expect(outputState.ct.players.last.name, "playert2");
+    expect(outputState.t.players.first.name, "playerct");
+  });
 }
