@@ -23,7 +23,7 @@ namespace fairTeams.DemoAnalyzer
 
             myDemo = match.Demo;
             myHasMatchStarted = false;
-            myKillsThisRound = new Dictionary<Player, int>();
+            myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
 
         public void ReadHeader()
