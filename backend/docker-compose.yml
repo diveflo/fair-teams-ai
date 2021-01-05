@@ -1,0 +1,16 @@
+version: "3"
+services:
+  fairteamsai:
+    image: floriang89/fair-teams-ai:latest
+    container_name: fair-teams-ai
+    environment:
+      - STEAM_USERNAME=
+      - STEAM_PASSWORD=
+      - STEAM_WEBAPI_KEY=
+      #- Logging__LogLevel__Default=Debug
+    volumes:
+      - ./databases:/root/.local/share/fairteamsai
+      - ./demowatch:/root/.local/share/fairteamsai/demowatch
+    ports:
+      - 80:80
+    restart: unless-stopped
