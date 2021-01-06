@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -15,12 +18,27 @@ class ScrambleWidget extends StatefulWidget {
 }
 
 class _ScrambleWidgetState extends State<ScrambleWidget> {
+  ConfettiController _confettiController;
+
+  @override
+  initState() {
+    _confettiController = ConfettiController(duration: Duration(seconds: 3));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
   void _scramblePlayers() {
     StoreProvider.of<AppState>(context).dispatch(scrambleTeamsRandom());
   }
 
   void _scrambleApi({bool hltv = false}) {
-    StoreProvider.of<AppState>(context).dispatch(scrambleTeams(hltv));
+    StoreProvider.of<AppState>(context)
+        .dispatch(scrambleTeams(hltv, _confettiController));
   }
 
   @override
@@ -56,6 +74,15 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
                 onPressed: _scrambleApi,
                 color: Colors.lime,
               ),
+            ),
+            ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirection: pi,
+              colors: [Colors.black, Colors.orange],
+              maxBlastForce: 40,
+              numberOfParticles: 30,
+              particleDrag: 0.01,
+              gravity: 0.07,
             ),
           ],
         );

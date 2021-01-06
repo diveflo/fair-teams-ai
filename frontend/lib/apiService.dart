@@ -14,7 +14,7 @@ class PlayerApi {
     var queryParameters = {'hltv': hltv};
 
     final Map<String, dynamic> response =
-        await _helper.post("/Player", candidates, queryParameters);
+        await _helper.post("/FairTeams", candidates, queryParameters);
     return Game.fromJson(response);
   }
 }

@@ -16,13 +16,11 @@ void main() {
       candidates: [
         Candidate(
           name: "player1",
-          isProfilePublic: true,
           steamID: "player1id",
           isSelected: true,
         ),
         Candidate(
           name: "player2",
-          isProfilePublic: false,
           steamID: "player2id",
           isSelected: false,
         )
@@ -41,13 +39,11 @@ void main() {
         {
           "name": "player1",
           "steamID": "player1id",
-          "isProfilePublic": true,
           "isSelected": true,
         },
         {
           "name": "player2",
           "steamID": "player2id",
-          "isProfilePublic": false,
           "isSelected": false,
         }
       ],

@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:frontend/model/candidate.dart';
 import 'package:frontend/model/player.dart';
 import 'package:frontend/model/team.dart';
@@ -8,7 +9,7 @@ import 'package:frontend/apiService.dart';
 
 PlayerApi api = PlayerApi();
 
-ThunkAction scrambleTeams(bool hltv) {
+ThunkAction scrambleTeams(bool hltv, ConfettiController confettiController) {
   return (Store store) async {
     Future(() {
       store.dispatch(ToggleIsLoadingAction());
@@ -18,6 +19,7 @@ ThunkAction scrambleTeams(bool hltv) {
 
       api.fetchScrambledTeams(activeCandidates, hltv).then((game) {
         store.dispatch(ToggleIsLoadingAction());
+        confettiController.play();
         store.dispatch(SetTeamsAction(game.t, game.ct));
       }).catchError((e) {
         print(e);
