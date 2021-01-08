@@ -46,6 +46,7 @@ namespace fairTeams.API
 
             services.AddHostedService<MatchMakingDemoCollector>();
             services.AddHostedService<LocalDemoCollector>();
+            services.AddHostedService<FTPDemoCollector>();
 
             services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }
