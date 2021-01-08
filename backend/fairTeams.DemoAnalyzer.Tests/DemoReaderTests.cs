@@ -149,7 +149,7 @@ namespace fairTeams.DemoParser.Tests
             demoReader.Read();
 
             Assert.Equal(30, demoReader.Match.Rounds);
-            foreach(var player in demoReader.Match.PlayerResults)
+            foreach (var player in demoReader.Match.PlayerResults)
             {
                 Assert.Equal(30, player.Rounds);
             }
