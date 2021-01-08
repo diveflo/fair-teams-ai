@@ -16,6 +16,8 @@ namespace fairTeams.Core
             myLogger = logger;
         }
 
+        public MatchRepository(DbContextOptions<MatchRepository> options) : this(options, UnitTestLoggerCreator.CreateUnitTestLogger<MatchRepository>()) { }
+
         public void AddMatchesAndSave(IEnumerable<Match> newMatches)
         {
             if (newMatches.Any())
