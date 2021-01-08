@@ -30,7 +30,6 @@ void main() {
       expect(testiJson, {
         "name": "player1",
         "steamName": "player1",
-        "profilePublic": false,
         "steamID": "id122",
         "skill": {
           "skillScore": double.maxFinite,
@@ -44,7 +43,6 @@ void main() {
       var json = {
         "name": "testi",
         "steamName": "boon",
-        "profilePublic": true,
         "steamID": "001",
         "skill": {"skillScore": 0.1}
       };
@@ -53,7 +51,6 @@ void main() {
 
       expect(testi.name, "testi");
       expect(testi.steamName, "boon");
-      expect(testi.profilePublic, true);
       expect(testi.steamID, "001");
       expect(testi.skillScore, 0.1);
     });

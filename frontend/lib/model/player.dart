@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 class Player {
   String name;
   String steamName;
-  bool profilePublic;
   String steamID;
   double skillScore;
 
@@ -12,7 +11,6 @@ class Player {
   Player(
       {@required this.name,
       this.steamName = "Player1",
-      this.profilePublic = false,
       this.steamID = "",
       this.isSelected = false,
       this.skillScore = double.maxFinite});
@@ -21,20 +19,14 @@ class Player {
     name = json["name"] != null ? json["name"] : "no name found";
     steamName = json["steamName"] != null ? json["steamName"] : "Player1";
     steamID = json["steamID"] != null ? json["steamID"] : ["invalid id"];
-    profilePublic = json["profilePublic"];
-    if (!profilePublic) {
-      skillScore = double.maxFinite;
-    } else {
-      skillScore = json["skill"]["skillScore"] != null
+    skillScore = json["skill"]["skillScore"] != null
           ? json["skill"]["skillScore"]
           : [0.0];
-    }
   }
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'steamName': steamName,
-        'profilePublic': profilePublic,
         'steamID': steamID,
         'skill': {'skillScore': skillScore},
       };

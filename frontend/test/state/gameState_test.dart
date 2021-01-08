@@ -20,14 +20,12 @@ void main() {
         Player(
           name: "player1",
           steamName: "player1",
-          profilePublic: true,
           steamID: "player1id",
           skillScore: 1.0,
         ),
         Player(
           name: "player2",
           steamName: "player2",
-          profilePublic: false,
           steamID: "player2id",
           skillScore: 2.0,
         ),
@@ -39,14 +37,12 @@ void main() {
         Player(
           name: "player3",
           steamName: "player3",
-          profilePublic: true,
           steamID: "player3id",
           skillScore: 0.0,
         ),
         Player(
           name: "player4",
           steamName: "player4",
-          profilePublic: false,
           steamID: "player4id",
           skillScore: 2.2,
         ),
@@ -61,14 +57,12 @@ void main() {
           {
             "name": "player1",
             "steamName": "player1",
-            "profilePublic": true,
             "steamID": "player1id",
             "skill": {"skillScore": 1.0}
           },
           {
             "name": "player2",
             "steamName": "player2",
-            "profilePublic": false,
             "steamID": "player2id",
             "skill": {"skillScore": 2.0}
           }
@@ -80,14 +74,12 @@ void main() {
           {
             "name": "player3",
             "steamName": "player3",
-            "profilePublic": true,
             "steamID": "player3id",
             "skill": {"skillScore": 0.0}
           },
           {
             "name": "player4",
             "steamName": "player4",
-            "profilePublic": false,
             "steamID": "player4id",
             "skill": {"skillScore": 2.2}
           }
