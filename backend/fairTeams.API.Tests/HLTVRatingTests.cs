@@ -87,7 +87,7 @@ namespace fairTeams.API.Tests
         private static List<Match> CreateMultipleMatchesWithStatistics(List<MatchStatistics> statistics)
         {
             var matches = new List<Match>();
-            foreach(var statistic in statistics)
+            foreach (var statistic in statistics)
             {
                 matches.Add(CreateMatchWithStatistics(statistic));
             }

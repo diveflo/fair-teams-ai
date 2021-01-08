@@ -65,18 +65,19 @@ namespace fairTeams.DemoHandling
                     demoReader.ReadHeader();
                     demoReader.Read();
                     match = demoReader.Match;
+                    myLogger.LogTrace($"Finished analyzing demo file {Path.GetFileName(demoFile)}");
+                    newMatches.Add(match);
                 }
                 catch (DemoReaderException e)
                 {
                     myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}");
                     continue;
                 }
-
-                myLogger.LogTrace($"Finished analyzing demo file {Path.GetFileName(demoFile)}");
-                newMatches.Add(match);
-
-                myLogger.LogTrace($"Deleting local demo file {Path.GetFileName(demoFile)}");
-                File.Delete(demoFile);
+                finally
+                {
+                    myLogger.LogTrace($"Deleting local demo file {Path.GetFileName(demoFile)}");
+                    File.Delete(demoFile);
+                }
             }
 
             using var scope = myScopeFactory.CreateScope();

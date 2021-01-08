@@ -12,16 +12,22 @@ namespace fairTeams.DemoAnalyzer
         private readonly Demo myDemo;
         private FileStream myDemoFileStream;
         private DemoParser myDemoParser;
+        private int myMinimumRounds;
+        private int myMinimumPlayers;
         private readonly Dictionary<Player, int> myKillsThisRound;
         private bool myHasMatchStarted;
 
         public Match Match { get; }
 
-        public DemoReader(Match match)
+        public DemoReader(Match match) : this(match, 15, 5) { }
+
+        public DemoReader(Match match, int minimumRounds, int minimumPlayers)
         {
             Match = match;
-
             myDemo = match.Demo;
+            myMinimumRounds = minimumRounds;
+            myMinimumPlayers = minimumPlayers;
+
             myHasMatchStarted = false;
             myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
@@ -45,10 +51,19 @@ namespace fairTeams.DemoAnalyzer
             myDemoParser.PlayerKilled += HandlePlayerKilled;
             myDemoParser.RoundOfficiallyEnd += HandleRoundOfficiallyEnd;
 
-            myDemoParser.ParseToEnd();
+            try
+            {
+                myDemoParser.ParseToEnd();
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                throw new DemoReaderException($"Unexpected exception thrown during demo analysis: {e.Message}");
+            }
 
             ParseFinalTeamScores();
             ProcessMissingLastRound();
+
+            AssertMinimumRoundsAndPlayers();
 
             CheckResultConsistency();
         }
@@ -303,6 +318,19 @@ namespace fairTeams.DemoAnalyzer
                     throw new InconsistentStatisticsException($"The sum of the multiple kill statistic ({sumOfKills}) must be larger-than or equal" +
                         $"to the overall number of kills ({player.Kills}) for player with steamid: {player.SteamID}");
                 }
+            }
+        }
+
+        private void AssertMinimumRoundsAndPlayers()
+        {
+            if (Match.Rounds < myMinimumRounds)
+            {
+                throw new TooFewRoundsException(myMinimumRounds, Match.Rounds);
+            }
+
+            if (Match.PlayerResults.Count < myMinimumPlayers)
+            {
+                throw new TooFewPlayersException(myMinimumPlayers, Match.PlayerResults.Count);
             }
         }
 
