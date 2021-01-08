@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 
 namespace fairTeams.API
 {
-    public enum SolverOptions
-    {
-        Greedy,
-        Optimal
-    }
-
     public class SkillBasedAssigner : ITeamAssigner
     {
         private readonly MatchRepository myMatchRepository;
@@ -31,11 +25,6 @@ namespace fairTeams.API
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
-            return await GetAssignedPlayers(players, SolverOptions.Optimal);
-        }
-
-        private async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
-        {
             var playersList = players.ToList();
             myLogger.LogInformation($"Computing optimal assignment for players: {string.Join(", ", playersList.Select(x => x.SteamName))}");
 
@@ -44,91 +33,9 @@ namespace fairTeams.API
                 playersList[i] = await GetSkillLevel(playersList[i]);
             }
 
-            var sortedByScore = playersList.OrderByDescending(x => x.Skill.SkillScore).ToList();
+            playersList = AddBotIfNecessary(playersList);
 
-            if (sortedByScore.Count % 2 != 0)
-            {
-                var bot = new Player
-                {
-                    Name = "BOT",
-                    SteamName = "BOT",
-                    SteamID = "0",
-                    Skill = new SkillLevel()
-                };
-
-                var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
-                var minimumScoreHumanPlayers = sortedByScore.Min(x => x.Skill.SkillScore);
-                var botScore = averageScoreHumanPlayers * 0.75;
-
-                if (minimumScoreHumanPlayers <= botScore)
-                {
-                    botScore = 0.9 * minimumScoreHumanPlayers;
-                }
-
-                bot.Skill.AddRating(new DummyRating { Score = botScore });
-                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
-
-                sortedByScore.Add(bot);
-                var bestPlayer = sortedByScore[0];
-                var secondBestPlayer = sortedByScore[1];
-                sortedByScore[0] = secondBestPlayer;
-                sortedByScore[1] = bestPlayer;
-            }
-
-            var terrorists = new Team("Terrorists");
-            var counterTerrorists = new Team("CounterTerrorists");
-
-            switch (option)
-            {
-                case SolverOptions.Optimal:
-                    (terrorists, counterTerrorists) = OptimalAssigner(sortedByScore);
-                    break;
-                case SolverOptions.Greedy:
-                    (terrorists, counterTerrorists) = GreedyAssigner(sortedByScore);
-                    break;
-            }
-
-            return (terrorists, counterTerrorists);
-        }
-
-        private static (Team terrorists, Team counterTerrorists) GreedyAssigner(IEnumerable<Player> playersSortedByScore)
-        {
-            var sortedByScore = playersSortedByScore.ToList();
-
-            var bestPlayerIsTerrorist = new Random().NextDouble() < 0.5;
-
-            var terrorists = new Team("Terrorists");
-            var counterTerrorists = new Team("CounterTerrorists");
-
-            for (var i = 0; i < sortedByScore.Count; i++)
-            {
-                var currentPlayer = sortedByScore[i];
-
-                if (i % 2 == 0)
-                {
-                    if (bestPlayerIsTerrorist)
-                    {
-                        terrorists.Players.Add(currentPlayer);
-                    }
-                    else
-                    {
-                        counterTerrorists.Players.Add(currentPlayer);
-                    }
-                }
-                else
-                {
-                    if (bestPlayerIsTerrorist)
-                    {
-                        counterTerrorists.Players.Add(currentPlayer);
-                    }
-                    else
-                    {
-                        terrorists.Players.Add(currentPlayer);
-                    }
-                }
-            }
-
-            return (terrorists, counterTerrorists);
+            return OptimalAssigner(playersList);
         }
 
         private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
@@ -164,6 +71,36 @@ namespace fairTeams.API
 
             var smallSubsetOfOptimalAssinments = GetSmallSubsetOfBestAssignments(assignmentAndCost);
             return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
+        }
+
+        private List<Player> AddBotIfNecessary(List<Player> players)
+        {
+            if (players.Count % 2 != 0)
+            {
+                var bot = new Player
+                {
+                    Name = "BOT",
+                    SteamName = "BOT",
+                    SteamID = "0",
+                    Skill = new SkillLevel()
+                };
+
+                var averageScoreHumanPlayers = players.Average(x => x.Skill.SkillScore);
+                var minimumScoreHumanPlayers = players.Min(x => x.Skill.SkillScore);
+                var botScore = averageScoreHumanPlayers * 0.75;
+
+                if (minimumScoreHumanPlayers <= botScore)
+                {
+                    botScore = 0.9 * minimumScoreHumanPlayers;
+                }
+
+                bot.Skill.AddRating(new DummyRating { Score = botScore });
+                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
+
+                players.Add(bot);
+            }
+
+            return players;
         }
 
         private static double GetSkillDifference(Team terrorists, Team counterTerrorists)
