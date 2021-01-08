@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 
 namespace fairTeams.API
 {
-    public enum SolverOptions
-    {
-        Greedy,
-        Optimal
-    }
-
     public class SkillBasedAssigner : ITeamAssigner
     {
         private readonly MatchRepository myMatchRepository;
@@ -30,11 +24,6 @@ namespace fairTeams.API
         public SkillBasedAssigner(MatchRepository matchRepository) : this(matchRepository, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
-        {
-            return await GetAssignedPlayers(players, SolverOptions.Optimal);
-        }
-
-        private async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, SolverOptions option)
         {
             var playersList = players.ToList();
             myLogger.LogInformation($"Computing optimal assignment for players: {string.Join(", ", playersList.Select(x => x.SteamName))}");
@@ -69,62 +58,7 @@ namespace fairTeams.API
                 playersList.Add(bot);
             }
 
-            var sortedByScore = playersList.OrderByDescending(x => x.Skill.SkillScore).ToList();
-
-            var terrorists = new Team("Terrorists");
-            var counterTerrorists = new Team("CounterTerrorists");
-
-            switch (option)
-            {
-                case SolverOptions.Optimal:
-                    (terrorists, counterTerrorists) = OptimalAssigner(sortedByScore);
-                    break;
-                case SolverOptions.Greedy:
-                    (terrorists, counterTerrorists) = GreedyAssigner(sortedByScore);
-                    break;
-            }
-
-            return (terrorists, counterTerrorists);
-        }
-
-        private static (Team terrorists, Team counterTerrorists) GreedyAssigner(IEnumerable<Player> playersSortedByScore)
-        {
-            var sortedByScore = playersSortedByScore.ToList();
-
-            var bestPlayerIsTerrorist = new Random().NextDouble() < 0.5;
-
-            var terrorists = new Team("Terrorists");
-            var counterTerrorists = new Team("CounterTerrorists");
-
-            for (var i = 0; i < sortedByScore.Count; i++)
-            {
-                var currentPlayer = sortedByScore[i];
-
-                if (i % 2 == 0)
-                {
-                    if (bestPlayerIsTerrorist)
-                    {
-                        terrorists.Players.Add(currentPlayer);
-                    }
-                    else
-                    {
-                        counterTerrorists.Players.Add(currentPlayer);
-                    }
-                }
-                else
-                {
-                    if (bestPlayerIsTerrorist)
-                    {
-                        counterTerrorists.Players.Add(currentPlayer);
-                    }
-                    else
-                    {
-                        terrorists.Players.Add(currentPlayer);
-                    }
-                }
-            }
-
-            return (terrorists, counterTerrorists);
+            return OptimalAssigner(playersList);
         }
 
         private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
