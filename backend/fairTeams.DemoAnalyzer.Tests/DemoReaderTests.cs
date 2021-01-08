@@ -13,7 +13,9 @@ namespace fairTeams.DemoParser.Tests
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
-            var demoReader = new DemoReader(new Match { Demo = demo });
+
+            //Setting minimum number of rounds & players to 0 (different than during runtime) to allow reading this smaller demo file
+            var demoReader = new DemoReader(new Match { Demo = demo }, 0, 0);
 
             demoReader.ReadHeader();
             demoReader.Read();

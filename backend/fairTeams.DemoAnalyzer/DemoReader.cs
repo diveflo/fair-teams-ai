@@ -12,16 +12,22 @@ namespace fairTeams.DemoAnalyzer
         private readonly Demo myDemo;
         private FileStream myDemoFileStream;
         private DemoParser myDemoParser;
+        private int myMinimumRounds;
+        private int myMinimumPlayers;
         private readonly Dictionary<Player, int> myKillsThisRound;
         private bool myHasMatchStarted;
 
         public Match Match { get; }
 
-        public DemoReader(Match match)
+        public DemoReader(Match match) : this(match, 15, 5) { }
+
+        public DemoReader(Match match, int minimumRounds, int minimumPlayers)
         {
             Match = match;
-
             myDemo = match.Demo;
+            myMinimumRounds = minimumRounds;
+            myMinimumPlayers = minimumPlayers;
+
             myHasMatchStarted = false;
             myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
@@ -317,17 +323,14 @@ namespace fairTeams.DemoAnalyzer
 
         private void AssertMinimumRoundsAndPlayers()
         {
-            const int minimumRounds = 15;
-            const int minimumPlayers = 6;
-
-            if (Match.Rounds < minimumRounds)
+            if (Match.Rounds < myMinimumRounds)
             {
-                throw new TooFewRoundsException(minimumRounds, Match.Rounds);
+                throw new TooFewRoundsException(myMinimumRounds, Match.Rounds);
             }
 
-            if (Match.PlayerResults.Count < minimumPlayers)
+            if (Match.PlayerResults.Count < myMinimumPlayers)
             {
-                throw new TooFewPlayersException(minimumPlayers, Match.PlayerResults.Count);
+                throw new TooFewPlayersException(myMinimumPlayers, Match.PlayerResults.Count);
             }
         }
 
