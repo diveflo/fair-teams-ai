@@ -52,7 +52,6 @@ namespace fairTeams.API
                 {
                     Name = "BOT",
                     SteamName = "BOT",
-                    ProfilePublic = true,
                     SteamID = "0",
                     Skill = new SkillLevel()
                 };
@@ -181,14 +180,12 @@ namespace fairTeams.API
             {
                 var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
                 player.Skill.AddRating(await hltvRating);
-                player.ProfilePublic = true;
             }
             catch (ProfileNotPublicException)
             {
                 myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
 
                 player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
-                player.ProfilePublic = false;
             }
 
             return player;
