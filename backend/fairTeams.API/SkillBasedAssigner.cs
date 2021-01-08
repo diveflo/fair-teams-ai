@@ -44,9 +44,7 @@ namespace fairTeams.API
                 playersList[i] = await GetSkillLevel(playersList[i]);
             }
 
-            var sortedByScore = playersList.OrderByDescending(x => x.Skill.SkillScore).ToList();
-
-            if (sortedByScore.Count % 2 != 0)
+            if (playersList.Count % 2 != 0)
             {
                 var bot = new Player
                 {
@@ -56,8 +54,8 @@ namespace fairTeams.API
                     Skill = new SkillLevel()
                 };
 
-                var averageScoreHumanPlayers = sortedByScore.Average(x => x.Skill.SkillScore);
-                var minimumScoreHumanPlayers = sortedByScore.Min(x => x.Skill.SkillScore);
+                var averageScoreHumanPlayers = playersList.Average(x => x.Skill.SkillScore);
+                var minimumScoreHumanPlayers = playersList.Min(x => x.Skill.SkillScore);
                 var botScore = averageScoreHumanPlayers * 0.75;
 
                 if (minimumScoreHumanPlayers <= botScore)
@@ -68,12 +66,10 @@ namespace fairTeams.API
                 bot.Skill.AddRating(new DummyRating { Score = botScore });
                 myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
 
-                sortedByScore.Add(bot);
-                var bestPlayer = sortedByScore[0];
-                var secondBestPlayer = sortedByScore[1];
-                sortedByScore[0] = secondBestPlayer;
-                sortedByScore[1] = bestPlayer;
+                playersList.Add(bot);
             }
+
+            var sortedByScore = playersList.OrderByDescending(x => x.Skill.SkillScore).ToList();
 
             var terrorists = new Team("Terrorists");
             var counterTerrorists = new Team("CounterTerrorists");
