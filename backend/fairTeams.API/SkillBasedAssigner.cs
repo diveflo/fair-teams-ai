@@ -33,30 +33,7 @@ namespace fairTeams.API
                 playersList[i] = await GetSkillLevel(playersList[i]);
             }
 
-            if (playersList.Count % 2 != 0)
-            {
-                var bot = new Player
-                {
-                    Name = "BOT",
-                    SteamName = "BOT",
-                    SteamID = "0",
-                    Skill = new SkillLevel()
-                };
-
-                var averageScoreHumanPlayers = playersList.Average(x => x.Skill.SkillScore);
-                var minimumScoreHumanPlayers = playersList.Min(x => x.Skill.SkillScore);
-                var botScore = averageScoreHumanPlayers * 0.75;
-
-                if (minimumScoreHumanPlayers <= botScore)
-                {
-                    botScore = 0.9 * minimumScoreHumanPlayers;
-                }
-
-                bot.Skill.AddRating(new DummyRating { Score = botScore });
-                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
-
-                playersList.Add(bot);
-            }
+            playersList = AddBotIfNecessary(playersList);
 
             return OptimalAssigner(playersList);
         }
@@ -94,6 +71,36 @@ namespace fairTeams.API
 
             var smallSubsetOfOptimalAssinments = GetSmallSubsetOfBestAssignments(assignmentAndCost);
             return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
+        }
+
+        private List<Player> AddBotIfNecessary(List<Player> players)
+        {
+            if (players.Count % 2 != 0)
+            {
+                var bot = new Player
+                {
+                    Name = "BOT",
+                    SteamName = "BOT",
+                    SteamID = "0",
+                    Skill = new SkillLevel()
+                };
+
+                var averageScoreHumanPlayers = players.Average(x => x.Skill.SkillScore);
+                var minimumScoreHumanPlayers = players.Min(x => x.Skill.SkillScore);
+                var botScore = averageScoreHumanPlayers * 0.75;
+
+                if (minimumScoreHumanPlayers <= botScore)
+                {
+                    botScore = 0.9 * minimumScoreHumanPlayers;
+                }
+
+                bot.Skill.AddRating(new DummyRating { Score = botScore });
+                myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
+
+                players.Add(bot);
+            }
+
+            return players;
         }
 
         private static double GetSkillDifference(Team terrorists, Team counterTerrorists)
