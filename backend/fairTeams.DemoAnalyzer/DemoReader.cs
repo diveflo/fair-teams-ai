@@ -45,10 +45,19 @@ namespace fairTeams.DemoAnalyzer
             myDemoParser.PlayerKilled += HandlePlayerKilled;
             myDemoParser.RoundOfficiallyEnd += HandleRoundOfficiallyEnd;
 
-            myDemoParser.ParseToEnd();
+            try
+            {
+                myDemoParser.ParseToEnd();
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                throw new DemoReaderException($"Unexpected exception thrown during demo analysis: {e.Message}");
+            }
 
             ParseFinalTeamScores();
             ProcessMissingLastRound();
+
+            AssertMinimumRoundsAndPlayers();
 
             CheckResultConsistency();
         }
@@ -303,6 +312,22 @@ namespace fairTeams.DemoAnalyzer
                     throw new InconsistentStatisticsException($"The sum of the multiple kill statistic ({sumOfKills}) must be larger-than or equal" +
                         $"to the overall number of kills ({player.Kills}) for player with steamid: {player.SteamID}");
                 }
+            }
+        }
+
+        private void AssertMinimumRoundsAndPlayers()
+        {
+            const int minimumRounds = 15;
+            const int minimumPlayers = 6;
+
+            if (Match.Rounds < minimumRounds)
+            {
+                throw new TooFewRoundsException(minimumRounds, Match.Rounds);
+            }
+
+            if (Match.PlayerResults.Count < minimumPlayers)
+            {
+                throw new TooFewPlayersException(minimumPlayers, Match.PlayerResults.Count);
             }
         }
 
