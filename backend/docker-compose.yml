@@ -7,6 +7,9 @@ services:
       - STEAM_USERNAME=
       - STEAM_PASSWORD=
       - STEAM_WEBAPI_KEY=
+      - CSGO_FTP=
+      - CSGO_FTP_USERNAME=
+      - CSGO_FTP_PASSWORD=
       #- Logging__LogLevel__Default=Debug
     volumes:
       - ./databases:/root/.local/share/fairteamsai

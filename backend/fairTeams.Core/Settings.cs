@@ -7,6 +7,9 @@ namespace fairTeams.Core
         public static string SteamUsername => GetEnvironmentVariableMachineAndProcess("STEAM_USERNAME");
         public static string SteamPassword => GetEnvironmentVariableMachineAndProcess("STEAM_PASSWORD");
         public static string SteamWebAPIKey => GetEnvironmentVariableMachineAndProcess("STEAM_WEBAPI_KEY");
+        public static string CSGOServerFTP => GetEnvironmentVariableMachineAndProcess("CSGO_FTP");
+        public static string CSGOServerFTPUsername => GetEnvironmentVariableMachineAndProcess("CSGO_FTP_USERNAME");
+        public static string CSGOServerFTPPassword => GetEnvironmentVariableMachineAndProcess("CSGO_FTP_PASSWORD");
         public static string ApplicationFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "fairteamsai");
 
         public static string DemoWatchFolder => Path.Combine(ApplicationFolder, "demowatch");
