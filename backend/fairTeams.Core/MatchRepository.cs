@@ -22,8 +22,16 @@ namespace fairTeams.Core
         {
             if (newMatches.Any())
             {
+                Matches.Load();
                 foreach (var match in newMatches)
                 {
+                    var alreadyExists = Matches.Any(x => x.Id == match.Id);
+                    if (alreadyExists)
+                    {
+                        myLogger.LogDebug($"Match with id: {match.Id} already exists in repository.");
+                        continue;
+                    }
+
                     try
                     {
                         Matches.Add(match);
