@@ -53,6 +53,7 @@ namespace fairTeams.DemoHandling
         public void ProcessNewMatches(object state)
         {
             var newMatches = new List<Match>();
+            var blacklistedMatches = new List<Match>();
             var newDemoFiles = Directory.EnumerateFiles(myDemoWatchFolder).Where(x => x.EndsWith(".dem"));
 
             foreach (var demoFile in newDemoFiles)
@@ -70,7 +71,9 @@ namespace fairTeams.DemoHandling
                 }
                 catch (DemoReaderException e)
                 {
-                    myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}");
+                    myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}. Adding to repository without stats -> blacklisted.");
+                    match.PlayerResults.Clear();
+                    blacklistedMatches.Add(match);
                     continue;
                 }
                 finally
@@ -81,9 +84,10 @@ namespace fairTeams.DemoHandling
             }
 
             using var scope = myScopeFactory.CreateScope();
-            myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
+            myLogger.LogTrace($"Getting match repository to add {newMatches.Count} new matches and blacklist {blacklistedMatches.Count} demos.");
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             matchRepository.AddMatchesAndSave(newMatches);
+            matchRepository.AddMatchesAndSave(blacklistedMatches);
         }
     }
 }
