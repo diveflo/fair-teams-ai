@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fairTeams.Core;
+using fairTeams.Steamworks;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -31,7 +32,7 @@ namespace fairTeams.API.Tests
             match.PlayerResults.Add(new MatchStatistics { SteamID = 2, Id = "2", Kills = 2, Deaths = 2 });
             myMatchRepository.Add(match);
             myMatchRepository.SaveChanges();
-            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository);
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
 
             (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { new Player { SteamID = "1" }, new Player { SteamID = "2" } });
 
@@ -48,7 +49,7 @@ namespace fairTeams.API.Tests
             match.PlayerResults.Add(new MatchStatistics { SteamID = 3, Id = "3", Kills = 3, Deaths = 3 });
             myMatchRepository.Add(match);
             myMatchRepository.SaveChanges();
-            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository);
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
 
             (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { 
                 new Player { SteamID = "1", Name = "Emma"}, 
@@ -74,7 +75,7 @@ namespace fairTeams.API.Tests
             match.PlayerResults.Add(new MatchStatistics { SteamID = 4, Id = Guid.NewGuid().ToString(), Kills = 2, Deaths = 3, Rounds = 5 });
             myMatchRepository.Add(match);
             myMatchRepository.SaveChanges();
-            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository);
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
 
             (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { strongPlayer1, strongPlayer2, mediumPlayer1, mediumPlayer2 });
 

@@ -13,15 +13,17 @@ namespace fairTeams.API
     public class SkillBasedAssigner : ITeamAssigner
     {
         private readonly MatchRepository myMatchRepository;
+        private readonly SteamworksApi mySteamworksApi;
         private readonly ILogger myLogger;
 
-        public SkillBasedAssigner(MatchRepository matchRepository, ILogger<SkillBasedAssigner> logger)
+        public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi, ILogger<SkillBasedAssigner> logger)
         {
             myMatchRepository = matchRepository;
+            mySteamworksApi = steamworksApi;
             myLogger = logger;
         }
 
-        public SkillBasedAssigner(MatchRepository matchRepository) : this(matchRepository, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
+        public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi) : this(matchRepository, steamworksApi, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
@@ -130,7 +132,7 @@ namespace fairTeams.API
 
             try
             {
-                var steamapiStatistics = await SteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var steamapiStatistics = await mySteamworksApi.ParsePlayerStatistics(player.SteamID);
                 var kdRating = new KDRating(steamapiStatistics);
                 player.Skill.AddRating(kdRating);
                 return player;

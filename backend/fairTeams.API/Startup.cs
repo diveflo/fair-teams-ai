@@ -1,5 +1,6 @@
 using fairTeams.Core;
 using fairTeams.DemoHandling;
+using fairTeams.Steamworks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,8 @@ namespace fairTeams.API
             services.AddHostedService<MatchMakingDemoCollector>();
             services.AddHostedService<LocalDemoCollector>();
             services.AddHostedService<FTPDemoCollector>();
+
+            services.AddTransient<SteamworksApi>();
 
             services.AddScoped<ITeamAssigner, SkillBasedAssigner>();
         }

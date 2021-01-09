@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace fairTeams.Steamworks
 {
-    public static class SteamworksApi
+    public class SteamworksApi
     {
-        public static async Task<IDictionary<string, string>> ParseSteamUsernames(IList<string> steamIDs)
+        public virtual async Task<IDictionary<string, string>> ParseSteamUsernames(IList<string> steamIDs)
         {
             var commaDelimitedSteamIDs = string.Join(",", steamIDs);
 
@@ -33,7 +33,7 @@ namespace fairTeams.Steamworks
             return steamIDsWithUsernames;
         }
 
-        public static async Task<IList<Statistic>> ParsePlayerStatistics(string steamID)
+        public virtual async Task<IList<Statistic>> ParsePlayerStatistics(string steamID)
         {
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key={Settings.SteamWebAPIKey}&steamid={steamID}");
             webRequest.ContentType = "application/json";
@@ -54,7 +54,7 @@ namespace fairTeams.Steamworks
             }
         }
 
-        public static async Task<string> GetNextMatchSharingCode(string steamID, string authenticationCodeForUser, string previousSharingCodeForUser)
+        public virtual async Task<string> GetNextMatchSharingCode(string steamID, string authenticationCodeForUser, string previousSharingCodeForUser)
         {
             var webRequest = WebRequest.Create($"https://api.steampowered.com/ICSGOPlayers_730/GetNextMatchSharingCode/v1?key={Settings.SteamWebAPIKey}&steamid={steamID}&steamidkey={authenticationCodeForUser}&knowncode={previousSharingCodeForUser}");
             webRequest.ContentType = "application/json";

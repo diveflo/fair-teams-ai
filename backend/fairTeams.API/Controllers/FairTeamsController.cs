@@ -14,11 +14,13 @@ namespace fairTeams.API.Controllers
     public class FairTeamsController : ControllerBase
     {
         private readonly ITeamAssigner myAssigner;
+        private readonly SteamworksApi mySteamworksApi;
         private readonly ILogger myLogger;
 
-        public FairTeamsController(ITeamAssigner teamAssigner, ILogger<FairTeamsController> logger)
+        public FairTeamsController(ITeamAssigner teamAssigner, SteamworksApi steamworksApi, ILogger<FairTeamsController> logger)
         {
             myAssigner = teamAssigner;
+            mySteamworksApi = steamworksApi;
             myLogger = logger;
         }
 
@@ -34,7 +36,7 @@ namespace fairTeams.API.Controllers
 
         private async Task<IEnumerable<Player>> GetSteamUsernames(IEnumerable<RequestPlayer> players)
         {
-            var steamIDsWithUsernames = await SteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
+            var steamIDsWithUsernames = await mySteamworksApi.ParseSteamUsernames(players.Select(x => x.SteamID).ToList());
             var extendedPlayers = new List<Player>();
 
             foreach (var player in players)
