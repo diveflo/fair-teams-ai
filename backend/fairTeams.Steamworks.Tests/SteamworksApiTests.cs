@@ -14,7 +14,9 @@ namespace fairTeams.Steamworks.Tests
         [Fact]
         public void ParseSteamUsernames_ValidSteamID_ReturnsFairTeamsAIUsername()
         {
-            var steamUsername = SteamworksApi.ParseSteamUsernames(new List<string> { myPrivateProfilePlayerSteamID }).Result.First().Value;
+            var steamworksApi = new SteamworksApi();
+
+            var steamUsername = steamworksApi.ParseSteamUsernames(new List<string> { myPrivateProfilePlayerSteamID }).Result.First().Value;
 
             Assert.Equal(myPrivateProfilePlayerSteamUsername, steamUsername);
         }
@@ -23,8 +25,9 @@ namespace fairTeams.Steamworks.Tests
         public void ParseSteamUsernames_InvalidSteamID_ReturnsNothing()
         {
             var invalidSteamID = "0";
+            var steamworksApi = new SteamworksApi();
 
-            var steamIDsWithUsername = SteamworksApi.ParseSteamUsernames(new List<string> { invalidSteamID }).Result;
+            var steamIDsWithUsername = steamworksApi.ParseSteamUsernames(new List<string> { invalidSteamID }).Result;
 
             Assert.Empty(steamIDsWithUsername);
         }
@@ -34,8 +37,9 @@ namespace fairTeams.Steamworks.Tests
         {
             var invalidSteamID = "0";
             var oneValidOneInvalidSteamID = new List<string> { myPrivateProfilePlayerSteamID, invalidSteamID };
+            var steamworksApi = new SteamworksApi();
 
-            var steamIDsWithUsername = SteamworksApi.ParseSteamUsernames(oneValidOneInvalidSteamID).Result;
+            var steamIDsWithUsername = steamworksApi.ParseSteamUsernames(oneValidOneInvalidSteamID).Result;
 
             Assert.Single(steamIDsWithUsername);
             Assert.Equal(myPrivateProfilePlayerSteamUsername, steamIDsWithUsername.First().Value);
@@ -44,7 +48,9 @@ namespace fairTeams.Steamworks.Tests
         [Fact]
         public async Task ParsePlayerStatistics_ProfileNotPublic_ThrowsProfileNotPublicException()
         {
-            var parseStatisticsTask = SteamworksApi.ParsePlayerStatistics(myPrivateProfilePlayerSteamID);
+            var steamworksApi = new SteamworksApi();
+
+            var parseStatisticsTask = steamworksApi.ParsePlayerStatistics(myPrivateProfilePlayerSteamID);
 
             await Assert.ThrowsAsync<ProfileNotPublicException>(() => parseStatisticsTask);
         }
@@ -59,8 +65,9 @@ namespace fairTeams.Steamworks.Tests
                 "total_damage_done",
                 "total_kills_bizon"
             };
+            var steamworksApi = new SteamworksApi();
 
-            var statistics = SteamworksApi.ParsePlayerStatistics(myPublicProfilePlayerSteamID).Result;
+            var statistics = steamworksApi.ParsePlayerStatistics(myPublicProfilePlayerSteamID).Result;
 
             Assert.True(statistics.Any());
 
@@ -76,7 +83,9 @@ namespace fairTeams.Steamworks.Tests
             var previousSharingCode = "CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ";
             var authenticationToken = "7TDM-B27HW-THBQ";
 
-            var nextSharingCode = await SteamworksApi.GetNextMatchSharingCode(myPublicProfilePlayerSteamID, authenticationToken, previousSharingCode);
+            var steamworksApi = new SteamworksApi();
+
+            var nextSharingCode = await steamworksApi.GetNextMatchSharingCode(myPublicProfilePlayerSteamID, authenticationToken, previousSharingCode);
 
             Assert.Equal("CSGO-k2TXT-9rmts-XE8G2-yqGVu-FhnEM", nextSharingCode);
         }

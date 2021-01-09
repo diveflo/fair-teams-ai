@@ -117,6 +117,7 @@ namespace fairTeams.DemoHandling
             using var scope = myScopeFactory.CreateScope();
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
+            var steamworksApi = scope.ServiceProvider.GetRequiredService<SteamworksApi>();
 
             var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
             var newSharingCodes = new List<string>();
@@ -125,7 +126,7 @@ namespace fairTeams.DemoHandling
 
             foreach (var user in steamUsers)
             {
-                var sharingCode = await SteamworksApi.GetNextMatchSharingCode(user.SteamID.ToString(), user.AuthenticationCode, user.LastSharingCode);
+                var sharingCode = await steamworksApi.GetNextMatchSharingCode(user.SteamID.ToString(), user.AuthenticationCode, user.LastSharingCode);
                 if (sharingCode.Equals("n/a") || sharingCode.Equals(user.LastSharingCode))
                 {
                     myLogger.LogTrace($"No new sharing code for Steam ID: {user.SteamID}");

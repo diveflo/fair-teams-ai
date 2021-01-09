@@ -13,15 +13,17 @@ namespace fairTeams.API
     public class SkillBasedAssigner : ITeamAssigner
     {
         private readonly MatchRepository myMatchRepository;
+        private readonly SteamworksApi mySteamworksApi;
         private readonly ILogger myLogger;
 
-        public SkillBasedAssigner(MatchRepository matchRepository, ILogger<SkillBasedAssigner> logger)
+        public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi, ILogger<SkillBasedAssigner> logger)
         {
             myMatchRepository = matchRepository;
+            mySteamworksApi = steamworksApi;
             myLogger = logger;
         }
 
-        public SkillBasedAssigner(MatchRepository matchRepository) : this(matchRepository, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
+        public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi) : this(matchRepository, steamworksApi, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
         public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
         {
@@ -121,11 +123,23 @@ namespace fairTeams.API
             {
                 var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
                 player.Skill.AddRating(await hltvRating);
+                return player;
+            }
+            catch (NoMatchstatisticsFoundException)
+            {
+                myLogger.LogWarning($"Didn't find any matches for {player.Name} (Steam ID: {player.SteamID}). Trying overall K/D rating from Steam.");
+            }
+
+            try
+            {
+                var steamapiStatistics = await mySteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var kdRating = new KDRating(steamapiStatistics);
+                player.Skill.AddRating(kdRating);
+                return player;
             }
             catch (ProfileNotPublicException)
             {
                 myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
-
                 player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
             }
 
