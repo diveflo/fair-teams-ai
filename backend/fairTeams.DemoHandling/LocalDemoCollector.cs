@@ -74,7 +74,6 @@ namespace fairTeams.DemoHandling
                     myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}. Adding to repository without stats -> blacklisted.");
                     match.PlayerResults.Clear();
                     blacklistedMatches.Add(match);
-                    continue;
                 }
                 finally
                 {
