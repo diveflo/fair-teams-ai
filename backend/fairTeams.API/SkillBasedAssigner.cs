@@ -35,7 +35,11 @@ namespace fairTeams.API
 
             playersList = AddBotIfNecessary(playersList);
 
-            return OptimalAssigner(playersList);
+            (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
+            terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
+            counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
+
+            return (terrorists, counterTerrorists);
         }
 
         private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
