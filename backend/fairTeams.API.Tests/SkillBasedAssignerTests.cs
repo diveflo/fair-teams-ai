@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using fairTeams.Core;
+﻿using fairTeams.Core;
 using fairTeams.Steamworks;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
-
 using Match = fairTeams.Core.Match;
 
 namespace fairTeams.API.Tests
@@ -52,9 +51,9 @@ namespace fairTeams.API.Tests
             myMatchRepository.SaveChanges();
             var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
 
-            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { 
-                new Player { SteamID = "1", Name = "Emma"}, 
-                new Player { SteamID = "2", Name = "Kathy"}, 
+            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> {
+                new Player { SteamID = "1", Name = "Emma"},
+                new Player { SteamID = "2", Name = "Kathy"},
                 new Player { SteamID = "3", Name = "Baltasar" } });
 
             Assert.Equal(2, t.Players.Count);
@@ -92,7 +91,7 @@ namespace fairTeams.API.Tests
             var steamworksApiMock = new Mock<SteamworksApi>();
             steamworksApiMock
                 .Setup(x => x.ParsePlayerStatistics(It.IsAny<string>()))
-                .Returns(Task.FromResult((IList<Statistic>) new List<Statistic> {
+                .Returns(Task.FromResult((IList<Statistic>)new List<Statistic> {
                     new Statistic {Name = "total_kills", Value = 5 },
                     new Statistic {Name = "total_deaths", Value = 1 }
                  }));
