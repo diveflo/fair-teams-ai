@@ -55,7 +55,9 @@ namespace fairTeams.DemoHandling
             myFtpClient.Connect();
 
             var allDemoFiles = ListDemoFilesOnFTPServer();
+            myLogger.LogTrace($"Found {allDemoFiles.Count} demo files on FTP server.");
             var newDemoFiles = GetNewDemoFiles(allDemoFiles);
+            myLogger.LogTrace($"{newDemoFiles.Count} of the found {allDemoFiles.Count} demo files on the FTP server are new.");
 
             var downloadedFilesAndStatus = DownloadDemoFiles(newDemoFiles);
             FixFileExtensionForSuccessfulDownloads(downloadedFilesAndStatus);

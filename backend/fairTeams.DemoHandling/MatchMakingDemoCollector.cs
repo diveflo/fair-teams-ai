@@ -133,10 +133,15 @@ namespace fairTeams.DemoHandling
                 }
 
                 myLogger.LogTrace($"New sharing code {sharingCode} for Steam ID: {user.SteamID}");
-
                 user.LastSharingCode = sharingCode;
 
-                if (newSharingCodes.Contains(sharingCode) || alreadyProcessedSharingCodes.Contains(sharingCode))
+                if (alreadyProcessedSharingCodes.Contains(sharingCode))
+                {
+                    myLogger.LogTrace($"Match for sharing code {sharingCode} already processed.");
+                    continue;
+                }
+
+                if (newSharingCodes.Contains(sharingCode))
                 {
                     continue;
                 }
