@@ -10,7 +10,8 @@ namespace fairTeams.API.Rating
 
         public HLTVRating(long steamID, MatchRepository matchRepository)
         {
-            Score = matchRepository.Matches.SelectMany(x => x.PlayerResults).Where(y => y.SteamID == steamID).ToList().Average(z => z.HLTVScore);
+            var allMatchStatisticsForPlayer = matchRepository.GetAllMatchStatisticsForSteamId(steamID);
+            Score = allMatchStatisticsForPlayer.Average(z => z.HLTVScore);
         }
     }
 }
