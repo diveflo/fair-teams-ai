@@ -53,6 +53,19 @@ namespace fairTeams.Core
             }
         }
 
+        public IList<MatchStatistics> GetAllMatchStatisticsForSteamId(long steamId)
+        {
+            Matches.Load();
+            var allMatchstatistics = Matches.SelectMany(x => x.PlayerResults);
+            var hasMatchesForSteamId = allMatchstatistics.Any(x => x.SteamID == steamId);
+            if (!hasMatchesForSteamId)
+            {
+                throw new NoMatchstatisticsFoundException(steamId);
+            }
+
+            return allMatchstatistics.Where(x => x.SteamID == steamId).ToList();
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Match>()
