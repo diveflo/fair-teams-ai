@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fairTeams.Core;
 using fairTeams.Steamworks;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Xunit;
 
 using Match = fairTeams.Core.Match;
@@ -83,6 +84,42 @@ namespace fairTeams.API.Tests
             Assert.Equal(2, ct.Players.Count);
             Assert.False(t.Players.Contains(strongPlayer1) && t.Players.Contains(strongPlayer2));
             Assert.False(ct.Players.Contains(strongPlayer1) && ct.Players.Contains(strongPlayer2));
+        }
+
+        [Fact]
+        public async Task GetAssignedPlayers_NoMatchesForPlayer_UsesKDRating()
+        {
+            var steamworksApiMock = new Mock<SteamworksApi>();
+            steamworksApiMock
+                .Setup(x => x.ParsePlayerStatistics(It.IsAny<string>()))
+                .Returns(Task.FromResult((IList<Statistic>) new List<Statistic> {
+                    new Statistic {Name = "total_kills", Value = 5 },
+                    new Statistic {Name = "total_deaths", Value = 1 }
+                 }));
+
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, steamworksApiMock.Object);
+            var steamIdOfPlayerWithoutMatches = "111";
+
+            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { new Player { SteamID = steamIdOfPlayerWithoutMatches } });
+
+            steamworksApiMock.Verify(x => x.ParsePlayerStatistics(steamIdOfPlayerWithoutMatches));
+            var playersOfBothTeams = t.Players.Concat(ct.Players);
+            Assert.Equal(5, playersOfBothTeams.Single(x => x.SteamID.Equals(steamIdOfPlayerWithoutMatches)).Skill.SkillScore);
+        }
+
+        [Fact]
+        public async Task GetAssignedPlayers_NoMatchesForPlayerProfileNotPublic_UsesDummyRating()
+        {
+            var steamworksApiMock = new Mock<SteamworksApi>();
+            steamworksApiMock.Setup(x => x.ParsePlayerStatistics(It.IsAny<string>())).Throws(new ProfileNotPublicException());
+
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, steamworksApiMock.Object);
+            var steamIdOfPlayerWithoutMatches = "111";
+
+            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { new Player { SteamID = steamIdOfPlayerWithoutMatches } });
+
+            var player = t.Players.Concat(ct.Players).Single(x => x.SteamID.Equals(steamIdOfPlayerWithoutMatches));
+            Assert.InRange(player.Skill.SkillScore, 0.3, 1.3);
         }
 
         public void Dispose()
