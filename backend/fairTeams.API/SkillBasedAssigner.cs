@@ -121,11 +121,23 @@ namespace fairTeams.API
             {
                 var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
                 player.Skill.AddRating(await hltvRating);
+                return player;
+            }
+            catch (NoMatchstatisticsFoundException)
+            {
+                myLogger.LogWarning($"Didn't find any matches for {player.Name} (Steam ID: {player.SteamID}). Trying overall K/D rating from Steam.");
+            }
+
+            try
+            {
+                var steamapiStatistics = await SteamworksApi.ParsePlayerStatistics(player.SteamID);
+                var kdRating = new KDRating(steamapiStatistics);
+                player.Skill.AddRating(kdRating);
+                return player;
             }
             catch (ProfileNotPublicException)
             {
                 myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
-
                 player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
             }
 
