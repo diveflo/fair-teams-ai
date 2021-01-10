@@ -20,7 +20,7 @@ class BotsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Include Bots?",
+                  "Include Bot?",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Switch(

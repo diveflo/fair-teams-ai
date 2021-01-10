@@ -32,10 +32,6 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
     super.dispose();
   }
 
-  void _scramblePlayers() {
-    StoreProvider.of<AppState>(context).dispatch(scrambleTeamsRandom());
-  }
-
   void _scrambleApi({bool hltv = false}) {
     StoreProvider.of<AppState>(context)
         .dispatch(scrambleTeams(hltv, _confettiController));
@@ -53,24 +49,6 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: MyButtonWidget(
                 buttonText: "Scramble",
-                onPressed: _scramblePlayers,
-                color: Colors.lime,
-              ),
-            ),
-            isLoading ? CircularProgressIndicator() : Container(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: MyButtonWidget(
-                buttonText: "ScrambleApi",
-                isDisabled: true,
-                onPressed: _scrambleApi,
-                color: Colors.lime,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: MyButtonWidget(
-                buttonText: "ScrambleApi HLTV",
                 onPressed: _scrambleApi,
                 color: Colors.lime,
               ),
