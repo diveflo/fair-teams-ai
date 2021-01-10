@@ -62,6 +62,7 @@ class _CandidatesWidgetState extends State<CandidatesWidget> {
                     return ListView.builder(
                       controller: _scrollController,
                       itemCount: players.length,
+                      itemExtent: 30,
                       itemBuilder: (BuildContext context, int index) {
                         return new CheckboxListTile(
                           title: Text(players[index].name,
