@@ -25,7 +25,12 @@ namespace fairTeams.API
 
         public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi) : this(matchRepository, steamworksApi, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
-        public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+        public Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+        {
+            return GetAssignedPlayers(players, true);
+        }
+
+        public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, bool includeBot)
         {
             var playersList = players.ToList();
             myLogger.LogInformation($"Computing optimal assignment for players: {string.Join(", ", playersList.Select(x => x.SteamName))}");
@@ -163,5 +168,7 @@ namespace fairTeams.API
             var indexOfAssignment = new Random().Next(0, smallSubsetOfOptimalAssignments.Count);
             return smallSubsetOfOptimalAssignments.ElementAt(indexOfAssignment);
         }
+
+        
     }
 }
