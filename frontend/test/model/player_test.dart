@@ -31,7 +31,7 @@ void main() {
         "name": "player1",
         "steamName": "player1",
         "steamID": "id122",
-        "skill": {"skillScore": double.maxFinite, "form": "none"}
+        "skill": {"skillScore": double.maxFinite, "skillTrend": 0}
       });
     });
   });
@@ -44,7 +44,7 @@ void main() {
         "steamID": "001",
         "skill": {
           "skillScore": 0.1,
-          "form": "none",
+          "skillTrend": 0,
         }
       };
 
