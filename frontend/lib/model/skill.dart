@@ -1,17 +1,17 @@
 class Skill {
   double skillScore;
-  String form;
+  int skillTrend;
 
-  Skill({this.skillScore = double.maxFinite, this.form = "none"});
+  Skill({this.skillScore = double.maxFinite, this.skillTrend = 0});
 
   Skill.fromJson(dynamic json) {
     skillScore =
         json["skillScore"] != null ? json["skillScore"] : double.maxFinite;
-    form = json["form"] != null ? json["form"] : "none";
+    skillTrend = json["skillTrend"] != null ? json["skillTrend"] : 0;
   }
 
   dynamic toJson() => {
         "skillScore": skillScore,
-        "form": form,
+        "skillTrend": skillTrend,
       };
 }

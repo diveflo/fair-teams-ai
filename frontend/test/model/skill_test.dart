@@ -6,14 +6,14 @@ void main() {
     test("sets default parameter", () {
       Skill skill = Skill();
 
-      expect(skill.form, "none");
+      expect(skill.skillTrend, 0);
       expect(skill.skillScore, double.maxFinite);
     });
 
     test("sets parameter", () {
-      Skill skill = Skill(form: "rising", skillScore: 1.0);
+      Skill skill = Skill(skillTrend: 1, skillScore: 1.0);
 
-      expect(skill.form, "rising");
+      expect(skill.skillTrend, 1);
       expect(skill.skillScore, 1.0);
     });
   });
@@ -22,12 +22,12 @@ void main() {
     test("set all parameter from json", () {
       var inputJson = {
         "skillScore": 1.0,
-        "form": "dropping",
+        "skillTrend": 1,
       };
 
       Skill skill = Skill.fromJson(inputJson);
 
-      expect(skill.form, "dropping");
+      expect(skill.skillTrend, 1);
       expect(skill.skillScore, 1.0);
     });
 
@@ -36,15 +36,15 @@ void main() {
 
       Skill skill = Skill.fromJson(inputJson);
 
-      expect(skill.form, "none");
+      expect(skill.skillTrend, 0);
       expect(skill.skillScore, double.maxFinite);
     });
   });
 
   test("to json", () {
-    Skill skill = Skill(form: "rising", skillScore: 2.2);
+    Skill skill = Skill(skillTrend: 1, skillScore: 2.2);
     var expectedJson = {
-      "form": "rising",
+      "skillTrend": 1,
       "skillScore": 2.2,
     };
 
