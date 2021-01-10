@@ -11,7 +11,65 @@ void main() {
       expect(gameConfig.candidates.length, 12);
     });
   });
-  group("json converter", () {
+
+  group("fromJson", () {
+    test("sets all values from json", () {
+      var gameConfigInputJson = {
+        "candidates": [
+          {
+            "name": "player1",
+            "steamID": "player1id",
+            "isSelected": true,
+          },
+          {
+            "name": "player2",
+            "steamID": "player2id",
+            "isSelected": false,
+          }
+        ],
+        "mapPool": [
+          {
+            "name": "inferno",
+            "imagePath": "inferno.png",
+            "isChecked": true,
+          }
+        ],
+        "includeBots": false,
+      };
+
+      GameConfigState gameConfig =
+          GameConfigState.fromJson(gameConfigInputJson);
+
+      expect(gameConfig.candidates.length, 2);
+      expect(gameConfig.mapPool.maps.length, 1);
+      expect(gameConfig.includeBots, false);
+    });
+  });
+
+  test("toJson", () {
+    var expectedJson = {
+      "candidates": [
+        {
+          "name": "player1",
+          "steamID": "player1id",
+          "isSelected": true,
+        },
+        {
+          "name": "player2",
+          "steamID": "player2id",
+          "isSelected": false,
+        }
+      ],
+      "mapPool": [
+        {
+          "name": "inferno",
+          "imagePath": "inferno.png",
+          "isChecked": true,
+        }
+      ],
+      "includeBots": false,
+    };
+
     GameConfigState gameConfig = GameConfigState(
       candidates: [
         Candidate(
@@ -32,40 +90,11 @@ void main() {
           isChecked: true,
         )
       ]),
+      includeBots: false,
     );
 
-    var gameConfigJson = {
-      "candidates": [
-        {
-          "name": "player1",
-          "steamID": "player1id",
-          "isSelected": true,
-        },
-        {
-          "name": "player2",
-          "steamID": "player2id",
-          "isSelected": false,
-        }
-      ],
-      "mapPool": [
-        {
-          "name": "inferno",
-          "imagePath": "inferno.png",
-          "isChecked": true,
-        }
-      ]
-    };
-    test("convert state to json", () {
-      var convertedGameConfigJson = gameConfig.toJson();
+    var convertedGameConfigJson = gameConfig.toJson();
 
-      expect(convertedGameConfigJson, gameConfigJson);
-    });
-
-    test("converts json to appState", () {
-      var convertedAppState = GameConfigState.fromJson(gameConfigJson);
-
-      expect(convertedAppState.candidates.length, 2);
-      expect(convertedAppState.mapPool.maps.length, 1);
-    });
+    expect(convertedGameConfigJson, expectedJson);
   });
 }
