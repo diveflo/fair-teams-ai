@@ -1,13 +1,17 @@
+const String PLATEAU = "Plateau";
+const String UPWARDS = "Upwards";
+const String DOWNWARDS = "Downwards";
+
 class Skill {
   double skillScore;
-  int skillTrend;
+  String skillTrend;
 
-  Skill({this.skillScore = double.maxFinite, this.skillTrend = 0});
+  Skill({this.skillScore = double.maxFinite, this.skillTrend = PLATEAU});
 
   Skill.fromJson(dynamic json) {
     skillScore =
         json["skillScore"] != null ? json["skillScore"] : double.maxFinite;
-    skillTrend = json["skillTrend"] != null ? json["skillTrend"] : 0;
+    skillTrend = json["skillTrend"] != null ? json["skillTrend"] : PLATEAU;
   }
 
   dynamic toJson() => {

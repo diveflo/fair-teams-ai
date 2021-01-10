@@ -86,7 +86,7 @@ class SkillWidget extends StatelessWidget {
           SizedBox(
             width: 10,
           ),
-          SkillFormIcon(form: skill.skillTrend),
+          SkillFormIcon(skillTrend: skill.skillTrend),
         ],
       ),
     );
@@ -94,23 +94,23 @@ class SkillWidget extends StatelessWidget {
 }
 
 class SkillFormIcon extends StatelessWidget {
-  final int form;
+  final String skillTrend;
 
-  SkillFormIcon({@required this.form});
+  SkillFormIcon({@required this.skillTrend});
 
   _getFormIcon() {
-    if (form == 0) {
+    if (skillTrend == PLATEAU) {
       return Icon(
         Icons.trending_flat,
       );
     }
-    if (form == 1) {
+    if (skillTrend == UPWARDS) {
       return Icon(
         Icons.trending_up,
         color: Colors.teal,
       );
     }
-    if (form == 2) {
+    if (skillTrend == DOWNWARDS) {
       return Icon(
         Icons.trending_down,
         color: Colors.red,
