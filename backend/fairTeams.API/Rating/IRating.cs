@@ -4,5 +4,6 @@ namespace fairTeams.API.Rating
     {
         string Name { get; }
         double Score { get; }
+        Trend Trend { get; }
     }
 }

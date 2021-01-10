@@ -10,6 +10,8 @@ namespace fairTeams.API.Rating
         public string Name => "KD";
         public double Score { get; }
 
+        public Trend Trend { get; }
+
         public KDRating(IEnumerable<Statistic> playerStatistics)
         {
             if (!playerStatistics.Any(x => x.Name == "total_kills") || !playerStatistics.Any(x => x.Name == "total_deaths"))
