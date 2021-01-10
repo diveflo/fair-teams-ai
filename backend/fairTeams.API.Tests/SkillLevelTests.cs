@@ -7,11 +7,11 @@ namespace fairTeams.API.Tests
     public class SkillLevelTests
     {
         [Fact]
-        public void SkillScore_NoRatingsAdded_ThrowsInvalidOperation()
+        public void SkillScore_NoRatingsAdded_ThrowsNullRef()
         {
             var skillLevel = new SkillLevel();
 
-            Assert.Throws<InvalidOperationException>(() => skillLevel.SkillScore);
+            Assert.Throws<NullReferenceException>(() => skillLevel.SkillScore);
         }
 
         [Fact]
@@ -19,20 +19,7 @@ namespace fairTeams.API.Tests
         {
             var expectedScore = 1.0d;
             var skillLevel = new SkillLevel();
-            skillLevel.AddRating(new DummyRating() { Score = expectedScore });
-
-            var skillScore = skillLevel.SkillScore;
-
-            Assert.Equal(expectedScore, skillScore);
-        }
-
-        [Fact]
-        public void SkillScore_TwoRatingsAdded_ReturnsAverage()
-        {
-            var expectedScore = 2.0d;
-            var skillLevel = new SkillLevel();
-            skillLevel.AddRating(new DummyRating() { Score = 1.0d });
-            skillLevel.AddRating(new DummyRating() { Score = 3.0d });
+            skillLevel.SetRating(new DummyRating() { Score = expectedScore });
 
             var skillScore = skillLevel.SkillScore;
 
@@ -43,9 +30,9 @@ namespace fairTeams.API.Tests
         public void CompareTo_FirstBetterThanSecond_ReturnsNegativeValue()
         {
             var firstSkillLevel = new SkillLevel();
-            firstSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+            firstSkillLevel.SetRating(new DummyRating() { Score = 1.0d });
             var secondSkillLevel = new SkillLevel();
-            secondSkillLevel.AddRating(new DummyRating() { Score = 0.5d });
+            secondSkillLevel.SetRating(new DummyRating() { Score = 0.5d });
 
             var comparisonResult = firstSkillLevel.CompareTo(secondSkillLevel);
 
@@ -56,9 +43,9 @@ namespace fairTeams.API.Tests
         public void CompareTo_SameScore_ReturnsZero()
         {
             var firstSkillLevel = new SkillLevel();
-            firstSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+            firstSkillLevel.SetRating(new DummyRating() { Score = 1.0d });
             var secondSkillLevel = new SkillLevel();
-            secondSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+            secondSkillLevel.SetRating(new DummyRating() { Score = 1.0d });
 
             var comparisonResult = firstSkillLevel.CompareTo(secondSkillLevel);
 
@@ -69,9 +56,9 @@ namespace fairTeams.API.Tests
         public void CompareTo_SecondBetterThanFirst_ReturnsPositiveValue()
         {
             var firstSkillLevel = new SkillLevel();
-            firstSkillLevel.AddRating(new DummyRating() { Score = 0.5d });
+            firstSkillLevel.SetRating(new DummyRating() { Score = 0.5d });
             var secondSkillLevel = new SkillLevel();
-            secondSkillLevel.AddRating(new DummyRating() { Score = 1.0d });
+            secondSkillLevel.SetRating(new DummyRating() { Score = 1.0d });
 
             var comparisonResult = firstSkillLevel.CompareTo(secondSkillLevel);
 

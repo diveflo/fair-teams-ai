@@ -93,7 +93,9 @@ namespace fairTeams.API.Tests
                 .Setup(x => x.ParsePlayerStatistics(It.IsAny<string>()))
                 .Returns(Task.FromResult((IList<Statistic>)new List<Statistic> {
                     new Statistic {Name = "total_kills", Value = 5 },
-                    new Statistic {Name = "total_deaths", Value = 1 }
+                    new Statistic {Name = "total_deaths", Value = 1 },
+                    new Statistic {Name = "last_match_kills", Value = 5 },
+                    new Statistic {Name = "last_match_deaths", Value = 5 }
                  }));
 
             var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, steamworksApiMock.Object);

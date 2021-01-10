@@ -1,25 +1,20 @@
 using fairTeams.API.Rating;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace fairTeams.API
 {
     public class SkillLevel : IComparable
     {
-        private readonly IList<IRating> myRatings;
+        private IRating myRating;
 
-        public double SkillScore => myRatings.Average(x => x.Score);
-        public SkillLevel()
-        {
-            myRatings = new List<IRating>();
-        }
+        public double SkillScore => myRating.Score;
+        public Trend SkillTrend => myRating.Trend;
 
-        public void AddRating(IRating rating)
+        public void SetRating(IRating rating)
         {
-            if (!myRatings.Contains(rating))
+            if (myRating == null)
             {
-                myRatings.Add(rating);
+                myRating = rating;
             }
         }
 

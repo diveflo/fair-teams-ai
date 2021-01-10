@@ -8,10 +8,15 @@ namespace fairTeams.API.Rating
         public string Name => "HLTV";
         public double Score { get; }
 
+        public Trend Trend { get; }
+
         public HLTVRating(long steamID, MatchRepository matchRepository)
         {
             var allMatchStatisticsForPlayer = matchRepository.GetAllMatchStatisticsForSteamId(steamID);
             Score = allMatchStatisticsForPlayer.Average(z => z.HLTVScore);
+
+            var latestMatchStatisticForPlayer = matchRepository.GetLatestMatchStatisticForSteamId(steamID);
+            Trend = TrendHelper.GetTrend(Score, latestMatchStatisticForPlayer.HLTVScore);
         }
     }
 }

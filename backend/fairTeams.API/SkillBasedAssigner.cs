@@ -100,7 +100,7 @@ namespace fairTeams.API
                     botScore = 0.9 * minimumScoreHumanPlayers;
                 }
 
-                bot.Skill.AddRating(new DummyRating { Score = botScore });
+                bot.Skill.SetRating(new DummyRating { Score = botScore });
                 myLogger.LogInformation($"Balancing team sizes by adding bot with a score of {botScore}");
 
                 players.Add(bot);
@@ -122,7 +122,7 @@ namespace fairTeams.API
             try
             {
                 var hltvRating = Task.Run(() => new HLTVRating(long.Parse(player.SteamID), myMatchRepository));
-                player.Skill.AddRating(await hltvRating);
+                player.Skill.SetRating(await hltvRating);
                 return player;
             }
             catch (NoMatchstatisticsFoundException)
@@ -134,13 +134,13 @@ namespace fairTeams.API
             {
                 var steamapiStatistics = await mySteamworksApi.ParsePlayerStatistics(player.SteamID);
                 var kdRating = new KDRating(steamapiStatistics);
-                player.Skill.AddRating(kdRating);
+                player.Skill.SetRating(kdRating);
                 return player;
             }
             catch (ProfileNotPublicException)
             {
                 myLogger.LogWarning($"{player.Name}'s profile (Steam ID: {player.SteamID}) seems not to be public. Using dummy score!");
-                player.Skill.AddRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
+                player.Skill.SetRating(new DummyRating { Score = new Random().NextDouble() + 0.3 });
             }
 
             return player;
