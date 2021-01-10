@@ -14,6 +14,9 @@ namespace fairTeams.API.Rating
         {
             var allMatchStatisticsForPlayer = matchRepository.GetAllMatchStatisticsForSteamId(steamID);
             Score = allMatchStatisticsForPlayer.Average(z => z.HLTVScore);
+
+            var latestMatchStatisticForPlayer = matchRepository.GetLatestMatchStatisticForSteamId(steamID);
+            Trend = TrendHelper.GetTrend(Score, latestMatchStatisticForPlayer.HLTVScore);
         }
     }
 }
