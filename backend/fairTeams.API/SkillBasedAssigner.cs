@@ -40,8 +40,11 @@ namespace fairTeams.API
                 playersList[i] = await GetSkillLevel(playersList[i]);
             }
 
-            playersList = AddBotIfNecessary(playersList);
-
+            if (includeBot)
+            {
+                playersList = BalanceTeamSizesWithBot(playersList);
+            }
+            
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
             terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
             counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
@@ -78,7 +81,7 @@ namespace fairTeams.API
             return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
         }
 
-        private List<Player> AddBotIfNecessary(List<Player> players)
+        private List<Player> BalanceTeamSizesWithBot(List<Player> players)
         {
             if (players.Count % 2 != 0)
             {

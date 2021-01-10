@@ -62,6 +62,28 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        public async Task GetAssignedPlayers_ThreePlayersIncludeBotParameterFalse_NoBotAddedToBalanceTeamSizes()
+        {
+            var match = new Match { Id = "M1" };
+            match.PlayerResults.Add(new MatchStatistics { SteamID = 1, Id = "1", Kills = 1, Deaths = 1 });
+            match.PlayerResults.Add(new MatchStatistics { SteamID = 2, Id = "2", Kills = 2, Deaths = 2 });
+            match.PlayerResults.Add(new MatchStatistics { SteamID = 3, Id = "3", Kills = 3, Deaths = 3 });
+            myMatchRepository.Add(match);
+            myMatchRepository.SaveChanges();
+            var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
+
+            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(
+                new List<Player> {
+                    new Player { SteamID = "1", Name = "Emma"},
+                    new Player { SteamID = "2", Name = "Kathy"},
+                    new Player { SteamID = "3", Name = "Baltasar" } },
+                false);
+
+            var numberOfAssignedPlayers = t.Players.Count + ct.Players.Count;
+            Assert.Equal(3, numberOfAssignedPlayers);
+        }
+
+        [Fact]
         public async Task GetAssignedPlayers_TwoStrongPlayersAndTwoMediumPlayers_OneStrongOneMediumEach()
         {
             var match = new Match { Id = "M1" };
