@@ -62,13 +62,14 @@ class _CandidatesWidgetState extends State<CandidatesWidget> {
                     return ListView.builder(
                       controller: _scrollController,
                       itemCount: players.length,
-                      itemExtent: 30,
+                      itemExtent: 35,
                       itemBuilder: (BuildContext context, int index) {
                         return new CheckboxListTile(
                           title: Text(players[index].name,
                               style:
                                   Theme.of(context).primaryTextTheme.bodyText1),
                           value: players[index].isSelected,
+                          controlAffinity: ListTileControlAffinity.leading,
                           onChanged: (bool value) {
                             StoreProvider.of<AppState>(context).dispatch(
                                 TogglePlayerSelectionAction(players[index]));
