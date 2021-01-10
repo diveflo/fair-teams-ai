@@ -34,7 +34,7 @@ void main() {
             "isChecked": true,
           }
         ],
-        "includeBots": false,
+        "includeBot": false,
       };
 
       GameConfigState gameConfig =
@@ -42,7 +42,7 @@ void main() {
 
       expect(gameConfig.candidates.length, 2);
       expect(gameConfig.mapPool.maps.length, 1);
-      expect(gameConfig.includeBots, false);
+      expect(gameConfig.includeBot, false);
     });
   });
 
@@ -67,7 +67,7 @@ void main() {
           "isChecked": true,
         }
       ],
-      "includeBots": false,
+      "includeBot": false,
     };
 
     GameConfigState gameConfig = GameConfigState(
@@ -90,7 +90,7 @@ void main() {
           isChecked: true,
         )
       ]),
-      includeBots: false,
+      includeBot: false,
     );
 
     var convertedGameConfigJson = gameConfig.toJson();

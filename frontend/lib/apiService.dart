@@ -10,8 +10,8 @@ class PlayerApi {
   ApiBaseHelper _helper = ApiBaseHelper();
 
   Future<Game> fetchScrambledTeams(
-      List<Candidate> candidates, bool includeBots, bool hltv) async {
-    var queryParameters = {"includeBots": includeBots.toString()};
+      List<Candidate> candidates, bool includeBot, bool hltv) async {
+    var queryParameters = {"includeBot": includeBot.toString()};
 
     final Map<String, dynamic> response =
         await _helper.post("/FairTeams", candidates, queryParameters);

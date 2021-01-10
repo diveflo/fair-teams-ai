@@ -73,26 +73,26 @@ void main() {
     });
   });
 
-  group('ToggleIncludeBotsAction', () {
+  group('ToggleincludeBotAction', () {
     test('from false to true', () {
       GameConfigState inputState = GameConfigState(
-          mapPool: MapPool(), includeBots: false, candidates: []);
+          mapPool: MapPool(), includeBot: false, candidates: []);
 
-      var toggleAction = ToggleIncludeBotsAction();
+      var toggleAction = ToggleincludeBotAction();
 
       GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
 
-      expect(outputState.includeBots, true);
+      expect(outputState.includeBot, true);
     });
     test('from true to false', () {
       GameConfigState inputState = GameConfigState(
-          mapPool: MapPool(), includeBots: true, candidates: []);
+          mapPool: MapPool(), includeBot: true, candidates: []);
 
-      var toggleAction = ToggleIncludeBotsAction();
+      var toggleAction = ToggleincludeBotAction();
 
       GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
 
-      expect(outputState.includeBots, false);
+      expect(outputState.includeBot, false);
     });
   });
 }

@@ -16,9 +16,9 @@ ThunkAction scrambleTeams(bool hltv, ConfettiController confettiController) {
       List<Candidate> candidates = store.state.gameConfigState.candidates;
       List<Candidate> activeCandidates =
           candidates.where((element) => element.isSelected).toList();
-      bool includeBots = store.state.gameConfigState.includeBots;
+      bool includeBot = store.state.gameConfigState.includeBot;
 
-      api.fetchScrambledTeams(activeCandidates, includeBots, hltv).then((game) {
+      api.fetchScrambledTeams(activeCandidates, includeBot, hltv).then((game) {
         store.dispatch(ToggleIsLoadingAction());
         confettiController.play();
         store.dispatch(SetTeamsAction(game.t, game.ct));

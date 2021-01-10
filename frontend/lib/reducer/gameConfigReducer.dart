@@ -8,7 +8,7 @@ final gameConfigReducer = combineReducers<GameConfigState>([
   TypedReducer<GameConfigState, TogglePlayerSelectionAction>(
       _togglePlayerSelection),
   TypedReducer<GameConfigState, ToggleMapSelectionAction>(_toggleMapSelection),
-  TypedReducer<GameConfigState, ToggleIncludeBotsAction>(_toggleIncludeBots),
+  TypedReducer<GameConfigState, ToggleincludeBotAction>(_toggleincludeBot),
 ]);
 
 class AddPlayerAction {
@@ -26,8 +26,8 @@ class ToggleMapSelectionAction {
   ToggleMapSelectionAction(this.map);
 }
 
-class ToggleIncludeBotsAction {
-  ToggleIncludeBotsAction();
+class ToggleincludeBotAction {
+  ToggleincludeBotAction();
 }
 
 GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
@@ -58,7 +58,7 @@ GameConfigState _toggleMapSelection(
   return state.copyWith(mapPool: updatedMapPool);
 }
 
-GameConfigState _toggleIncludeBots(
-    GameConfigState state, ToggleIncludeBotsAction action) {
-  return state.copyWith(includeBots: !state.includeBots);
+GameConfigState _toggleincludeBot(
+    GameConfigState state, ToggleincludeBotAction action) {
+  return state.copyWith(includeBot: !state.includeBot);
 }

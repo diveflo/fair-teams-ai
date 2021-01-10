@@ -4,13 +4,13 @@ import 'package:frontend/model/map.dart';
 
 class GameConfigState {
   final List<Candidate> candidates;
-  final bool includeBots;
+  final bool includeBot;
   final MapPool mapPool;
 
   GameConfigState(
       {@required this.candidates,
       @required this.mapPool,
-      this.includeBots = true});
+      this.includeBot = true});
 
   factory GameConfigState.initial() {
     return GameConfigState(
@@ -29,18 +29,18 @@ class GameConfigState {
         Candidate(name: "Uwe", steamID: "76561198053826525"),
       ],
       mapPool: MapPool(),
-      includeBots: true,
+      includeBot: true,
     );
   }
 
   factory GameConfigState.fromJson(dynamic json) {
     if (json != null) {
       List<Candidate> _candidates = parseList(json);
-      bool _includeBots = json["includeBots"];
+      bool _includeBot = json["includeBot"];
       return GameConfigState(
           candidates: _candidates,
           mapPool: MapPool.fromJson(json),
-          includeBots: _includeBots);
+          includeBot: _includeBot);
     }
     return GameConfigState.initial();
   }
@@ -49,15 +49,15 @@ class GameConfigState {
         "candidates":
             this.candidates.map((candidate) => candidate.saveState()).toList(),
         "mapPool": this.mapPool.toJson(),
-        "includeBots": includeBots,
+        "includeBot": includeBot,
       };
 
   GameConfigState copyWith(
-      {List<Candidate> candidates, MapPool mapPool, bool includeBots}) {
+      {List<Candidate> candidates, MapPool mapPool, bool includeBot}) {
     return new GameConfigState(
       candidates: candidates ?? this.candidates,
       mapPool: mapPool ?? this.mapPool,
-      includeBots: includeBots ?? this.includeBots,
+      includeBot: includeBot ?? this.includeBot,
     );
   }
 }
