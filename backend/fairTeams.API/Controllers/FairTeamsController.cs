@@ -25,11 +25,11 @@ namespace fairTeams.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Assignment> GetAssignedTeams(IEnumerable<RequestPlayer> players)
+        public async Task<Assignment> GetAssignedTeams(IEnumerable<RequestPlayer> players, bool includeBot)
         {
             var extendedPlayers = await GetSteamUsernames(players);
 
-            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(extendedPlayers);
+            (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(extendedPlayers, includeBot);
 
             return new Assignment(terrorists, counterTerrorists);
         }
