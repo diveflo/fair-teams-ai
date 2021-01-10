@@ -18,7 +18,7 @@ namespace fairTeams.API.Tests
         public SkillBasedAssignerTests()
         {
             var options = new DbContextOptionsBuilder<MatchRepository>()
-                .UseInMemoryDatabase(databaseName: "MatchRepository")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             myMatchRepository = new MatchRepository(options);

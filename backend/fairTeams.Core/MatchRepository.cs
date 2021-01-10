@@ -69,7 +69,7 @@ namespace fairTeams.Core
         public MatchStatistics GetLatestMatchStatisticForSteamId(long steamId)
         {
             Matches.Load();
-            var allMatchStatisticsOrderedByDate = Matches.OrderByDescending(x => x.Date).SelectMany(x => x.PlayerResults);
+            var allMatchStatisticsOrderedByDate = Matches.OrderByDescending(x => x.Date).SelectMany(x => x.PlayerResults).ToList();
             var hasMatchesForSteamId = allMatchStatisticsOrderedByDate.Any(x => x.SteamID == steamId);
             if (!hasMatchesForSteamId)
             {
