@@ -55,7 +55,7 @@ namespace fairTeams.DemoAnalyzer
             {
                 myDemoParser.ParseToEnd();
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (Exception e)
             {
                 throw new DemoReaderException($"Unexpected exception thrown during demo analysis: {e.Message}");
             }
