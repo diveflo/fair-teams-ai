@@ -47,13 +47,7 @@ namespace fairTeams.API
         private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
         {
             var playersList = players.ToList();
-
-            if (playersList.Count % 2 != 0)
-            {
-                throw new ArgumentException("The number of players has to be even!");
-            }
-
-            var playersPerTeam = playersList.Count / 2;
+            var playersPerTeam = (int)Math.Ceiling(playersList.Count / 2.0d);
 
             var firstTeamCombinations = new Combinations<Player>(playersList, playersPerTeam);
             myLogger.LogInformation($"{firstTeamCombinations.Count} possible combinations of teams. Computing their skill differences.");
