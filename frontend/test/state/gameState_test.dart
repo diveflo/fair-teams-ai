@@ -61,7 +61,7 @@ void main() {
             "steamID": "player1id",
             "skill": {
               "skillScore": 1.0,
-              "skillTrend": 0,
+              "skillTrend": "Plateau",
             }
           },
           {
@@ -70,7 +70,7 @@ void main() {
             "steamID": "player2id",
             "skill": {
               "skillScore": 2.0,
-              "skillTrend": 0,
+              "skillTrend": "Plateau",
             }
           }
         ]
@@ -84,7 +84,7 @@ void main() {
             "steamID": "player3id",
             "skill": {
               "skillScore": 0.0,
-              "skillTrend": 0,
+              "skillTrend": "Plateau",
             }
           },
           {
@@ -93,7 +93,7 @@ void main() {
             "steamID": "player4id",
             "skill": {
               "skillScore": 2.2,
-              "skillTrend": 0,
+              "skillTrend": "Plateau",
             }
           }
         ]
