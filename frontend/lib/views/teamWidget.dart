@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/model/player.dart';
+import 'package:frontend/model/skill.dart';
 
 class TeamWidget extends StatelessWidget {
   const TeamWidget({
@@ -53,12 +54,7 @@ class TeamWidget extends StatelessWidget {
                             Text(team[index].steamName,
                                 style: TextStyle(
                                     color: color, fontWeight: FontWeight.bold)),
-                            Text(
-                              team[index].skillScore.toStringAsFixed(3),
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.purple),
-                            ),
+                            SkillWidget(skill: team[index].skill),
                           ],
                         ),
                       ),
@@ -71,5 +67,60 @@ class TeamWidget extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+class SkillWidget extends StatelessWidget {
+  final Skill skill;
+  SkillWidget({@required this.skill});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          Text(
+            skill.skillScore.toStringAsFixed(3),
+            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.purple),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          SkillFormIcon(form: skill.form),
+        ],
+      ),
+    );
+  }
+}
+
+class SkillFormIcon extends StatelessWidget {
+  final String form;
+
+  SkillFormIcon({@required this.form});
+
+  _getFormIcon() {
+    if (form == "none") {
+      return Icon(
+        Icons.trending_flat,
+      );
+    }
+    if (form == "rising") {
+      return Icon(
+        Icons.trending_up,
+        color: Colors.teal,
+      );
+    }
+    if (form == "dropping") {
+      return Icon(
+        Icons.trending_down,
+        color: Colors.red,
+      );
+    }
+    return Icon(Icons.trending_flat);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _getFormIcon();
   }
 }

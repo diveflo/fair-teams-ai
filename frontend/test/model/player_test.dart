@@ -31,9 +31,7 @@ void main() {
         "name": "player1",
         "steamName": "player1",
         "steamID": "id122",
-        "skill": {
-          "skillScore": double.maxFinite,
-        }
+        "skill": {"skillScore": double.maxFinite, "form": "none"}
       });
     });
   });
@@ -44,7 +42,10 @@ void main() {
         "name": "testi",
         "steamName": "boon",
         "steamID": "001",
-        "skill": {"skillScore": 0.1}
+        "skill": {
+          "skillScore": 0.1,
+          "form": "none",
+        }
       };
 
       Player testi = Player.fromJson(json);
@@ -52,7 +53,7 @@ void main() {
       expect(testi.name, "testi");
       expect(testi.steamName, "boon");
       expect(testi.steamID, "001");
-      expect(testi.skillScore, 0.1);
+      expect(testi.skill.skillScore, 0.1);
     });
   });
 }

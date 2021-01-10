@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/model/player.dart';
+import 'package:frontend/model/skill.dart';
 import 'package:frontend/model/team.dart';
 import 'package:frontend/state/gameState.dart';
 
@@ -21,13 +22,13 @@ void main() {
           name: "player1",
           steamName: "player1",
           steamID: "player1id",
-          skillScore: 1.0,
+          skill: Skill(skillScore: 1.0),
         ),
         Player(
           name: "player2",
           steamName: "player2",
           steamID: "player2id",
-          skillScore: 2.0,
+          skill: Skill(skillScore: 2.0),
         ),
       ],
       "terror",
@@ -38,13 +39,13 @@ void main() {
           name: "player3",
           steamName: "player3",
           steamID: "player3id",
-          skillScore: 0.0,
+          skill: Skill(skillScore: 0.0),
         ),
         Player(
           name: "player4",
           steamName: "player4",
           steamID: "player4id",
-          skillScore: 2.2,
+          skill: Skill(skillScore: 2.2),
         ),
       ],
       "ct",
@@ -58,13 +59,19 @@ void main() {
             "name": "player1",
             "steamName": "player1",
             "steamID": "player1id",
-            "skill": {"skillScore": 1.0}
+            "skill": {
+              "skillScore": 1.0,
+              "form": "none",
+            }
           },
           {
             "name": "player2",
             "steamName": "player2",
             "steamID": "player2id",
-            "skill": {"skillScore": 2.0}
+            "skill": {
+              "skillScore": 2.0,
+              "form": "none",
+            }
           }
         ]
       },
@@ -75,13 +82,19 @@ void main() {
             "name": "player3",
             "steamName": "player3",
             "steamID": "player3id",
-            "skill": {"skillScore": 0.0}
+            "skill": {
+              "skillScore": 0.0,
+              "form": "none",
+            }
           },
           {
             "name": "player4",
             "steamName": "player4",
             "steamID": "player4id",
-            "skill": {"skillScore": 2.2}
+            "skill": {
+              "skillScore": 2.2,
+              "form": "none",
+            }
           }
         ]
       }
