@@ -5,7 +5,7 @@ class Team {
   String name;
 
   Team.empy() {
-    players = List<Player>();
+    players = [];
     name = "";
   }
 

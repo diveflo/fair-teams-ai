@@ -16,8 +16,9 @@ ThunkAction scrambleTeams(bool hltv, ConfettiController confettiController) {
       List<Candidate> candidates = store.state.gameConfigState.candidates;
       List<Candidate> activeCandidates =
           candidates.where((element) => element.isSelected).toList();
+      bool includeBot = store.state.gameConfigState.includeBot;
 
-      api.fetchScrambledTeams(activeCandidates, hltv).then((game) {
+      api.fetchScrambledTeams(activeCandidates, includeBot, hltv).then((game) {
         store.dispatch(ToggleIsLoadingAction());
         confettiController.play();
         store.dispatch(SetTeamsAction(game.t, game.ct));
@@ -36,8 +37,8 @@ ThunkAction scrambleTeamsRandom() {
     List<Candidate> activePlayers =
         candidates.where((element) => element.isSelected).toList();
     if (activePlayers.length > 0) {
-      List<Player> _team1 = List<Player>();
-      List<Player> _team2 = List<Player>();
+      List<Player> _team1 = [];
+      List<Player> _team2 = [];
       activePlayers.shuffle();
       for (int i = 0; i < activePlayers.length; i++) {
         if (i % 2 == 0) {

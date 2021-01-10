@@ -20,7 +20,7 @@ class MapPool {
   }
 
   List<CsMap> getPlayableMaps() {
-    List<CsMap> playableMaps = List<CsMap>();
+    List<CsMap> playableMaps = [];
     this.maps.forEach((element) {
       if (element.isChecked) {
         playableMaps.add(element);

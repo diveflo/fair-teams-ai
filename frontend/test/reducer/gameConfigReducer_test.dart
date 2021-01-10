@@ -72,4 +72,27 @@ void main() {
       expect(outputState.mapPool.maps.first.isChecked, false);
     });
   });
+
+  group('ToggleincludeBotAction', () {
+    test('from false to true', () {
+      GameConfigState inputState = GameConfigState(
+          mapPool: MapPool(), includeBot: false, candidates: []);
+
+      var toggleAction = ToggleincludeBotAction();
+
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.includeBot, true);
+    });
+    test('from true to false', () {
+      GameConfigState inputState = GameConfigState(
+          mapPool: MapPool(), includeBot: true, candidates: []);
+
+      var toggleAction = ToggleincludeBotAction();
+
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.includeBot, false);
+    });
+  });
 }
