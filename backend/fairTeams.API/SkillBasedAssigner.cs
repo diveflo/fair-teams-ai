@@ -25,7 +25,12 @@ namespace fairTeams.API
 
         public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi) : this(matchRepository, steamworksApi, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
 
-        public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+        public Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players)
+        {
+            return GetAssignedPlayers(players, true);
+        }
+
+        public async Task<(Team terrorists, Team counterTerrorists)> GetAssignedPlayers(IEnumerable<Player> players, bool includeBot)
         {
             var playersList = players.ToList();
             myLogger.LogInformation($"Computing optimal assignment for players: {string.Join(", ", playersList.Select(x => x.SteamName))}");
@@ -35,8 +40,11 @@ namespace fairTeams.API
                 playersList[i] = await GetSkillLevel(playersList[i]);
             }
 
-            playersList = AddBotIfNecessary(playersList);
-
+            if (includeBot)
+            {
+                playersList = BalanceTeamSizesWithBot(playersList);
+            }
+            
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
             terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
             counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
@@ -47,13 +55,7 @@ namespace fairTeams.API
         private (Team terrorists, Team counterTerrorists) OptimalAssigner(IEnumerable<Player> players)
         {
             var playersList = players.ToList();
-
-            if (playersList.Count % 2 != 0)
-            {
-                throw new ArgumentException("The number of players has to be even!");
-            }
-
-            var playersPerTeam = playersList.Count / 2;
+            var playersPerTeam = (int)Math.Ceiling(playersList.Count / 2.0d);
 
             var firstTeamCombinations = new Combinations<Player>(playersList, playersPerTeam);
             myLogger.LogInformation($"{firstTeamCombinations.Count} possible combinations of teams. Computing their skill differences.");
@@ -79,7 +81,7 @@ namespace fairTeams.API
             return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
         }
 
-        private List<Player> AddBotIfNecessary(List<Player> players)
+        private List<Player> BalanceTeamSizesWithBot(List<Player> players)
         {
             if (players.Count % 2 != 0)
             {
@@ -169,5 +171,7 @@ namespace fairTeams.API
             var indexOfAssignment = new Random().Next(0, smallSubsetOfOptimalAssignments.Count);
             return smallSubsetOfOptimalAssignments.ElementAt(indexOfAssignment);
         }
+
+        
     }
 }
