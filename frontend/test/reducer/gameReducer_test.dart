@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/model/player.dart';
+import 'package:frontend/model/skill.dart';
 import 'package:frontend/model/team.dart';
 import 'package:frontend/reducer/gameReducer.dart';
 import 'package:frontend/state/gameState.dart';
@@ -29,20 +30,22 @@ void main() {
       Team t = Team(
         [
           Player(
-              name: 'player1',
-              steamName: 'player1',
-              steamID: "player1id",
-              skillScore: 1)
+            name: 'player1',
+            steamName: 'player1',
+            steamID: "player1id",
+            skill: Skill(skillScore: 1),
+          )
         ],
         "t",
       );
       Team ct = Team(
         [
           Player(
-              name: 'player2',
-              steamName: 'player2',
-              steamID: "player2id",
-              skillScore: 2)
+            name: 'player2',
+            steamName: 'player2',
+            steamID: "player2id",
+            skill: Skill(skillScore: 2),
+          )
         ],
         "ct",
       );
@@ -66,25 +69,28 @@ void main() {
     Team t = Team(
       [
         Player(
-            name: 'playert',
-            steamName: 'playert',
-            steamID: "playertid",
-            skillScore: 1),
+          name: 'playert',
+          steamName: 'playert',
+          steamID: "playertid",
+          skill: Skill(skillScore: 1),
+        ),
         Player(
-            name: 'playert2',
-            steamName: 'playert2',
-            steamID: "playert2id",
-            skillScore: 1)
+          name: 'playert2',
+          steamName: 'playert2',
+          steamID: "playert2id",
+          skill: Skill(skillScore: 1),
+        )
       ],
       "t",
     );
     Team ct = Team(
       [
         Player(
-            name: 'playerct',
-            steamName: 'playerct',
-            steamID: "playerctid",
-            skillScore: 2)
+          name: 'playerct',
+          steamName: 'playerct',
+          steamID: "playerctid",
+          skill: Skill(skillScore: 2),
+        )
       ],
       "ct",
     );
