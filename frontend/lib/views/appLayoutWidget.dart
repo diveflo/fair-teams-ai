@@ -9,6 +9,8 @@ import 'package:frontend/views/mapPoolWidget.dart';
 import 'package:frontend/views/newPlayerWidget.dart';
 import 'package:frontend/views/scrambleWidget.dart';
 
+import 'botsWidget.dart';
+
 class AppLayoutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class AppLayoutWidget extends StatelessWidget {
                     SizedBox(
                       height: 30,
                     ),
+                    BotsWidget(),
                     ScrambleWidget(),
                   ]),
                 )

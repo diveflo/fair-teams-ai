@@ -10,8 +10,8 @@ class PlayerApi {
   ApiBaseHelper _helper = ApiBaseHelper();
 
   Future<Game> fetchScrambledTeams(
-      List<Candidate> candidates, bool hltv) async {
-    var queryParameters = {'hltv': hltv};
+      List<Candidate> candidates, bool includeBots, bool hltv) async {
+    var queryParameters = {"includeBots": includeBots.toString()};
 
     final Map<String, dynamic> response =
         await _helper.post("/FairTeams", candidates, queryParameters);
@@ -24,12 +24,8 @@ class ApiBaseHelper {
 
   Future<dynamic> post(
       String uriPath, List<Candidate> candidates, var queryParameters) async {
-    Uri uri;
-    if (queryParameters == true) {
-      uri = Uri.https(_baseUrl, uriPath, queryParameters);
-    } else {
-      uri = Uri.https(_baseUrl, uriPath);
-    }
+    Uri uri = Uri.https(_baseUrl, uriPath, queryParameters);
+
     final content = jsonEncode(candidates);
     print("Api Post, url $uri");
     print(uri.host + uri.path);
