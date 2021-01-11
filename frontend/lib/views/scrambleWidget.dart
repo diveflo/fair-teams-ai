@@ -53,6 +53,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
                 color: Colors.lime,
               ),
             ),
+            isLoading ? CircularProgressIndicator() : Container(),
             ConfettiWidget(
               confettiController: _confettiController,
               blastDirection: pi,
