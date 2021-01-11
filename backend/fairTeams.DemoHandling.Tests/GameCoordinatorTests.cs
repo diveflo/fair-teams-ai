@@ -13,7 +13,7 @@ namespace fairTeams.DemoHandling.Tests
         public void GetMatchInfo_ShareCodeInput_ReturnsCorrectDateAndDownloadURL()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();
-            var gameRequest = ShareCode.Decode("CSGO-j6hrT-hvqmd-pNMXY-TuTrq-aXnMC");
+            var gameRequest = ShareCodeDecoder.Decode("CSGO-j6hrT-hvqmd-pNMXY-TuTrq-aXnMC");
             var demo = new Demo { GameRequest = gameRequest };
 
             var match = gameCoordinatorClient.GetMatchInfo(demo);

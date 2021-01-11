@@ -58,7 +58,7 @@ namespace fairTeams.DemoHandling
 
             foreach (var sharingCode in newSharingCodes)
             {
-                var gameRequest = ShareCode.Decode(sharingCode);
+                var gameRequest = ShareCodeDecoder.Decode(sharingCode);
                 myLogger.LogTrace($"Decoded sharing code {sharingCode} into Request with Match ID: {gameRequest.MatchId}, Outcome ID: {gameRequest.OutcomeId} and Token: {gameRequest.Token}");
                 var demo = new Demo { ShareCode = sharingCode, GameRequest = gameRequest };
                 Match match;
