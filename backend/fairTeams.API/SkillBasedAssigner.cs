@@ -44,7 +44,7 @@ namespace fairTeams.API
             {
                 playersList = BalanceTeamSizesWithBot(playersList);
             }
-            
+
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
             terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
             counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
@@ -171,7 +171,5 @@ namespace fairTeams.API
             var indexOfAssignment = new Random().Next(0, smallSubsetOfOptimalAssignments.Count);
             return smallSubsetOfOptimalAssignments.ElementAt(indexOfAssignment);
         }
-
-        
     }
 }
