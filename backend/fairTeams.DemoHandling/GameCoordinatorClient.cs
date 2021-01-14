@@ -10,19 +10,16 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class GameCoordinatorClient
+    public class GameCoordinatorClient : IDisposable
     {
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
 
         private readonly SteamClient mySteamClient;
+        private readonly SteamUser mySteamUser;
         private readonly CallbackManager myCallbackManager;
 
-        private readonly SteamUser mySteamUser;
-
-        private bool myGotMatch = false;
-
-        private TaskCompletionSource<bool> myIsLoggedIn = new();
+        private const int myWaitTimeInMilliseconds = 30000;
 
         public GameCoordinatorClient(ILoggerFactory loggerFactory)
         {
@@ -31,127 +28,139 @@ namespace fairTeams.DemoHandling
 
             mySteamClient = new SteamClient();
             myCallbackManager = new CallbackManager(mySteamClient);
-
             mySteamUser = mySteamClient.GetHandler<SteamUser>();
-            mySteamClient.GetHandler<SteamGameCoordinator>();
 
-            myCallbackManager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
-            myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-            myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+            Task.Run(() => HandleCallbacks());
+
+            Connect().Wait();
+            var loginResult = Login().Result;
         }
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
 
         public Match GetMatchInfo(Demo demo)
         {
-            myGotMatch = false;
-            mySteamClient.Connect();
-            myLogger.LogTrace("Connecting to Steam...");
-            Task.Run(() => HandleCallbacks());
-            var waitTimeInMilliseconds = 20000;
-            if (!myIsLoggedIn.Task.Wait(waitTimeInMilliseconds))
-            {
-                myIsLoggedIn = new TaskCompletionSource<bool>();
-                throw new GameCoordinatorException($"Steam client didn't connect after {waitTimeInMilliseconds} milliseconds.");
-            }
-
-            var requestGameTask = RequestGame(demo.GameRequest);
+            var match = new Match { Demo = demo };
 
             try
             {
-                var successWithinTimeout = requestGameTask.Wait(waitTimeInMilliseconds);
-                if (!successWithinTimeout)
+                Connect().Wait();
+                var loginResult = Login().Result;
+                if (loginResult != EResult.OK)
                 {
-                    myLogger.LogWarning($"Game coordinator didn't provide match details after {waitTimeInMilliseconds} milliseconds. Aborting.");
-                    throw new GameCoordinatorException($"Steam didn't answer our request for the game download url after 10000 milliseconds.");
+                    myLogger.LogWarning($"Couldn't login to Steam network. Result code: {loginResult}");
+                    throw new GameCoordinatorException($"Couldn't login to Steam network. Result code: {loginResult}");
                 }
+
+                var csgoClient = ConnectToCSGOGameCoodinator().Result;
+                var matchInfo = RequestGame(demo.GameRequest, csgoClient).Result;
+                demo.DownloadURL = GetDownloadURL(matchInfo);
+                match.Date = GetMatchDate(matchInfo);
             }
             catch (AggregateException e)
             {
                 var innerExceptions = e.InnerExceptions;
+
                 if (innerExceptions.Any(x => x is GameCoordinatorException))
                 {
                     throw innerExceptions.Single(x => x is GameCoordinatorException);
                 }
 
-                myLogger.LogWarning($"Game coordinator threw unexpected exceptions: {e.InnerExceptions}");
-                throw new GameCoordinatorException($"Unexpected exception(s) thrown from game coordinator: {e.Message}");
+                if (innerExceptions.Any(x => x is TimeoutException))
+                {
+                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
+                    myLogger.LogWarning(timeoutMessage);
+                    throw new GameCoordinatorException(timeoutMessage);
+                }
             }
-            finally
-            {
-                mySteamClient.Disconnect();
-                myGotMatch = true;
-            }
-
-            var matchInfo = requestGameTask.Result;
-            demo.DownloadURL = GetDownloadURL(matchInfo);
-            var match = new Match
-            {
-                Demo = demo,
-                Date = GetMatchDate(matchInfo)
-            };
 
             return match;
         }
 
+        private Task Connect()
+        {
+            var taskCompletionSource = TaskHelper.CreateResultlessTaskCompletionSourceWithTimeout(myWaitTimeInMilliseconds, $"Steam client didn't connect within {myWaitTimeInMilliseconds} milliseconds.");
+
+            if (mySteamClient.IsConnected)
+            {
+                taskCompletionSource.SetResult();
+            }
+            else
+            {
+                myCallbackManager.Subscribe<SteamClient.ConnectedCallback>((callback) => taskCompletionSource.SetResult());
+
+                if (!mySteamClient.IsConnected)
+                {
+                    mySteamClient.Connect();
+                    myLogger.LogTrace("Connecting to Steam...");
+                }
+            }
+
+            return taskCompletionSource.Task;
+        }
+
+        private Task<EResult> Login()
+        {
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<EResult>(myWaitTimeInMilliseconds);
+
+            if (mySteamClient.SessionID != null)
+            {
+                taskCompletionSource.SetResult(EResult.OK);
+            }
+            else
+            {
+                myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>((callback) => taskCompletionSource.SetResult(callback.Result));
+
+                var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
+                try
+                {
+                    mySteamUser.LogOn(steamCredentials);
+                }
+                catch (ArgumentException)
+                {
+                    myLogger.LogCritical("You need to provide a Steam account via the environment variables STEAM_USERNAME and STEAM_PASSWORD");
+                    taskCompletionSource.SetException(new Exception("No steam account provided via environment variables STEAM_USERNAME and STEAM_PASSWORD"));
+                }
+            }
+
+            return taskCompletionSource.Task;
+        }
+
         private void HandleCallbacks()
         {
-            while (!myGotMatch)
+            while (true)
             {
                 myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
             }
         }
 
-        private void OnConnected(SteamClient.ConnectedCallback callback)
+        private Task<CsgoClient> ConnectToCSGOGameCoodinator()
         {
-            myLogger.LogTrace("Connected to Steam. Logging in now...");
-
-            var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
-            try
-            {
-                mySteamUser.LogOn(steamCredentials);
-            }
-            catch (ArgumentException)
-            {
-                myLogger.LogCritical("You need to provide a Steam account via the environment variables STEAM_USERNAME and STEAM_PASSWORD");
-                throw new Exception("No steam account provided via environment variables STEAM_USERNAME and STEAM_PASSWORD");
-            }
-        }
-
-        private void OnDisconnected(SteamClient.DisconnectedCallback callback)
-        {
-            myLogger.LogTrace("Disconnected from Steam.");
-            myIsLoggedIn = new TaskCompletionSource<bool>();
-        }
-
-        private void OnLoggedOn(SteamUser.LoggedOnCallback callback)
-        {
-            myLogger.LogTrace("Logged in to Steam.");
-            myIsLoggedIn.SetResult(true);
-        }
-
-        private Task<CDataGCCStrike15_v2_MatchInfo> RequestGame(GameRequest request)
-        {
-            var taskCompletionSource = new TaskCompletionSource<CDataGCCStrike15_v2_MatchInfo>();
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<CsgoClient>(myWaitTimeInMilliseconds, $"Game coordinator didn't welcome us after {myWaitTimeInMilliseconds} milliseconds.");
 
             var csgo = new CsgoClient(mySteamClient, myCallbackManager, myLoggerFactory.CreateLogger<CsgoClient>());
             myLogger.LogTrace("Telling Steam we're playing CS:GO to connect to game coordinator.");
-            csgo.Launch(protobuf =>
-            {
-                myLogger.LogTrace("Asking game coordinator for match details.");
-                Thread.Sleep(5000);
-                csgo.RequestGame(request, list =>
-                {
-                    if (!list.matches.Any())
-                    {
-                        myLogger.LogWarning("Game coordinator doesn't have match details (probably expired).");
-                        taskCompletionSource.SetException(new GameCoordinatorException("Game coordinator doesn't have match details (probably expired)."));
-                        return;
-                    }
+            csgo.Launch((_) => taskCompletionSource.SetResult(csgo));
 
-                    var matchInfo = list.matches.First();
-                    taskCompletionSource.SetResult(matchInfo);
-                });
+            return taskCompletionSource.Task;
+        }
+
+        private Task<CDataGCCStrike15_v2_MatchInfo> RequestGame(GameRequest request, CsgoClient csgoClient)
+        {
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<CDataGCCStrike15_v2_MatchInfo>(myWaitTimeInMilliseconds);
+
+            myLogger.LogTrace("Asking game coordinator for match details.");
+            Thread.Sleep(5000);
+            csgoClient.RequestGame(request, matchList =>
+            {
+                if (!matchList.matches.Any())
+                {
+                    myLogger.LogWarning("Game coordinator doesn't have match details (probably expired).");
+                    taskCompletionSource.SetException(new GameCoordinatorException("Game coordinator doesn't have match details (probably expired)."));
+                }
+
+                var matchInfo = matchList.matches.First();
+                taskCompletionSource.SetResult(matchInfo);
             });
 
             return taskCompletionSource.Task;
@@ -176,6 +185,12 @@ namespace fairTeams.DemoHandling
                 myLogger.LogWarning("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
                 throw new GameCoordinatorException("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
             }
+        }
+
+        public void Dispose()
+        {
+            mySteamUser.LogOff();
+            mySteamClient.Disconnect();
         }
     }
 }

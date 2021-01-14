@@ -2,7 +2,7 @@
 
 namespace fairTeams.DemoHandling.Tests
 {
-    public class ShareCodeTests
+    public class ShareCodeDecoderTests
     {
         [Theory]
         [InlineData("CSGO-c8yAf-mYUVd-EYMDm-YZkqQ-66r4N", 3456660989162815693u, 3456667023591866681u, 30789u)]
@@ -13,7 +13,7 @@ namespace fairTeams.DemoHandling.Tests
         [InlineData("CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ", 3455512396796264580u, 3455518115545219333u, 8129u)]
         public void Decode_ValidShareCode_ReturnsValidMatchId(string shareCode, ulong matchId, ulong outcomdeId, uint token)
         {
-            var gameRequest = ShareCode.Decode(shareCode);
+            var gameRequest = ShareCodeDecoder.Decode(shareCode);
 
             Assert.Equal(matchId, gameRequest.MatchId);
             Assert.Equal(outcomdeId, gameRequest.OutcomeId);

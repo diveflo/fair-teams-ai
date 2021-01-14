@@ -47,6 +47,10 @@ namespace fairTeams.API
             var steamUserDatabasePath = Path.Combine(Settings.ApplicationFolder, "users.db");
             services.AddDbContext<SteamUserRepository>(d => d.UseSqlite($"Data Source={steamUserDatabasePath}", x => x.MigrationsAssembly("fairTeams.API")));
 
+            var shareCodeDatabasePath = Path.Combine(Settings.ApplicationFolder, "sharecodes.db");
+            services.AddDbContext<ShareCodeRepository>(d => d.UseSqlite($"Data Source={shareCodeDatabasePath}", x => x.MigrationsAssembly("fairTeams.API")));
+
+            services.AddHostedService<ShareCodeCollector>();
             services.AddHostedService<MatchMakingDemoCollector>();
             services.AddHostedService<LocalDemoCollector>();
             services.AddHostedService<FTPDemoCollector>();

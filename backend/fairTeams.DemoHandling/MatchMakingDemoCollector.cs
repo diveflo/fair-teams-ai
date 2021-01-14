@@ -1,7 +1,5 @@
 ﻿using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
-using fairTeams.Steamworks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -46,7 +44,9 @@ namespace fairTeams.DemoHandling
 
         public void ProcessNewMatches(object state)
         {
-            var newSharingCodes = GetNewSharingCodes().Result;
+            using var scope = myScopeFactory.CreateScope();
+            var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
+            var newSharingCodes = shareCodeRepository.GetRetrieableBatch(5);
 
             if (!newSharingCodes.Any())
             {
@@ -54,23 +54,24 @@ namespace fairTeams.DemoHandling
             }
 
             myLogger.LogInformation($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes)}");
+            var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
+            var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
 
             foreach (var sharingCode in newSharingCodes)
             {
-                var gameRequest = ShareCode.Decode(sharingCode);
-                myLogger.LogTrace($"Decoded sharing code {sharingCode} into Request with Match ID: {gameRequest.MatchId}, Outcome ID: {gameRequest.OutcomeId} and Token: {gameRequest.Token}");
-                var demo = new Demo { ShareCode = sharingCode, GameRequest = gameRequest };
+                var gameRequest = ShareCodeDecoder.Decode(sharingCode.Code);
+                myLogger.LogTrace($"Decoded sharing code {sharingCode.Code} into Request with Match ID: {gameRequest.MatchId}, Outcome ID: {gameRequest.OutcomeId} and Token: {gameRequest.Token}");
+                var demo = new Demo { ShareCode = sharingCode.Code, GameRequest = gameRequest };
                 Match match;
 
-                var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
                 try
                 {
                     match = gameCoordinatorClient.GetMatchInfo(demo);
                 }
                 catch (GameCoordinatorException)
                 {
-                    myLogger.LogWarning($"Couldn't get download url for sharing code {sharingCode}. See previous logs/exceptions for explanation. Continuing.");
+                    myLogger.LogWarning($"Couldn't get download url for sharing code {sharingCode.Code}. See previous logs/exceptions for explanation. Continuing.");
                     continue;
                 }
 
@@ -85,7 +86,9 @@ namespace fairTeams.DemoHandling
                     continue;
                 }
 
-                myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode}. Analyzing now.");
+                myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}. Analyzing now.");
+                successfullyDownloadedSharingCodes.Add(sharingCode);
+
                 match.Demo.FilePath = demoFilePath;
 
                 using var demoReader = new DemoReader(match);
@@ -96,63 +99,26 @@ namespace fairTeams.DemoHandling
                 }
                 catch (DemoReaderException e)
                 {
-                    myLogger.LogWarning($"Analyzing demo for share code {sharingCode} failed: {e.Message}");
+                    myLogger.LogWarning($"Analyzing demo for share code {sharingCode.Code} failed: {e.Message}");
                     continue;
                 }
 
-                myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode}");
+                myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
                 newMatches.Add(demoReader.Match);
             }
 
             myLogger.LogInformation($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
 
-            using var scope = myScopeFactory.CreateScope();
             myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             matchRepository.AddMatchesAndSave(newMatches);
-        }
 
-        private async Task<List<string>> GetNewSharingCodes()
-        {
-            using var scope = myScopeFactory.CreateScope();
-            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
-            var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
-            var steamworksApi = scope.ServiceProvider.GetRequiredService<SteamworksApi>();
-
-            var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
-            var newSharingCodes = new List<string>();
-
-            var steamUsers = userRepository.SteamUsers.ToList();
-
-            foreach (var user in steamUsers)
+            foreach (var successfullyDownloadedSharingCode in successfullyDownloadedSharingCodes)
             {
-                var sharingCode = await steamworksApi.GetNextMatchSharingCode(user.SteamID.ToString(), user.AuthenticationCode, user.LastSharingCode);
-                if (sharingCode.Equals("n/a") || sharingCode.Equals(user.LastSharingCode))
-                {
-                    myLogger.LogTrace($"No new sharing code for Steam ID: {user.SteamID}");
-                    continue;
-                }
-
-                myLogger.LogTrace($"New sharing code {sharingCode} for Steam ID: {user.SteamID}");
-                user.LastSharingCode = sharingCode;
-
-                if (alreadyProcessedSharingCodes.Contains(sharingCode))
-                {
-                    myLogger.LogTrace($"Match for sharing code {sharingCode} already processed.");
-                    continue;
-                }
-
-                if (newSharingCodes.Contains(sharingCode))
-                {
-                    continue;
-                }
-
-                newSharingCodes.Add(sharingCode);
+                shareCodeRepository.Remove(successfullyDownloadedSharingCode);
             }
 
-            userRepository.SaveChanges();
-
-            return newSharingCodes;
+            shareCodeRepository.SaveChanges();
         }
     }
 }
