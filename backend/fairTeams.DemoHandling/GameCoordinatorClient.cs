@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC.CSGO.Internal;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,8 +33,7 @@ namespace fairTeams.DemoHandling
 
             Task.Run(() => HandleCallbacks());
 
-            Connect().Wait();
-            var loginResult = Login().Result;
+            ConnectAndLogin();
         }
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
@@ -44,13 +44,7 @@ namespace fairTeams.DemoHandling
 
             try
             {
-                Connect().Wait();
-                var loginResult = Login().Result;
-                if (loginResult != EResult.OK)
-                {
-                    myLogger.LogWarning($"Couldn't login to Steam network. Result code: {loginResult}");
-                    throw new GameCoordinatorException($"Couldn't login to Steam network. Result code: {loginResult}");
-                }
+                ConnectAndLogin();
 
                 var csgoClient = ConnectToCSGOGameCoodinator().Result;
                 var matchInfo = RequestGame(demo.GameRequest, csgoClient).Result;
@@ -75,6 +69,31 @@ namespace fairTeams.DemoHandling
             }
 
             return match;
+        }
+
+        private void ConnectAndLogin()
+        {
+            Connect().Wait();
+
+            try
+            {
+                var loginResult = Login().Result;
+                if (loginResult != EResult.OK)
+                {
+                    throw new GameCoordinatorException($"Couldn't login to the steam client. Result code: {loginResult}");
+                }
+            }
+            catch (AggregateException e)
+            {
+                var innerExceptions = e.InnerExceptions;
+
+                if (innerExceptions.Any(x => x is TimeoutException))
+                {
+                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
+                    myLogger.LogWarning(timeoutMessage);
+                    throw new GameCoordinatorException(timeoutMessage);
+                }
+            }
         }
 
         private Task Connect()
