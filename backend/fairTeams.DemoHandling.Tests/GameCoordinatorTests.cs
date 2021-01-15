@@ -1,15 +1,12 @@
 ﻿using fairTeams.Core;
+using System.Collections.Generic;
 using Xunit;
 
 namespace fairTeams.DemoHandling.Tests
 {
     public class GameCoordinatorTests
     {
-        /// <summary>
-        /// This will fail pretty soon once Valve expires the demo...we should probably instead somehow get a current/recent share-code automatically.
-        /// Though this kind of breaks the whole "unit"-test approach :/
-        /// </summary>
-        [Fact(Skip = "See comment above. This will fail soon...")]
+        [Fact (Skip = "The match/demo link will expire at some point")]
         public void GetMatchInfo_ShareCodeInput_ReturnsCorrectDateAndDownloadURL()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();
@@ -23,6 +20,80 @@ namespace fairTeams.DemoHandling.Tests
 
             Assert.Equal(expectedMatchDate, match.Date);
             Assert.Equal(expectedDownloadURL, match.Demo.DownloadURL);
+            Assert.Equal(13, match.TScore);
+            Assert.Equal(16, match.CTScore);
+            Assert.Equal(29, match.Rounds);
+        }
+
+        [Fact (Skip = "The match/demo links will expire at some point")]
+        public void GetMatchInfo_MultipleCallsSameObject_ReturnsCorrectDateAndDownloadURL()
+        {
+            var gameCoordinatorClient = new GameCoordinatorClient();
+            var shareCodes = new List<string> {
+                "CSGO-6FfJt-Fkyyu-8VFij-h5TDt-osMHA",
+                "CSGO-FmnKB-V88mu-kidjO-bCxAj-c49oF",
+                "CSGO-V6a3d-CjTH6-mqZGt-6mVw8-DKoJN",
+                "CSGO-6ZQsb-hVSm7-qL7KM-mS9FQ-MwYDJ",
+                "CSGO-6xbsY-7zSsm-ewtnA-hTxns-bCyDK"
+            };
+
+            var matches = new List<Match>();
+
+            foreach (var shareCode in shareCodes)
+            {
+                var request = ShareCodeDecoder.Decode(shareCode);
+
+                var demo = new Demo { GameRequest = request };
+                try
+                {
+                    var match = gameCoordinatorClient.GetMatchInfo(demo);
+                    matches.Add(match);
+                }
+                catch (GameCoordinatorException e)
+                {
+                    System.Console.WriteLine($"{e.Message}");
+                    continue;
+                }
+            }
+
+            Assert.Equal(2, matches.Count);
+        }
+
+        [Fact]
+        public void GetRank_UnrankedAccount_NotRanked()
+        {
+            var gameCoordinatorClient = new GameCoordinatorClient();
+
+            // can't have our two fake accounts add each other as friends...hence I have to know which account is currently used
+            // as the game coordinator doesn't tell us the rank of someone unless it's ourself or a friend
+            long steamId;
+            if (Settings.SteamUsername == "fairteamsai")
+            {
+                steamId = 76561199120831930;
+            }
+            else if (Settings.SteamUsername == "fteamsai")
+            {
+                steamId = 76561199130322471;
+            }
+            else
+            {
+                return;
+            }
+
+            var rank = gameCoordinatorClient.GetRank(steamId);
+
+            Assert.Equal(Rank.NotRanked, rank);
+        }
+
+        [Fact(Skip = "Obviously this isn't stable...")]
+        public void GetRank_GoldNovaI_GoldNovaI()
+        {
+            var gameCoordinatorClient = new GameCoordinatorClient();
+            var steamId = 76561197973591119;
+
+            var rank = gameCoordinatorClient.GetRank(steamId);
+
+            Assert.Equal(Rank.GoldNovaI, rank);
         }
     }
 }

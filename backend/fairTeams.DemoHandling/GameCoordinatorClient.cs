@@ -72,6 +72,51 @@ namespace fairTeams.DemoHandling
             return match;
         }
 
+        public Rank GetRank(long steamId)
+        {
+            var accountId = SteamIdDecoder.ToAccountId(steamId);
+            var rank = Rank.NotRanked;
+
+            try
+            {
+                var rankId = GetRank(accountId, myCsgoClient).Result;
+                rank = (Rank)rankId;
+            }
+            catch (AggregateException e)
+            {
+                var innerExceptions = e.InnerExceptions;
+
+                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                {
+                    throw innerExceptions.Single(x => x is GameCoordinatorException);
+                }
+
+                if (innerExceptions.Any(x => x is TimeoutException))
+                {
+                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
+                    myLogger.LogWarning(timeoutMessage);
+                    throw new GameCoordinatorException(timeoutMessage);
+                }
+            }
+
+            return rank;
+        }
+
+        private Task<uint> GetRank(uint accountId, CsgoClient csgoClient)
+        {
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(myWaitTimeInMilliseconds);
+
+            myLogger.LogTrace("Asking game coordinator for match details.");
+            Thread.Sleep(2000);
+            csgoClient.PlayerProfileRequest(accountId, callback =>
+            {
+                var rankId = callback.account_profiles.First().ranking.rank_id;
+                taskCompletionSource.SetResult(rankId);
+            });
+
+            return taskCompletionSource.Task;
+        }
+
         private void ConnectAndLogin()
         {
             Connect().Wait();
