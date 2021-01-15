@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
@@ -43,7 +43,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
 
         private void Knock(object state, ElapsedEventArgs elapsedEventArgs)
         {
-            Console.WriteLine("Knocking");
+            myLogger.LogTrace("Knocking to get welcomed by csgo game coodinator.");
             var clientmsg = new ClientGCMsgProtobuf<CMsgClientHello>((uint)EGCBaseClientMsg.k_EMsgGCClientHello);
             myGameCoordinator.Send(clientmsg, CsgoAppid);
         }
