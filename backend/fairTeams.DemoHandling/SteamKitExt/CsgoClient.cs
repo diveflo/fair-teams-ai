@@ -1,3 +1,4 @@
+﻿using fairTeams.Core;
 using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC;
@@ -40,6 +41,8 @@ namespace fairTeams.DemoHandling.SteamKitExt
             };
             HelloTimer.Elapsed += Knock;
         }
+
+        public CsgoClient(SteamClient steamClient, CallbackManager callbackManager) : this(steamClient, callbackManager, UnitTestLoggerCreator.CreateUnitTestLogger<CsgoClient>()) { }
 
         private void Knock(object state, ElapsedEventArgs elapsedEventArgs)
         {
