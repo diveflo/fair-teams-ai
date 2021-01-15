@@ -1,4 +1,4 @@
-﻿using fairTeams.Core;
+using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +30,7 @@ namespace fairTeams.DemoHandling
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("MatchMakingDemoCollector timed hosted service started");
+            myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started (trigger interval: {myEveryMinutesToTriggerProcessing} minutes)");
             myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
             return Task.CompletedTask;
         }

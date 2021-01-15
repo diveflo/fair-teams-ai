@@ -31,7 +31,7 @@ namespace fairTeams.DemoHandling
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("MatchMakingDemoCollector timed hosted service started");
+            myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started (trigger interval: {myEveryMinutesToTriggerProcessing} minutes)");
             myTimer = new Timer(CollectNewShareCodes, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
             return Task.CompletedTask;
         }

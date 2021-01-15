@@ -38,7 +38,7 @@ namespace fairTeams.DemoHandling
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("FTPDemoCollector timed hosted service started");
+            myLogger.LogInformation($"FTPDemoCollector timed hosted service started (trigger interval: {TriggerScheduleInMinutes} minutes)");
             myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(TriggerScheduleInMinutes));
             return Task.CompletedTask;
         }
