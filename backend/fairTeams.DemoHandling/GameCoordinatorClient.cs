@@ -4,14 +4,13 @@ using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC.CSGO.Internal;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class GameCoordinatorClient : IDisposable
+    public sealed class GameCoordinatorClient : IDisposable
     {
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
@@ -19,6 +18,7 @@ namespace fairTeams.DemoHandling
         private readonly SteamClient mySteamClient;
         private readonly SteamUser mySteamUser;
         private readonly CallbackManager myCallbackManager;
+        private readonly CsgoClient myCsgoClient;
 
         private const int myWaitTimeInMilliseconds = 30000;
 
@@ -34,6 +34,8 @@ namespace fairTeams.DemoHandling
             Task.Run(() => HandleCallbacks());
 
             ConnectAndLogin();
+            myLogger.LogTrace("Successfully connected and logged in to steam account.");
+            myCsgoClient = ConnectToCSGOGameCoodinator().Result;
         }
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
@@ -44,12 +46,11 @@ namespace fairTeams.DemoHandling
 
             try
             {
-                ConnectAndLogin();
-
-                var csgoClient = ConnectToCSGOGameCoodinator().Result;
-                var matchInfo = RequestGame(demo.GameRequest, csgoClient).Result;
+                var matchInfo = RequestGame(demo.GameRequest, myCsgoClient).Result;
                 demo.DownloadURL = GetDownloadURL(matchInfo);
                 match.Date = GetMatchDate(matchInfo);
+                match.Rounds = GetNumberOfRounds(matchInfo);
+                (match.CTScore, match.TScore) = GetScore(matchInfo);
             }
             catch (AggregateException e)
             {
@@ -206,8 +207,22 @@ namespace fairTeams.DemoHandling
             }
         }
 
+        private static int GetNumberOfRounds(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            return roundStats.Count;
+        }
+
+        private static (int counterTerroristsScore, int terroristsScore) GetScore(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            var finalRoundStats = roundStats.Last();
+            return (finalRoundStats.team_scores[0], finalRoundStats.team_scores[1]);
+        }
+
         public void Dispose()
         {
+            myCsgoClient.Dispose();
             mySteamUser.LogOff();
             mySteamClient.Disconnect();
         }

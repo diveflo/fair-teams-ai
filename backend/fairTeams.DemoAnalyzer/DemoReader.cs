@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace fairTeams.DemoAnalyzer
 {
-    public class DemoReader : IDisposable
+    public sealed class DemoReader : IDisposable
     {
         private readonly Demo myDemo;
         private FileStream myDemoFileStream;
@@ -15,6 +15,9 @@ namespace fairTeams.DemoAnalyzer
         private readonly int myMinimumRounds;
         private readonly int myMinimumPlayers;
         private readonly Dictionary<Player, int> myKillsThisRound;
+        private int myNumberOfRounds;
+        private int myTScore;
+        private int myCTScore;
         private bool myHasMatchStarted;
 
         public Match Match { get; }
@@ -64,8 +67,9 @@ namespace fairTeams.DemoAnalyzer
             ProcessMissingLastRound();
 
             AssertMinimumRoundsAndPlayers();
-
             CheckResultConsistency();
+
+            SetMatchRoundsAndScore();
         }
 
         // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
@@ -74,14 +78,14 @@ namespace fairTeams.DemoAnalyzer
         {
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
-            Match.Rounds = 0;
+            myNumberOfRounds = 0;
         }
 
         private void HandleMatchStarted(object sender, MatchStartedEventArgs e)
         {
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
-            Match.Rounds = 0;
+            myNumberOfRounds = 0;
 
             myHasMatchStarted = true;
 
@@ -229,7 +233,7 @@ namespace fairTeams.DemoAnalyzer
                 return;
             }
 
-            Match.Rounds += 1;
+            myNumberOfRounds += 1;
 
             foreach (var playerResult in Match.PlayerResults)
             {
@@ -240,16 +244,15 @@ namespace fairTeams.DemoAnalyzer
         private void ParseFinalTeamScores()
         {
             // At the end of the game, the initial CT team is T side and vice versa
-            if (Match.Rounds > 15)
+            if (myNumberOfRounds > 15)
             {
-                Match.TScore = myDemoParser.CTScore;
-                Match.CTScore = myDemoParser.TScore;
+                myTScore = myDemoParser.CTScore;
+                myCTScore = myDemoParser.TScore;
                 return;
             }
 
-            Match.CTScore = myDemoParser.CTScore;
-            Match.TScore = myDemoParser.TScore;
-
+            myCTScore = myDemoParser.CTScore;
+            myTScore = myDemoParser.TScore;
         }
 
         private void ProcessNewPlayers()
@@ -266,7 +269,7 @@ namespace fairTeams.DemoAnalyzer
         {
             // RoundOfficiallyEnded event is more stable than RoundEnd but isn't fired for the last round of a match.
             // Hence, we process one more round if have a mismatch between our counted rounds and the sum of both teams scores.
-            if (Match.Rounds != Match.CTScore + Match.TScore)
+            if (myNumberOfRounds != myCTScore + myTScore)
             {
                 UpdateKillCounts();
                 UpdateRounds();
@@ -293,6 +296,8 @@ namespace fairTeams.DemoAnalyzer
         private void CheckResultConsistency()
         {
             CheckNumberOfKillsConsistency();
+            CheckNumberOfRoundsConsistency();
+            CheckScoreConsistency();
         }
 
         // The overall number of kills can be lower than the sum of the multiple kill statistic (b.c. of teamkills, suicide) but not the other way round
@@ -309,6 +314,34 @@ namespace fairTeams.DemoAnalyzer
             }
         }
 
+        // This is only a potential check, if the analyzed demo was retrieved from the CSGO game coodinator,
+        // as those Match objects already have the Rounds property filled in from the game coodinator
+        private void CheckNumberOfRoundsConsistency()
+        {
+            if (Match.Rounds != 0)
+            {
+                if (Match.Rounds != myNumberOfRounds)
+                {
+                    throw new InconsistentStatisticsException($"The from the demo parsed number of rounds for the match {myNumberOfRounds}" +
+                        $"is different than what the game coodinator told us ({Match.Rounds})");
+                }
+            }
+        }
+
+        // This is only a potential check, if the analyzed demo was retrieved from the CSGO game coodinator,
+        // as those Match objects already have the TScore and CTScore property filled in from the game coodinator
+        private void CheckScoreConsistency()
+        {
+            if (Match.TScore != 0 || Match.CTScore != 0)
+            {
+                if (Match.TScore != myTScore || Match.CTScore != myCTScore)
+                {
+                    throw new InconsistentStatisticsException($"The from the demo parsed score for the match (CT: {myCTScore} v. T: {myTScore})" +
+                        $"is different than what the game coodinator told us (CT: {Match.CTScore} v. T: {Match.TScore})");
+                }
+            }
+        }
+
         private void AssertMinimumRoundsAndPlayers()
         {
             if (Match.Rounds < myMinimumRounds)
@@ -320,6 +353,13 @@ namespace fairTeams.DemoAnalyzer
             {
                 throw new TooFewPlayersException(myMinimumPlayers, Match.PlayerResults.Count);
             }
+        }
+
+        private void SetMatchRoundsAndScore()
+        {
+            Match.Rounds = myNumberOfRounds;
+            Match.TScore = myTScore;
+            Match.CTScore = myCTScore;
         }
 
         public void Dispose()

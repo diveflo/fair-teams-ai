@@ -16,18 +16,18 @@ namespace fairTeams.Steamworks
     public class Player
     {
         public string SteamID { get; set; }
-        public int communityvisibilitystate { get; set; }
-        public int profilestate { get; set; }
+        public int Communityvisibilitystate { get; set; }
+        public int Profilestate { get; set; }
         public string PersonaName { get; set; }
-        public string profileurl { get; set; }
-        public string avatar { get; set; }
-        public string avatarmedium { get; set; }
-        public string avatarfull { get; set; }
-        public string avatarhash { get; set; }
-        public int lastlogoff { get; set; }
-        public int personastate { get; set; }
-        public string primaryclanid { get; set; }
-        public int timecreated { get; set; }
-        public int personastateflags { get; set; }
+        public string Profileurl { get; set; }
+        public string Avatar { get; set; }
+        public string AvatarMedium { get; set; }
+        public string AvatarFull { get; set; }
+        public string AvatarHash { get; set; }
+        public int LastLogOff { get; set; }
+        public int PersonaState { get; set; }
+        public string PrimaryClanId { get; set; }
+        public int TimeCreated { get; set; }
+        public int PersonaStateFlags { get; set; }
     }
 }

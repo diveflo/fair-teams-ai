@@ -12,20 +12,18 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class LocalDemoCollector : IHostedService
+    public sealed class LocalDemoCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
-        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<LocalDemoCollector> myLogger;
         private const int myEveryMinutesToTriggerProcessing = 30;
         private Timer myTimer;
         private readonly string myDemoWatchFolder;
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILogger<LocalDemoCollector> logger)
         {
             myScopeFactory = scopeFactory;
-            myLoggerFactory = loggerFactory;
-            myLogger = loggerFactory.CreateLogger<LocalDemoCollector>();
+            myLogger = logger;
 
             myDemoWatchFolder = Settings.DemoWatchFolder;
             if (!Directory.Exists(myDemoWatchFolder))
@@ -34,11 +32,11 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLogger<LocalDemoCollector>()) { }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("LocalDemoCollector timed hosted service started");
+            myLogger.LogInformation($"LocalDemoCollector timed hosted service started (trigger interval: {myEveryMinutesToTriggerProcessing} minutes)");
             myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
             return Task.CompletedTask;
         }
@@ -55,6 +53,7 @@ namespace fairTeams.DemoHandling
             var newMatches = new List<Match>();
             var blacklistedMatches = new List<Match>();
             var newDemoFiles = Directory.EnumerateFiles(myDemoWatchFolder).Where(x => x.EndsWith(".dem"));
+            myLogger.LogDebug($"Found {newDemoFiles.Count()} new demo files in the watch folder");
 
             foreach (var demoFile in newDemoFiles)
             {

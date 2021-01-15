@@ -6,7 +6,7 @@ using Xunit;
 
 namespace fairTeams.DemoHandling.Tests
 {
-    public class ShareCodeRepositoryTests : IDisposable
+    public sealed class ShareCodeRepositoryTests : IDisposable
     {
         private readonly ShareCodeRepository myShareCodeRepository;
 

@@ -12,26 +12,24 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class ShareCodeCollector : IHostedService
+    public sealed class ShareCodeCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
-        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<ShareCodeCollector> myLogger;
         private const int myEveryMinutesToTriggerProcessing = 10;
         private Timer myTimer;
 
-        public ShareCodeCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
+        public ShareCodeCollector(IServiceScopeFactory scopeFactory, ILogger<ShareCodeCollector> logger)
         {
             myScopeFactory = scopeFactory;
-            myLoggerFactory = loggerFactory;
-            myLogger = loggerFactory.CreateLogger<ShareCodeCollector>();
+            myLogger = logger;
         }
 
-        public ShareCodeCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
+        public ShareCodeCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLogger<ShareCodeCollector>()) { }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("MatchMakingDemoCollector timed hosted service started");
+            myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started (trigger interval: {myEveryMinutesToTriggerProcessing} minutes)");
             myTimer = new Timer(CollectNewShareCodes, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
             return Task.CompletedTask;
         }

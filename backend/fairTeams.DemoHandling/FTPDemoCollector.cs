@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class FTPDemoCollector : IHostedService
+    public sealed class FTPDemoCollector : IHostedService
     {
         private readonly IServiceProvider myServiceProvider;
         private readonly ILogger<FTPDemoCollector> myLogger;
         private Timer myTimer;
-        private FtpClient myFtpClient;
+        private readonly FtpClient myFtpClient;
 
         public int TriggerScheduleInMinutes { get; set; }
 
@@ -38,7 +38,7 @@ namespace fairTeams.DemoHandling
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation("FTPDemoCollector timed hosted service started");
+            myLogger.LogInformation($"FTPDemoCollector timed hosted service started (trigger interval: {TriggerScheduleInMinutes} minutes)");
             myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(TriggerScheduleInMinutes));
             return Task.CompletedTask;
         }

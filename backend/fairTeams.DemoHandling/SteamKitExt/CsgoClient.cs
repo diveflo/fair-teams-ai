@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using fairTeams.Core;
+using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC;
 using SteamKit2.GC.CSGO.Internal;
@@ -8,12 +9,13 @@ using System.Timers;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {
-    public partial class CsgoClient
+    public sealed partial class CsgoClient : IDisposable
     {
         private const int CsgoAppid = 730;
         private readonly SteamGameCoordinator myGameCoordinator;
 
         private readonly CallbackStore myCallbackStore = new();
+        private readonly IDisposable myOnGcMessageSubscription;
 
         private readonly SteamClient mySteamClient;
         private readonly SteamUser mySteamUser;
@@ -31,7 +33,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
 
             myLogger = logger;
 
-            callbackManager.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
+            myOnGcMessageSubscription = callbackManager.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
 
             HelloTimer = new Timer(1000)
             {
@@ -40,9 +42,11 @@ namespace fairTeams.DemoHandling.SteamKitExt
             HelloTimer.Elapsed += Knock;
         }
 
+        public CsgoClient(SteamClient steamClient, CallbackManager callbackManager) : this(steamClient, callbackManager, UnitTestLoggerCreator.CreateUnitTestLogger<CsgoClient>()) { }
+
         private void Knock(object state, ElapsedEventArgs elapsedEventArgs)
         {
-            Console.WriteLine("Knocking");
+            myLogger.LogTrace("Knocking to get welcomed by csgo game coodinator.");
             var clientmsg = new ClientGCMsgProtobuf<CMsgClientHello>((uint)EGCBaseClientMsg.k_EMsgGCClientHello);
             myGameCoordinator.Send(clientmsg, CsgoAppid);
         }
@@ -54,6 +58,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
             if (obj.EMsg == (uint)EGCBaseClientMsg.k_EMsgGCClientWelcome)
             {
                 HelloTimer.Stop();
+                myLogger.LogTrace("Game coordinator welcomed us");
             }
 
             if (!myCallbackStore.TryGetValue(obj.EMsg, out Action<IPacketGCMsg> func))
@@ -81,6 +86,15 @@ namespace fairTeams.DemoHandling.SteamKitExt
             mySteamClient.Send(playGame);
 
             HelloTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            myOnGcMessageSubscription.Dispose();
+
+            HelloTimer.Elapsed -= Knock;
+            HelloTimer.Stop();
+            HelloTimer.Dispose();
         }
     }
 }
