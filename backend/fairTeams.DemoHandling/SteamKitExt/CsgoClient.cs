@@ -8,12 +8,13 @@ using System.Timers;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {
-    public partial class CsgoClient
+    public partial class CsgoClient : IDisposable
     {
         private const int CsgoAppid = 730;
         private readonly SteamGameCoordinator myGameCoordinator;
 
         private readonly CallbackStore myCallbackStore = new();
+        private readonly IDisposable myOnGcMessageSubscription;
 
         private readonly SteamClient mySteamClient;
         private readonly SteamUser mySteamUser;
@@ -31,7 +32,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
 
             myLogger = logger;
 
-            callbackManager.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
+            myOnGcMessageSubscription = callbackManager.Subscribe<SteamGameCoordinator.MessageCallback>(OnGcMessage);
 
             HelloTimer = new Timer(1000)
             {
@@ -81,6 +82,15 @@ namespace fairTeams.DemoHandling.SteamKitExt
             mySteamClient.Send(playGame);
 
             HelloTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            myOnGcMessageSubscription.Dispose();
+
+            HelloTimer.Elapsed -= Knock;
+            HelloTimer.Stop();
+            HelloTimer.Dispose();
         }
     }
 }

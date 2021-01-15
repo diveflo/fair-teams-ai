@@ -19,6 +19,7 @@ namespace fairTeams.DemoHandling
         private readonly SteamClient mySteamClient;
         private readonly SteamUser mySteamUser;
         private readonly CallbackManager myCallbackManager;
+        private readonly CsgoClient myCsgoClient;
 
         private const int myWaitTimeInMilliseconds = 30000;
 
@@ -34,6 +35,7 @@ namespace fairTeams.DemoHandling
             Task.Run(() => HandleCallbacks());
 
             ConnectAndLogin();
+            myCsgoClient = ConnectToCSGOGameCoodinator().Result;
         }
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
@@ -44,10 +46,7 @@ namespace fairTeams.DemoHandling
 
             try
             {
-                ConnectAndLogin();
-
-                var csgoClient = ConnectToCSGOGameCoodinator().Result;
-                var matchInfo = RequestGame(demo.GameRequest, csgoClient).Result;
+                var matchInfo = RequestGame(demo.GameRequest, myCsgoClient).Result;
                 demo.DownloadURL = GetDownloadURL(matchInfo);
                 match.Date = GetMatchDate(matchInfo);
             }
@@ -208,6 +207,7 @@ namespace fairTeams.DemoHandling
 
         public void Dispose()
         {
+            myCsgoClient.Dispose();
             mySteamUser.LogOff();
             mySteamClient.Disconnect();
         }
