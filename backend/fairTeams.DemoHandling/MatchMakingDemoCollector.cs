@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class MatchMakingDemoCollector : IHostedService
+    public sealed class MatchMakingDemoCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
         private readonly ILoggerFactory myLoggerFactory;

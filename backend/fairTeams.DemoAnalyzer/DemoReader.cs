@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace fairTeams.DemoAnalyzer
 {
-    public class DemoReader : IDisposable
+    public sealed class DemoReader : IDisposable
     {
         private readonly Demo myDemo;
         private FileStream myDemoFileStream;

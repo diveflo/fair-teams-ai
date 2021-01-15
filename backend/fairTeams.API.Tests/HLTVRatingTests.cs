@@ -9,7 +9,7 @@ using Match = fairTeams.Core.Match;
 
 namespace fairTeams.API.Tests
 {
-    public class HLTVRatingTests : IDisposable
+    public sealed class HLTVRatingTests : IDisposable
     {
         private readonly MatchRepository myMatchRepository;
         private readonly List<MatchStatistics> myRealUweStatistics = new()

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class FTPDemoCollector : IHostedService
+    public sealed class FTPDemoCollector : IHostedService
     {
         private readonly IServiceProvider myServiceProvider;
         private readonly ILogger<FTPDemoCollector> myLogger;

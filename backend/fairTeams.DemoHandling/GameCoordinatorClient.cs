@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class GameCoordinatorClient : IDisposable
+    public sealed class GameCoordinatorClient : IDisposable
     {
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;

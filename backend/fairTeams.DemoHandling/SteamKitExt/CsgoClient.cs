@@ -9,7 +9,7 @@ using System.Timers;
 
 namespace fairTeams.DemoHandling.SteamKitExt
 {
-    public partial class CsgoClient : IDisposable
+    public sealed partial class CsgoClient : IDisposable
     {
         private const int CsgoAppid = 730;
         private readonly SteamGameCoordinator myGameCoordinator;

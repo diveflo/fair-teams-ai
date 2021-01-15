@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
-    public class ShareCodeCollector : IHostedService
+    public sealed class ShareCodeCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
         private readonly ILoggerFactory myLoggerFactory;
