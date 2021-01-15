@@ -12,8 +12,8 @@ namespace fairTeams.DemoAnalyzer
         private readonly Demo myDemo;
         private FileStream myDemoFileStream;
         private DemoParser myDemoParser;
-        private int myMinimumRounds;
-        private int myMinimumPlayers;
+        private readonly int myMinimumRounds;
+        private readonly int myMinimumPlayers;
         private readonly Dictionary<Player, int> myKillsThisRound;
         private bool myHasMatchStarted;
 
@@ -292,19 +292,7 @@ namespace fairTeams.DemoAnalyzer
 
         private void CheckResultConsistency()
         {
-            CheckNumberOfRoundsConsistency();
             CheckNumberOfKillsConsistency();
-        }
-
-        private void CheckNumberOfRoundsConsistency()
-        {
-            foreach (var player in Match.PlayerResults)
-            {
-                if (player.Rounds != Match.Rounds)
-                {
-                    throw new InconsistentStatisticsException($"Number of rounds differs between Match ({Match.Rounds}) and player ({player.Rounds}) with steam id {player.SteamID}");
-                }
-            }
         }
 
         // The overall number of kills can be lower than the sum of the multiple kill statistic (b.c. of teamkills, suicide) but not the other way round
