@@ -49,6 +49,8 @@ namespace fairTeams.DemoHandling
                 var matchInfo = RequestGame(demo.GameRequest, myCsgoClient).Result;
                 demo.DownloadURL = GetDownloadURL(matchInfo);
                 match.Date = GetMatchDate(matchInfo);
+                match.Rounds = GetNumberOfRounds(matchInfo);
+                (match.CTScore, match.TScore) = GetScore(matchInfo);
             }
             catch (AggregateException e)
             {
@@ -203,6 +205,19 @@ namespace fairTeams.DemoHandling
                 myLogger.LogWarning("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
                 throw new GameCoordinatorException("MatchInfo doesn't contain download url ('map' property on any of the 'roundstatsall').");
             }
+        }
+
+        private static int GetNumberOfRounds(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            return roundStats.Count;
+        }
+
+        private static (int counterTerroristsScore, int terroristsScore) GetScore(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            var finalRoundStats = roundStats.Last();
+            return (finalRoundStats.team_scores[0], finalRoundStats.team_scores[1]);
         }
 
         public void Dispose()
