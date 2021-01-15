@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC.CSGO.Internal;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
