@@ -1,4 +1,4 @@
-using fairTeams.Core;
+﻿using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,7 +53,7 @@ namespace fairTeams.DemoHandling
                 return;
             }
 
-            myLogger.LogInformation($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes)}");
+            myLogger.LogDebug($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes.Select(x => x.Code))}");
             var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
@@ -107,8 +107,7 @@ namespace fairTeams.DemoHandling
                 newMatches.Add(demoReader.Match);
             }
 
-            myLogger.LogInformation($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
-
+            myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
             myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             matchRepository.AddMatchesAndSave(newMatches);

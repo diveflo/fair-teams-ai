@@ -55,6 +55,7 @@ namespace fairTeams.DemoHandling
             var newMatches = new List<Match>();
             var blacklistedMatches = new List<Match>();
             var newDemoFiles = Directory.EnumerateFiles(myDemoWatchFolder).Where(x => x.EndsWith(".dem"));
+            myLogger.LogDebug($"Found {newDemoFiles.Count()} new demo files in the watch folder");
 
             foreach (var demoFile in newDemoFiles)
             {

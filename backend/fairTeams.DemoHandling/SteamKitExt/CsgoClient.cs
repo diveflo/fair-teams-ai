@@ -58,6 +58,7 @@ namespace fairTeams.DemoHandling.SteamKitExt
             if (obj.EMsg == (uint)EGCBaseClientMsg.k_EMsgGCClientWelcome)
             {
                 HelloTimer.Stop();
+                myLogger.LogTrace("Game coordinator welcomed us");
             }
 
             if (!myCallbackStore.TryGetValue(obj.EMsg, out Action<IPacketGCMsg> func))

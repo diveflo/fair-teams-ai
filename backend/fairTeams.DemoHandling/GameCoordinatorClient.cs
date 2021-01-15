@@ -34,6 +34,7 @@ namespace fairTeams.DemoHandling
             Task.Run(() => HandleCallbacks());
 
             ConnectAndLogin();
+            myLogger.LogTrace("Successfully connected and logged in to steam account.");
             myCsgoClient = ConnectToCSGOGameCoodinator().Result;
         }
 
