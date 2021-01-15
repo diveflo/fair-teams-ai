@@ -18,7 +18,7 @@ namespace fairTeams.DemoHandling
         private readonly IServiceProvider myServiceProvider;
         private readonly ILogger<FTPDemoCollector> myLogger;
         private Timer myTimer;
-        private FtpClient myFtpClient;
+        private readonly FtpClient myFtpClient;
 
         public int TriggerScheduleInMinutes { get; set; }
 
