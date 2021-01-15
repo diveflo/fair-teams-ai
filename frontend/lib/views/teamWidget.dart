@@ -23,10 +23,22 @@ class TeamWidget extends StatelessWidget {
       children: [
         Container(
           margin: EdgeInsets.only(bottom: 5),
-          child: Text(
-            name,
-            style: TextStyle(
-                color: color, fontWeight: FontWeight.bold, fontSize: 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage(imagePath),
+                height: 40,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                    color: color, fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -42,7 +54,7 @@ class TeamWidget extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Image(
-                          image: AssetImage(imagePath),
+                          image: AssetImage(team[index].skill.rank + ".png"),
                         ),
                         title: Text(
                           team[index].name,
@@ -66,6 +78,27 @@ class TeamWidget extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class Images extends StatelessWidget {
+  final String imagePath;
+  Images({@required this.imagePath});
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 100,
+      child: Row(
+        children: [
+          Image(
+            image: AssetImage(imagePath),
+          ),
+          Image(
+            image: AssetImage("global_elite.png"),
+          )
+        ],
+      ),
     );
   }
 }
