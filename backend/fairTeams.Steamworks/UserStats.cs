@@ -24,7 +24,7 @@ namespace fairTeams.Steamworks
 
     public class Achievement
     {
-        public string name { get; set; }
-        public int achieved { get; set; }
+        public string Name { get; set; }
+        public int Achieved { get; set; }
     }
 }
