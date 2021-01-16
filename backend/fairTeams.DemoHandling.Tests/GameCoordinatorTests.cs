@@ -59,33 +59,7 @@ namespace fairTeams.DemoHandling.Tests
             Assert.Equal(2, matches.Count);
         }
 
-        [Fact]
-        public void GetRank_UnrankedAccount_NotRanked()
-        {
-            var gameCoordinatorClient = new GameCoordinatorClient();
-
-            // can't have our two fake accounts add each other as friends...hence I have to know which account is currently used
-            // as the game coordinator doesn't tell us the rank of someone unless it's ourself or a friend
-            long steamId;
-            if (Settings.SteamUsername == "fairteamsai")
-            {
-                steamId = 76561199120831930;
-            }
-            else if (Settings.SteamUsername == "fteamsai")
-            {
-                steamId = 76561199130322471;
-            }
-            else
-            {
-                return;
-            }
-
-            var rank = gameCoordinatorClient.GetRank(steamId);
-
-            Assert.Equal(Rank.NotRanked, rank);
-        }
-
-        [Fact(Skip = "Obviously this isn't stable...")]
+        [Fact (Skip = "Obviously this isn't stable...")]
         public void GetRank_GoldNovaI_GoldNovaI()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();
