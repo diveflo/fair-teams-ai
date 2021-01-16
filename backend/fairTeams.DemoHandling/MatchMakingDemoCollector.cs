@@ -105,6 +105,8 @@ namespace fairTeams.DemoHandling
 
                 myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
                 newMatches.Add(demoReader.Match);
+
+                UpdateRanksForPlayers(demoReader.Match, gameCoordinatorClient);
             }
 
             myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
@@ -118,6 +120,31 @@ namespace fairTeams.DemoHandling
             }
 
             shareCodeRepository.SaveChanges();
+        }
+
+        private void UpdateRanksForPlayers(Match match, GameCoordinatorClient gameCoordinatorClient)
+        {
+            using var scope = myScopeFactory.CreateScope();
+            var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
+
+            var knownPlayers = match.PlayerResults.Select(x => x.SteamID).Where(x => userRepository.SteamUsers.ToList().Select(y => y.SteamID).Contains(x));
+
+            foreach (var steamId in knownPlayers)
+            {
+                try
+                {
+                    var rank = gameCoordinatorClient.GetRank(steamId);
+                    myLogger.LogTrace($"Got rank {rank} for steam id: {steamId}");
+                    userRepository.SteamUsers.Find(steamId).Rank = rank;
+                }
+                catch (GameCoordinatorException)
+                {
+                    myLogger.LogWarning($"Couldn't get rank for steam id {steamId}");
+                    continue;
+                }
+            }
+
+            userRepository.SaveChanges();
         }
     }
 }
