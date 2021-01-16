@@ -104,12 +104,18 @@ namespace fairTeams.DemoHandling
 
         private Task<uint> GetRank(uint accountId, CsgoClient csgoClient)
         {
-            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(myWaitTimeInMilliseconds);
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(2000);
 
-            myLogger.LogTrace("Asking game coordinator for match details.");
-            Thread.Sleep(2000);
+            myLogger.LogTrace("Asking game coordinator for rank");
             csgoClient.PlayerProfileRequest(accountId, callback =>
             {
+                var profile = callback.account_profiles.First();
+                if (profile.ranking == null)
+                {
+                    myLogger.LogWarning($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
+                    throw new GameCoordinatorException($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
+                }
+
                 var rankId = callback.account_profiles.First().ranking.rank_id;
                 taskCompletionSource.SetResult(rankId);
             });
