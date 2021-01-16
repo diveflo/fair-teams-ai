@@ -20,6 +20,7 @@ class Game {
       Player(name: "Chris", steamID: "76561197976972561"),
       Player(name: "Stefan", steamID: "76561198058595736"),
       Player(name: "Uwe", steamID: "76561198053826525"),
+      Player(name: "Leo", steamID: "76561198053699328"),
     ];
   }
 
