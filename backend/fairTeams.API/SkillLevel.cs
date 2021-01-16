@@ -1,4 +1,5 @@
 using fairTeams.API.Rating;
+using fairTeams.Core;
 using System;
 
 namespace fairTeams.API
@@ -9,6 +10,12 @@ namespace fairTeams.API
 
         public double SkillScore => myRating.Score;
         public Trend SkillTrend => myRating.Trend;
+        public Rank Rank { get; set; }
+
+        public SkillLevel()
+        {
+            Rank = Rank.NotRanked;
+        }
 
         public void SetRating(IRating rating)
         {

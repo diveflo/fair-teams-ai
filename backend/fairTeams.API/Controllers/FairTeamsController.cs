@@ -1,4 +1,5 @@
-﻿using fairTeams.Steamworks;
+﻿using fairTeams.DemoHandling;
+using fairTeams.Steamworks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,14 @@ namespace fairTeams.API.Controllers
     {
         private readonly ITeamAssigner myAssigner;
         private readonly SteamworksApi mySteamworksApi;
+        private readonly SteamUserRepository myUserRepository;
         private readonly ILogger myLogger;
 
-        public FairTeamsController(ITeamAssigner teamAssigner, SteamworksApi steamworksApi, ILogger<FairTeamsController> logger)
+        public FairTeamsController(ITeamAssigner teamAssigner, SteamworksApi steamworksApi, SteamUserRepository userRepository, ILogger<FairTeamsController> logger)
         {
             myAssigner = teamAssigner;
             mySteamworksApi = steamworksApi;
+            myUserRepository = userRepository;
             myLogger = logger;
         }
 
@@ -28,6 +31,7 @@ namespace fairTeams.API.Controllers
         public async Task<Assignment> GetAssignedTeams(IEnumerable<RequestPlayer> players, bool includeBot)
         {
             var extendedPlayers = await GetSteamUsernames(players);
+            extendedPlayers = GetRanks(extendedPlayers);
 
             (Team terrorists, Team counterTerrorists) = await myAssigner.GetAssignedPlayers(extendedPlayers, includeBot);
 
@@ -51,6 +55,23 @@ namespace fairTeams.API.Controllers
             }
 
             return extendedPlayers;
+        }
+
+        private IEnumerable<Player> GetRanks(IEnumerable<Player> players)
+        {
+            foreach (var player in players)
+            {
+                var storedPlayer = myUserRepository.SteamUsers.Find(long.Parse(player.SteamID));
+                if (storedPlayer == null)
+                {
+                    player.Skill.Rank = Core.Rank.NotRanked;
+                    continue;
+                }
+
+                player.Skill.Rank = storedPlayer.Rank;
+            }
+
+            return players;
         }
     }
 }

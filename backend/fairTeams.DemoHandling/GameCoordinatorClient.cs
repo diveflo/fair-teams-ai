@@ -72,6 +72,57 @@ namespace fairTeams.DemoHandling
             return match;
         }
 
+        public Rank GetRank(long steamId)
+        {
+            var accountId = SteamIdDecoder.ToAccountId(steamId);
+            var rank = Rank.NotRanked;
+
+            try
+            {
+                var rankId = GetRank(accountId, myCsgoClient).Result;
+                rank = (Rank)rankId;
+            }
+            catch (AggregateException e)
+            {
+                var innerExceptions = e.InnerExceptions;
+
+                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                {
+                    throw innerExceptions.Single(x => x is GameCoordinatorException);
+                }
+
+                if (innerExceptions.Any(x => x is TimeoutException))
+                {
+                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
+                    myLogger.LogWarning(timeoutMessage);
+                    throw new GameCoordinatorException(timeoutMessage);
+                }
+            }
+
+            return rank;
+        }
+
+        private Task<uint> GetRank(uint accountId, CsgoClient csgoClient)
+        {
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(2000);
+
+            myLogger.LogTrace("Asking game coordinator for rank");
+            csgoClient.PlayerProfileRequest(accountId, callback =>
+            {
+                var profile = callback.account_profiles.First();
+                if (profile.ranking == null)
+                {
+                    myLogger.LogWarning($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
+                    throw new GameCoordinatorException($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
+                }
+
+                var rankId = callback.account_profiles.First().ranking.rank_id;
+                taskCompletionSource.SetResult(rankId);
+            });
+
+            return taskCompletionSource.Task;
+        }
+
         private void ConnectAndLogin()
         {
             Connect().Wait();
