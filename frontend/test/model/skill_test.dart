@@ -8,13 +8,15 @@ void main() {
 
       expect(skill.skillTrend, PLATEAU);
       expect(skill.skillScore, double.maxFinite);
+      expect(skill.rank, "NotRanked");
     });
 
     test("sets parameter", () {
-      Skill skill = Skill(skillTrend: UPWARDS, skillScore: 1.0);
+      Skill skill = Skill(skillTrend: UPWARDS, skillScore: 1.0, rank: "master");
 
       expect(skill.skillTrend, UPWARDS);
       expect(skill.skillScore, 1.0);
+      expect(skill.rank, "master");
     });
   });
 
@@ -23,12 +25,14 @@ void main() {
       var inputJson = {
         "skillScore": 1.0,
         "skillTrend": "Upwards",
+        "rank": "master"
       };
 
       Skill skill = Skill.fromJson(inputJson);
 
       expect(skill.skillTrend, UPWARDS);
       expect(skill.skillScore, 1.0);
+      expect(skill.rank, "master");
     });
 
     test("set default params if parameter are not in json", () {
@@ -38,14 +42,16 @@ void main() {
 
       expect(skill.skillTrend, PLATEAU);
       expect(skill.skillScore, double.maxFinite);
+      expect(skill.rank, "NotRanked");
     });
   });
 
   test("to json", () {
-    Skill skill = Skill(skillTrend: UPWARDS, skillScore: 2.2);
+    Skill skill = Skill(skillTrend: UPWARDS, skillScore: 2.2, rank: "master");
     var expectedJson = {
       "skillTrend": "Upwards",
       "skillScore": 2.2,
+      "rank": "master"
     };
 
     expect(skill.toJson(), expectedJson);

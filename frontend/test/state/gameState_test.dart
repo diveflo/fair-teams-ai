@@ -62,6 +62,7 @@ void main() {
             "skill": {
               "skillScore": 1.0,
               "skillTrend": "Plateau",
+              "rank": "NotRanked",
             }
           },
           {
@@ -71,6 +72,7 @@ void main() {
             "skill": {
               "skillScore": 2.0,
               "skillTrend": "Plateau",
+              "rank": "NotRanked",
             }
           }
         ]
@@ -85,6 +87,7 @@ void main() {
             "skill": {
               "skillScore": 0.0,
               "skillTrend": "Plateau",
+              "rank": "NotRanked",
             }
           },
           {
@@ -94,6 +97,7 @@ void main() {
             "skill": {
               "skillScore": 2.2,
               "skillTrend": "Plateau",
+              "rank": "NotRanked",
             }
           }
         ]
