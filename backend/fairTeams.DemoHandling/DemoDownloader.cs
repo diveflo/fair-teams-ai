@@ -1,4 +1,6 @@
-﻿using ICSharpCode.SharpZipLib.BZip2;
+﻿using fairTeams.Core;
+using ICSharpCode.SharpZipLib.BZip2;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net;
@@ -7,7 +9,16 @@ namespace fairTeams.DemoHandling
 {
     public class DemoDownloader
     {
-        public static string DownloadAndDecompressDemo(string downloadUrl)
+        private readonly ILogger<DemoDownloader> myLogger;
+
+        public DemoDownloader(ILogger<DemoDownloader> logger)
+        {
+            myLogger = logger;
+        }
+
+        public DemoDownloader() : this(UnitTestLoggerCreator.CreateUnitTestLogger<DemoDownloader>()) { }
+
+        public string DownloadAndDecompressDemo(string downloadUrl)
         {
             string archivedDemoFilePath;
             try
@@ -32,17 +43,18 @@ namespace fairTeams.DemoHandling
             return demoFilePath;
         }
 
-        public static string DownloadDemoArchive(string downloadUrl)
+        public string DownloadDemoArchive(string downloadUrl)
         {
+            myLogger.LogTrace($"Trying to download: {downloadUrl}");
             var realFileExtension = GetRealFileExtensionFromBZip2DownloadURL(downloadUrl);
-
             var downloadLocation = Path.GetTempFileName().Replace(".tmp", realFileExtension + ".bz2");
+            myLogger.LogTrace($"Downloading to local temp file: {downloadLocation}");
             using var webClient = new WebClient();
             webClient.DownloadFile(downloadUrl, downloadLocation);
             return downloadLocation;
         }
 
-        public static string DecompressDemoArchive(string bz2FilePath)
+        public string DecompressDemoArchive(string bz2FilePath)
         {
             if (!File.Exists(bz2FilePath))
             {
