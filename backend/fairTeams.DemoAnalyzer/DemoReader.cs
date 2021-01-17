@@ -344,9 +344,9 @@ namespace fairTeams.DemoAnalyzer
 
         private void AssertMinimumRoundsAndPlayers()
         {
-            if (Match.Rounds < myMinimumRounds)
+            if (myNumberOfRounds < myMinimumRounds)
             {
-                throw new TooFewRoundsException(myMinimumRounds, Match.Rounds);
+                throw new TooFewRoundsException(myMinimumRounds, myNumberOfRounds);
             }
 
             if (Match.PlayerResults.Count < myMinimumPlayers)

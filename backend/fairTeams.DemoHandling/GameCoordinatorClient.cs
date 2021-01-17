@@ -237,10 +237,12 @@ namespace fairTeams.DemoHandling
             return taskCompletionSource.Task;
         }
 
-        private static DateTime GetMatchDate(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        private DateTime GetMatchDate(CDataGCCStrike15_v2_MatchInfo matchInfo)
         {
             var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            return date.AddSeconds(matchInfo.matchtime);
+            date.AddSeconds(matchInfo.matchtime);
+            myLogger.LogTrace($"Extracted match date/time: {date}");
+            return date;
         }
 
         private string GetDownloadURL(CDataGCCStrike15_v2_MatchInfo matchInfo)
@@ -249,6 +251,7 @@ namespace fairTeams.DemoHandling
             try
             {
                 var downloadUrl = roundStats.First(x => !string.IsNullOrEmpty(x.map)).map;
+                myLogger.LogTrace($"Extract download url: {downloadUrl}");
                 return downloadUrl;
             }
             catch (InvalidOperationException)

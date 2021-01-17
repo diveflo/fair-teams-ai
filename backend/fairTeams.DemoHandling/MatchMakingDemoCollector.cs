@@ -57,6 +57,7 @@ namespace fairTeams.DemoHandling
             var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
+            var demoDownloader = new DemoDownloader(myLoggerFactory.CreateLogger<DemoDownloader>());
 
             foreach (var sharingCode in newSharingCodes)
             {
@@ -78,7 +79,7 @@ namespace fairTeams.DemoHandling
                 string demoFilePath;
                 try
                 {
-                    demoFilePath = DemoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
+                    demoFilePath = demoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
                 }
                 catch (DemoDownloaderException exception)
                 {
