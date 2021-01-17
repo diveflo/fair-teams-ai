@@ -28,7 +28,7 @@ class GameConfigState {
         Candidate(name: "Stefan", steamID: "76561198058595736"),
         Candidate(name: "Uwe", steamID: "76561198053826525"),
         Candidate(name: "Leo", steamID: "76561198053699328"),
-        Candidate(name: "Flo Galgon", steamID: "76561198021024163")
+        Candidate(name: "Flo G", steamID: "76561198021024163")
       ],
       mapPool: MapPool(),
       includeBot: true,
