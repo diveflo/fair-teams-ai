@@ -8,7 +8,7 @@ void main() {
     test("sets game config state with 12 candidates", () {
       GameConfigState gameConfig = GameConfigState.initial();
 
-      expect(gameConfig.candidates.length, 12);
+      expect(gameConfig.candidates.length, 14);
     });
   });
 
