@@ -92,7 +92,7 @@ namespace fairTeams.DemoHandling
 
                 match.Demo.FilePath = demoFilePath;
 
-                using var demoReader = new DemoReader(match);
+                using var demoReader = new DemoReader(match, 0, 0);
                 try
                 {
                     demoReader.ReadHeader();
