@@ -70,7 +70,9 @@ namespace fairTeams.DemoHandling
                 }
                 catch (DemoReaderException e)
                 {
-                    myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}. Adding to repository without stats -> blacklisted.");
+                    match.Id += Guid.NewGuid().ToString();
+                    match.Demo.Id = match.Id;
+                    myLogger.LogWarning($"Analyzing demo from watch folder ({Path.GetFileName(demoFile)}) failed: {e.Message}. Adding to repository (id: {match.Id}) without stats -> blacklisted.");
                     match.PlayerResults.Clear();
                     match.CTScore = -1;
                     match.TScore = -1;
