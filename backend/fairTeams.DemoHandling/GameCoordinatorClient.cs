@@ -239,6 +239,12 @@ namespace fairTeams.DemoHandling
 
         private DateTime GetMatchDate(CDataGCCStrike15_v2_MatchInfo matchInfo)
         {
+            if (matchInfo.matchtime == 0)
+            {
+                myLogger.LogWarning($"Couldn't extract match date/time. Assuming 'now'.");
+                return DateTime.Now;
+            }
+
             var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             date.AddSeconds(matchInfo.matchtime);
             myLogger.LogTrace($"Extracted match date/time: {date}");
