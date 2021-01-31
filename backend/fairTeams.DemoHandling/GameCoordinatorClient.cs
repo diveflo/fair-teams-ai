@@ -246,7 +246,7 @@ namespace fairTeams.DemoHandling
             }
 
             var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            date.AddSeconds(matchInfo.matchtime);
+            date = date.AddSeconds(matchInfo.matchtime);
             myLogger.LogTrace($"Extracted match date/time: {date}");
             return date;
         }
