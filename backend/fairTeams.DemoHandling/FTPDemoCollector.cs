@@ -65,6 +65,8 @@ namespace fairTeams.DemoHandling
 
         public List<FtpListItem> ListDemoFilesOnFTPServer()
         {
+            var minimumFileSize = ByteSize.FromMegaBytes(10.0);
+
             if (!myFtpClient.IsConnected)
             {
                 myFtpClient.Connect();
@@ -73,6 +75,7 @@ namespace fairTeams.DemoHandling
             return myFtpClient.GetListing()
                 .Where(x => x.Type == FtpFileSystemObjectType.File)
                 .Where(x => x.FullName.EndsWith(".dem"))
+                .Where(x => x.Size >= minimumFileSize.Bytes)
                 .ToList();
         }
 
