@@ -1,4 +1,5 @@
-﻿using fairTeams.Core;
+﻿using ByteSizeLib;
+using fairTeams.Core;
 using FluentFTP;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,6 +56,7 @@ namespace fairTeams.DemoHandling
             myFtpClient.Connect();
 
             var allDemoFiles = ListDemoFilesOnFTPServer();
+            allDemoFiles = GetDemoFilesForFinishedMatches(allDemoFiles);
             myLogger.LogTrace($"Found {allDemoFiles.Count} demo files on FTP server.");
             var newDemoFiles = GetNewDemoFiles(allDemoFiles);
             myLogger.LogTrace($"{newDemoFiles.Count} of the found {allDemoFiles.Count} demo files on the FTP server are new.");
@@ -65,6 +67,8 @@ namespace fairTeams.DemoHandling
 
         public List<FtpListItem> ListDemoFilesOnFTPServer()
         {
+            var minimumFileSize = ByteSize.FromMegaBytes(10.0);
+
             if (!myFtpClient.IsConnected)
             {
                 myFtpClient.Connect();
@@ -73,6 +77,7 @@ namespace fairTeams.DemoHandling
             return myFtpClient.GetListing()
                 .Where(x => x.Type == FtpFileSystemObjectType.File)
                 .Where(x => x.FullName.EndsWith(".dem"))
+                .Where(x => x.Size >= minimumFileSize.Bytes)
                 .ToList();
         }
 
@@ -130,6 +135,21 @@ namespace fairTeams.DemoHandling
                     }
                 }
             }
+        }
+
+        private static List<FtpListItem> GetDemoFilesForFinishedMatches(List<FtpListItem> files)
+        {
+            var finishedDemoFiles = new List<FtpListItem>();
+            foreach(var file in files)
+            {
+                var tenMinutesAgo = DateTime.UtcNow - TimeSpan.FromMinutes(10.0);
+                if (file.Modified <= tenMinutesAgo)
+                {
+                    finishedDemoFiles.Add(file);
+                }
+            }
+
+            return finishedDemoFiles;
         }
 
         private static string GetFileName(string path)
