@@ -51,6 +51,15 @@ namespace fairTeams.API
             terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
             counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
 
+            var flipTeams = myRandom.NextDouble() > 0.5;
+            if (flipTeams)
+            {
+                var newCTs = terrorists.Players;
+                terrorists.Players = counterTerrorists.Players;
+                counterTerrorists.Players = newCTs;
+                myLogger.LogInformation("Coinflip: Ts and CTs switched sides");
+            }
+
             return (terrorists, counterTerrorists);
         }
 
@@ -61,18 +70,12 @@ namespace fairTeams.API
 
             var firstTeamCombinations = new Combinations<Player>(playersList, playersPerTeam);
             myLogger.LogInformation($"{firstTeamCombinations.Count} possible combinations of teams. Computing their skill differences.");
-
+            
             var assignmentAndCost = new Dictionary<(Team, Team), double>((int)firstTeamCombinations.Count);
             foreach (var combination in firstTeamCombinations)
             {
-                var terrorists = new Team("Terrorists")
-                {
-                    Players = combination
-                };
-                var counterTerrorists = new Team("CounterTerrorists")
-                {
-                    Players = playersList.Except(combination).ToList()
-                };
+                var terrorists = new Team("Terrorists") { Players = combination };
+                var counterTerrorists = new Team("CounterTerrorists") { Players = playersList.Except(combination).ToList() };
 
                 var skillDifference = GetSkillDifference(terrorists, counterTerrorists);
 
