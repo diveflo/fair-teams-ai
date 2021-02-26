@@ -48,8 +48,8 @@ namespace fairTeams.API
             }
 
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
-            terrorists.Players = EnumerableExtensions.Randomize(terrorists.Players);
-            counterTerrorists.Players = EnumerableExtensions.Randomize(counterTerrorists.Players);
+            terrorists.Players = terrorists.Players.OrderBy(x => x.Name).ToList();
+            counterTerrorists.Players = counterTerrorists.Players.OrderBy(x => x.Name).ToList();
 
             return (terrorists, counterTerrorists);
         }
