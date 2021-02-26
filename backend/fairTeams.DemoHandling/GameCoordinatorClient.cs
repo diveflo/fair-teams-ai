@@ -112,8 +112,8 @@ namespace fairTeams.DemoHandling
                 var profile = callback.account_profiles.First();
                 if (profile.ranking == null)
                 {
-                    myLogger.LogWarning($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
-                    throw new GameCoordinatorException($"Couldn't get rank for account id {accountId}. Probably the player isn't friends with our functional acount {Settings.SteamUsername}");
+                    myLogger.LogWarning($"Couldn't get rank for account id {accountId}");
+                    throw new GameCoordinatorException($"Couldn't get rank for account id {accountId}");
                 }
 
                 var rankId = callback.account_profiles.First().ranking.rank_id;
@@ -125,10 +125,9 @@ namespace fairTeams.DemoHandling
 
         private void ConnectAndLogin()
         {
-            Connect().Wait();
-
             try
             {
+                Connect().Wait();
                 var loginResult = Login().Result;
                 if (loginResult != EResult.OK)
                 {
