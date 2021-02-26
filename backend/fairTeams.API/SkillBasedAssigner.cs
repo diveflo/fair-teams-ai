@@ -15,12 +15,14 @@ namespace fairTeams.API
         private readonly MatchRepository myMatchRepository;
         private readonly SteamworksApi mySteamworksApi;
         private readonly ILogger myLogger;
+        private readonly Random myRandom;
 
         public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi, ILogger<SkillBasedAssigner> logger)
         {
             myMatchRepository = matchRepository;
             mySteamworksApi = steamworksApi;
             myLogger = logger;
+            myRandom = new Random();
         }
 
         public SkillBasedAssigner(MatchRepository matchRepository, SteamworksApi steamworksApi) : this(matchRepository, steamworksApi, UnitTestLoggerCreator.CreateUnitTestLogger<SkillBasedAssigner>()) { }
@@ -61,7 +63,7 @@ namespace fairTeams.API
             myLogger.LogInformation($"{firstTeamCombinations.Count} possible combinations of teams. Computing their skill differences.");
 
             var assignmentAndCost = new Dictionary<(Team, Team), double>((int)firstTeamCombinations.Count);
-            Parallel.ForEach(firstTeamCombinations, combination =>
+            foreach (var combination in firstTeamCombinations)
             {
                 var terrorists = new Team("Terrorists")
                 {
@@ -74,11 +76,13 @@ namespace fairTeams.API
 
                 var skillDifference = GetSkillDifference(terrorists, counterTerrorists);
 
-                assignmentAndCost.Add((terrorists, counterTerrorists), skillDifference);
-            });
+                if (!assignmentAndCost.Any(x => ScrambledEquals(x.Key.Item1.Players, counterTerrorists.Players)))
+                {
+                    assignmentAndCost.Add((terrorists, counterTerrorists), skillDifference);
+                }
+            }
 
-            var smallSubsetOfOptimalAssinments = GetSmallSubsetOfBestAssignments(assignmentAndCost);
-            return GetRandomlySelectedAssignment(smallSubsetOfOptimalAssinments);
+            return GetRandomSelectionOfBestAssignments(assignmentAndCost);
         }
 
         private List<Player> BalanceTeamSizesWithBot(List<Player> players)
@@ -148,28 +152,39 @@ namespace fairTeams.API
             return player;
         }
 
-        private List<(Team, Team)> GetSmallSubsetOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
+        private (Team, Team) GetRandomSelectionOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
         {
             var orderedByCosts = assignmentsAndCosts.OrderBy(x => x.Value);
             var numberOfAssignments = orderedByCosts.Count();
             const int minimumNumberOfAssignments = 3;
 
+            IEnumerable<KeyValuePair<(Team, Team), double>> selectedSubset;
+
             if (numberOfAssignments >= minimumNumberOfAssignments)
             {
-                myLogger.LogInformation($"Using subset of best {minimumNumberOfAssignments} (hard-coded value!) assignments.");
-                return orderedByCosts.Take(minimumNumberOfAssignments).Select(x => x.Key).ToList();
+                selectedSubset = orderedByCosts.Take(minimumNumberOfAssignments);
+
+                myLogger.LogInformation($"Using subset of best {minimumNumberOfAssignments} (hard-coded value!) assignments." +
+                    $"Their skill-difference is {selectedSubset.ElementAt(0).Value}, {selectedSubset.ElementAt(1).Value} and {selectedSubset.ElementAt(2).Value} respectively");
+            }
+            else
+            {
+                selectedSubset = orderedByCosts;
+                myLogger.LogInformation($"Using all possible assignments as there are so few.");
             }
 
-            myLogger.LogInformation($"Using all possible assignments as there are so few.");
+            var indexOfAssignment = myRandom.Next(0, selectedSubset.Count());
+            myLogger.LogTrace($"Generated random index for assignment selection: {indexOfAssignment}");
 
-            return orderedByCosts.Take(numberOfAssignments).Select(x => x.Key).ToList();
+            var selectedAssignment = selectedSubset.ElementAt(indexOfAssignment);
+            myLogger.LogInformation($"The selected teams have a skill difference of {selectedAssignment.Value}");
+
+            return selectedAssignment.Key;
         }
 
-        private (Team, Team) GetRandomlySelectedAssignment(List<(Team, Team)> smallSubsetOfOptimalAssignments)
+        public static bool ScrambledEquals(IEnumerable<Player> first, IEnumerable<Player> second)
         {
-            myLogger.LogInformation("Returning randomly selected assignment.");
-            var indexOfAssignment = new Random().Next(0, smallSubsetOfOptimalAssignments.Count);
-            return smallSubsetOfOptimalAssignments.ElementAt(indexOfAssignment);
+            return Enumerable.SequenceEqual(first.OrderBy(x => x.Skill), second.OrderBy(x => x.Skill));
         }
     }
 }

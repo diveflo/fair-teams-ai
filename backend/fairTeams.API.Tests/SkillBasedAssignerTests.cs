@@ -1,4 +1,5 @@
-﻿using fairTeams.Core;
+﻿using fairTeams.API.Rating;
+using fairTeams.Core;
 using fairTeams.Steamworks;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -143,6 +144,40 @@ namespace fairTeams.API.Tests
 
             var player = t.Players.Concat(ct.Players).Single(x => x.SteamID.Equals(steamIdOfPlayerWithoutMatches));
             Assert.InRange(player.Skill.SkillScore, 0.3, 1.3);
+        }
+
+        [Fact]
+        public void ScrambledEquals_Test()
+        {
+            var player1 = new Player { Name = "Player 1", SteamID = "1" };
+            player1.Skill.SetRating(new DummyRating { Score = 1.0 });
+            var player2 = new Player { Name = "Player 2", SteamID = "2" };
+            player2.Skill.SetRating(new DummyRating { Score = 2.0 });
+            var player3 = new Player { Name = "Player 3", SteamID = "3" };
+            player3.Skill.SetRating(new DummyRating { Score = 3.0 });
+            var player4 = new Player { Name = "Player 4", SteamID = "4" };
+            player4.Skill.SetRating(new DummyRating { Score = 4.0 });
+
+            var team1 = new Team("1")
+            {
+                Players = new List<Player> { player1, player2 }
+            };
+            var team1copy = new Team("1")
+            {
+                Players = new List<Player> { player1, player2 }
+            };
+            var team2 = new Team("2")
+            {
+                Players = new List<Player> { player3, player4 }
+            };
+            var team2copy = new Team("2")
+            {
+                Players = new List<Player> { player3, player4 }
+            };
+
+            Assert.True(SkillBasedAssigner.ScrambledEquals(team1.Players, team1copy.Players));
+            Assert.True(SkillBasedAssigner.ScrambledEquals(team2.Players, team2copy.Players));
+            Assert.False(SkillBasedAssigner.ScrambledEquals(team1.Players, team2.Players));
         }
 
         public void Dispose()
