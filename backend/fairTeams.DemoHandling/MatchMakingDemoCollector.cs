@@ -58,6 +58,7 @@ namespace fairTeams.DemoHandling
             var newMatches = new List<Match>();
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
             var demoDownloader = new DemoDownloader(myLoggerFactory.CreateLogger<DemoDownloader>());
+            var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
 
             foreach (var sharingCode in newSharingCodes)
             {
@@ -87,9 +88,9 @@ namespace fairTeams.DemoHandling
                     continue;
                 }
 
-                myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}. Analyzing now.");
-                successfullyDownloadedSharingCodes.Add(sharingCode);
+                myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}");
 
+                successfullyDownloadedSharingCodes.Add(sharingCode);
                 match.Demo.FilePath = demoFilePath;
 
                 using var demoReader = new DemoReader(match, 0, 0);
@@ -101,8 +102,11 @@ namespace fairTeams.DemoHandling
                 catch (DemoReaderException e)
                 {
                     myLogger.LogWarning($"Analyzing demo for share code {sharingCode.Code} failed: {e.Message}");
+                    BackupDemo(demo, demoBackuper);
                     continue;
                 }
+
+                BackupDemo(demo, demoBackuper);
 
                 myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
                 newMatches.Add(demoReader.Match);
@@ -121,6 +125,18 @@ namespace fairTeams.DemoHandling
             }
 
             shareCodeRepository.SaveChanges();
+        }
+
+        private void BackupDemo(Demo demo, DemoBackuper backuper)
+        {
+            try
+            {
+                backuper.BackupDemoFile(demo);
+            }
+            catch (Exception)
+            {
+                myLogger.LogWarning($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
+            }
         }
 
         private void UpdateRanksForPlayers(Match match, GameCoordinatorClient gameCoordinatorClient)

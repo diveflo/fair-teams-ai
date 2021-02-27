@@ -1,4 +1,4 @@
-using fairTeams.Core;
+﻿using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,6 +57,8 @@ namespace fairTeams.DemoHandling
             var newDemoFiles = Directory.EnumerateFiles(myDemoWatchFolder).Where(x => x.EndsWith(".dem"));
             myLogger.LogDebug($"Found {newDemoFiles.Count()} new demo files in the watch folder");
 
+            var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
+
             foreach (var demoFile in newDemoFiles)
             {
                 var match = new Match { Demo = new Demo { FilePath = demoFile }, Date = File.GetCreationTime(demoFile) };
@@ -80,11 +82,8 @@ namespace fairTeams.DemoHandling
                     match.TScore = -1;
                     blacklistedMatches.Add(match);
                 }
-                finally
-                {
-                    myLogger.LogTrace($"Deleting local demo file {Path.GetFileName(demoFile)}");
-                    File.Delete(demoFile);
-                }
+
+                BackupDemo(match.Demo, demoBackuper);
             }
 
             using var scope = myScopeFactory.CreateScope();
@@ -92,6 +91,18 @@ namespace fairTeams.DemoHandling
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             matchRepository.AddMatchesAndSave(newMatches);
             matchRepository.AddMatchesAndSave(blacklistedMatches);
+        }
+
+        private void BackupDemo(Demo demo, DemoBackuper backuper)
+        {
+            try
+            {
+                backuper.BackupDemoFile(demo, true);
+            }
+            catch (Exception)
+            {
+                myLogger.LogWarning($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
+            }
         }
     }
 }
