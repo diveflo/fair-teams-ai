@@ -1,4 +1,4 @@
-﻿using fairTeams.Core;
+using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,15 +15,17 @@ namespace fairTeams.DemoHandling
     public sealed class LocalDemoCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
+        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<LocalDemoCollector> myLogger;
         private const int myEveryMinutesToTriggerProcessing = 30;
         private Timer myTimer;
         private readonly string myDemoWatchFolder;
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILogger<LocalDemoCollector> logger)
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
         {
             myScopeFactory = scopeFactory;
-            myLogger = logger;
+            myLoggerFactory = loggerFactory;
+            myLogger = loggerFactory.CreateLogger<LocalDemoCollector>();
 
             myDemoWatchFolder = Settings.DemoWatchFolder;
             if (!Directory.Exists(myDemoWatchFolder))
@@ -32,7 +34,7 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLogger<LocalDemoCollector>()) { }
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
