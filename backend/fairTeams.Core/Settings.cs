@@ -10,8 +10,10 @@ namespace fairTeams.Core
         public static string CSGOServerFTP => GetEnvironmentVariableMachineAndProcess("CSGO_FTP");
         public static string CSGOServerFTPUsername => GetEnvironmentVariableMachineAndProcess("CSGO_FTP_USERNAME");
         public static string CSGOServerFTPPassword => GetEnvironmentVariableMachineAndProcess("CSGO_FTP_PASSWORD");
+        public static string DemoBackupFTP => GetEnvironmentVariableMachineAndProcess("DEMO_FTP");
+        public static string DemoBackupFTPUsername => GetEnvironmentVariableMachineAndProcess("DEMO_FTP_USERNAME");
+        public static string DemoBackupFTPPassword => GetEnvironmentVariableMachineAndProcess("DEMO_FTP_PASSWORD");
         public static string ApplicationFolder => Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "fairteamsai");
-
         public static string DemoWatchFolder => Path.Combine(ApplicationFolder, "demowatch");
 
         private static string GetEnvironmentVariableMachineAndProcess(string environmentVariable)
