@@ -10,6 +10,9 @@ services:
       - CSGO_FTP=
       - CSGO_FTP_USERNAME=
       - CSGO_FTP_PASSWORD=
+      - DEMO_FTP=
+      - DEMO_FTP_USERNAME=
+      - DEMO_FTP_PASSWORD=
       #- Logging__LogLevel__Default=Debug
     volumes:
       - ./databases:/root/.local/share/fairteamsai

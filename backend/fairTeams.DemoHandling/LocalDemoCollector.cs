@@ -15,15 +15,17 @@ namespace fairTeams.DemoHandling
     public sealed class LocalDemoCollector : IHostedService
     {
         private readonly IServiceScopeFactory myScopeFactory;
+        private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<LocalDemoCollector> myLogger;
         private const int myEveryMinutesToTriggerProcessing = 30;
         private Timer myTimer;
         private readonly string myDemoWatchFolder;
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILogger<LocalDemoCollector> logger)
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
         {
             myScopeFactory = scopeFactory;
-            myLogger = logger;
+            myLoggerFactory = loggerFactory;
+            myLogger = loggerFactory.CreateLogger<LocalDemoCollector>();
 
             myDemoWatchFolder = Settings.DemoWatchFolder;
             if (!Directory.Exists(myDemoWatchFolder))
@@ -32,7 +34,7 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLogger<LocalDemoCollector>()) { }
+        public LocalDemoCollector(IServiceScopeFactory scopeFactory) : this(scopeFactory, UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
@@ -54,6 +56,8 @@ namespace fairTeams.DemoHandling
             var blacklistedMatches = new List<Match>();
             var newDemoFiles = Directory.EnumerateFiles(myDemoWatchFolder).Where(x => x.EndsWith(".dem"));
             myLogger.LogDebug($"Found {newDemoFiles.Count()} new demo files in the watch folder");
+
+            var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
 
             foreach (var demoFile in newDemoFiles)
             {
@@ -78,11 +82,8 @@ namespace fairTeams.DemoHandling
                     match.TScore = -1;
                     blacklistedMatches.Add(match);
                 }
-                finally
-                {
-                    myLogger.LogTrace($"Deleting local demo file {Path.GetFileName(demoFile)}");
-                    File.Delete(demoFile);
-                }
+
+                BackupDemo(match.Demo, demoBackuper);
             }
 
             using var scope = myScopeFactory.CreateScope();
@@ -90,6 +91,18 @@ namespace fairTeams.DemoHandling
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
             matchRepository.AddMatchesAndSave(newMatches);
             matchRepository.AddMatchesAndSave(blacklistedMatches);
+        }
+
+        private void BackupDemo(Demo demo, DemoBackuper backuper)
+        {
+            try
+            {
+                backuper.BackupDemoFile(demo, true);
+            }
+            catch (Exception)
+            {
+                myLogger.LogWarning($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
+            }
         }
     }
 }
