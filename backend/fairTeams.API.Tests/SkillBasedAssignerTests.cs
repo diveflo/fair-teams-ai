@@ -85,7 +85,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
-        public async Task GetAssignedPlayers_TwoStrongPlayersAndTwoMediumPlayers_OneStrongOneMediumEach()
+        public async Task GetAssignedPlayers_TwoStrongPlayersAndFourMediumPlayers_OneStrongTwoMediumEach()
         {
             var match = new Match { Id = "M1" };
             var strongPlayer1 = new Player { SteamID = "1" };
@@ -96,14 +96,18 @@ namespace fairTeams.API.Tests
             match.PlayerResults.Add(new MatchStatistics { SteamID = 3, Id = Guid.NewGuid().ToString(), Kills = 2, Deaths = 2, Rounds = 5 });
             var mediumPlayer2 = new Player { SteamID = "4" };
             match.PlayerResults.Add(new MatchStatistics { SteamID = 4, Id = Guid.NewGuid().ToString(), Kills = 2, Deaths = 3, Rounds = 5 });
+            var mediumPlayer3 = new Player { SteamID = "5" };
+            match.PlayerResults.Add(new MatchStatistics { SteamID = 5, Id = Guid.NewGuid().ToString(), Kills = 2, Deaths = 3, Rounds = 5 });
+            var mediumPlayer4 = new Player { SteamID = "6" };
+            match.PlayerResults.Add(new MatchStatistics { SteamID = 6, Id = Guid.NewGuid().ToString(), Kills = 2, Deaths = 3, Rounds = 5 });
             myMatchRepository.Add(match);
             myMatchRepository.SaveChanges();
             var skillBasedAssigner = new SkillBasedAssigner(myMatchRepository, new SteamworksApi());
 
-            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { strongPlayer1, strongPlayer2, mediumPlayer1, mediumPlayer2 });
+            (var t, var ct) = await skillBasedAssigner.GetAssignedPlayers(new List<Player> { strongPlayer1, strongPlayer2, mediumPlayer1, mediumPlayer2, mediumPlayer3, mediumPlayer4 });
 
-            Assert.Equal(2, t.Players.Count);
-            Assert.Equal(2, ct.Players.Count);
+            Assert.Equal(3, t.Players.Count);
+            Assert.Equal(3, ct.Players.Count);
             Assert.False(t.Players.Contains(strongPlayer1) && t.Players.Contains(strongPlayer2));
             Assert.False(ct.Players.Contains(strongPlayer1) && ct.Players.Contains(strongPlayer2));
         }
