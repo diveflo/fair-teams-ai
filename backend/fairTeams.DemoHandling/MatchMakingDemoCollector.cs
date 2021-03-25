@@ -16,8 +16,12 @@ namespace fairTeams.DemoHandling
         private readonly IServiceScopeFactory myScopeFactory;
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
-        private const int myEveryMinutesToTriggerProcessing = 30;
-        private Timer myTimer;
+        private const int myMatchMakingCollectionTriggerInMinutes = 30;
+        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
+        private const int myRankCheckerTriggerInMinutes = 360;
+        private const int myRankCheckerTriggerOffsetInMinutes = 15;
+        private Timer myMatchMakingCollectionSchedule;
+        private Timer myRankCheckerSchedule;
 
         public MatchMakingDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
         {
@@ -30,15 +34,21 @@ namespace fairTeams.DemoHandling
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started (trigger interval: {myEveryMinutesToTriggerProcessing} minutes)");
-            myTimer = new Timer(ProcessNewMatches, null, TimeSpan.Zero, TimeSpan.FromMinutes(myEveryMinutesToTriggerProcessing));
+            myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started. {System.Environment.NewLine}" +
+                $"Match making collector schedule: {myMatchMakingCollectorTriggerOffsetInMinutes} min offset, trigger every {myMatchMakingCollectionTriggerInMinutes} min {Environment.NewLine}" +
+                $"Rank checker schedule: {myRankCheckerTriggerOffsetInMinutes} min offset, trigger every {myRankCheckerTriggerInMinutes}");
+
+            myMatchMakingCollectionSchedule = new Timer(ProcessNewMatches, null, TimeSpan.FromMinutes(myMatchMakingCollectorTriggerOffsetInMinutes), TimeSpan.FromMinutes(myMatchMakingCollectionTriggerInMinutes));
+            myRankCheckerSchedule = new Timer(CheckForRankChanges, null, TimeSpan.FromMinutes(myRankCheckerTriggerOffsetInMinutes), TimeSpan.FromMinutes(myRankCheckerTriggerInMinutes));
+
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             myLogger.LogInformation("MatchMakingDemoCollector timed hosted service is stopping");
-            myTimer?.Change(Timeout.Infinite, 0);
+            myMatchMakingCollectionSchedule?.Change(Timeout.Infinite, 0);
+            myRankCheckerSchedule?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
@@ -110,8 +120,6 @@ namespace fairTeams.DemoHandling
 
                 myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
                 newMatches.Add(demoReader.Match);
-
-                UpdateRanksForPlayers(demoReader.Match, gameCoordinatorClient);
             }
 
             myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
@@ -125,6 +133,14 @@ namespace fairTeams.DemoHandling
             }
 
             shareCodeRepository.SaveChanges();
+
+            UpdateRanksForPlayers(gameCoordinatorClient);
+        }
+
+        public void CheckForRankChanges(object state)
+        {
+            var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
+            UpdateRanksForPlayers(gameCoordinatorClient);
         }
 
         private void BackupDemo(Demo demo, DemoBackuper backuper)
@@ -139,20 +155,22 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        private void UpdateRanksForPlayers(Match match, GameCoordinatorClient gameCoordinatorClient)
+        private void UpdateRanksForPlayers(GameCoordinatorClient gameCoordinatorClient)
         {
             using var scope = myScopeFactory.CreateScope();
             var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
 
-            var knownPlayers = match.PlayerResults.Select(x => x.SteamID).Where(x => userRepository.SteamUsers.ToList().Select(y => y.SteamID).Contains(x));
+            var steamUsers = userRepository.SteamUsers;
 
-            foreach (var steamId in knownPlayers)
+            foreach (var user in steamUsers)
             {
+                var steamId = user.SteamID;
+
                 try
                 {
                     var rank = gameCoordinatorClient.GetRank(steamId);
                     myLogger.LogTrace($"Got rank {rank} for steam id: {steamId}");
-                    userRepository.SteamUsers.Find(steamId).Rank = rank;
+                    user.Rank = rank;
                 }
                 catch (GameCoordinatorException)
                 {
