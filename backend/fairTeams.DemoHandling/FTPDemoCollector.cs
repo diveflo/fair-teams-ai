@@ -86,7 +86,7 @@ namespace fairTeams.DemoHandling
             using var scope = myServiceProvider.CreateScope();
             var matchRepository = scope.ServiceProvider.GetService<MatchRepository>();
 
-            var existingDemoFileNames = matchRepository.Matches.AsEnumerable().Select(x => PathExtensions.GetFileName(x.Demo.FilePath)).ToList();
+            var existingDemoFileNames = matchRepository.Matches.AsQueryable().Select(x => PathExtensions.GetFileName(x.Demo.FilePath)).ToList();
             existingDemoFileNames.AddRange(Directory.EnumerateFiles(Settings.DemoWatchFolder).Where(x => x.EndsWith(".dem")));
             return allDemoFiles.Where(x => !existingDemoFileNames.Contains(x.Name)).ToList();
         }
