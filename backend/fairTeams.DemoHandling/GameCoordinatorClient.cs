@@ -104,9 +104,10 @@ namespace fairTeams.DemoHandling
 
         private Task<uint> GetRank(uint accountId, CsgoClient csgoClient)
         {
-            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(2000);
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(100000);
 
             myLogger.LogTrace("Asking game coordinator for rank");
+            Thread.Sleep(2000);
             csgoClient.PlayerProfileRequest(accountId, callback =>
             {
                 var profile = callback.account_profiles.First();
