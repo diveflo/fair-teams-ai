@@ -17,9 +17,9 @@ namespace fairTeams.DemoHandling
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
-        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
+        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 15;
         private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 15;
+        private const int myRankCheckerTriggerOffsetInMinutes = 0;
         private Timer myMatchMakingCollectionSchedule;
         private Timer myRankCheckerSchedule;
 
