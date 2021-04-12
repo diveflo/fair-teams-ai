@@ -111,14 +111,16 @@ namespace fairTeams.DemoHandling
             csgoClient.PlayerProfileRequest(accountId, callback =>
             {
                 var profile = callback.account_profiles.First();
-                if (profile.ranking == null)
+                if (profile.ranking != null)
+                {
+                    var rankId = profile.ranking.rank_id;
+                    taskCompletionSource.SetResult(rankId);
+                }
+                else
                 {
                     myLogger.LogWarning($"Couldn't get rank for account id {accountId}");
-                    throw new GameCoordinatorException($"Couldn't get rank for account id {accountId}");
+                    taskCompletionSource.SetException(new GameCoordinatorException($"Couldn't get rank for account id {accountId}"));
                 }
-
-                var rankId = callback.account_profiles.First().ranking.rank_id;
-                taskCompletionSource.SetResult(rankId);
             });
 
             return taskCompletionSource.Task;
