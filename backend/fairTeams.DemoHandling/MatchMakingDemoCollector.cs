@@ -17,9 +17,9 @@ namespace fairTeams.DemoHandling
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
-        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
+        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 15;
         private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 15;
+        private const int myRankCheckerTriggerOffsetInMinutes = 0;
         private Timer myMatchMakingCollectionSchedule;
         private Timer myRankCheckerSchedule;
 
@@ -160,7 +160,8 @@ namespace fairTeams.DemoHandling
             using var scope = myScopeFactory.CreateScope();
             var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
 
-            var steamUsers = userRepository.SteamUsers;
+            var steamUsers = userRepository.SteamUsers.AsEnumerable().ToList();
+            myLogger.LogInformation($"Checking for rank changes of {steamUsers.Count} players");
 
             foreach (var user in steamUsers)
             {
@@ -171,6 +172,7 @@ namespace fairTeams.DemoHandling
                     var rank = gameCoordinatorClient.GetRank(steamId);
                     myLogger.LogTrace($"Got rank {rank} for steam id: {steamId}");
                     user.Rank = rank;
+                    userRepository.SaveChanges();
                 }
                 catch (GameCoordinatorException)
                 {
@@ -178,8 +180,6 @@ namespace fairTeams.DemoHandling
                     continue;
                 }
             }
-
-            userRepository.SaveChanges();
         }
     }
 }
