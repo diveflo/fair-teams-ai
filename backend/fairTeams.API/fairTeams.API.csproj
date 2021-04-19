@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="Combinatorics" Version="1.1.0.19" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.4" NoWarn="NU1605" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.5" NoWarn="NU1605" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
             <PrivateAssets>all</PrivateAssets>
