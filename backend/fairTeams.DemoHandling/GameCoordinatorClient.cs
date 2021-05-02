@@ -18,7 +18,7 @@ namespace fairTeams.DemoHandling
         private readonly SteamClient mySteamClient;
         private readonly SteamUser mySteamUser;
         private readonly CallbackManager myCallbackManager;
-        private readonly CsgoClient myCsgoClient;
+        private CsgoClient myCsgoClient;
 
         private const int myWaitTimeInMilliseconds = 30000;
 
@@ -32,10 +32,6 @@ namespace fairTeams.DemoHandling
             mySteamUser = mySteamClient.GetHandler<SteamUser>();
 
             Task.Run(() => HandleCallbacks());
-
-            ConnectAndLogin();
-            myLogger.LogTrace("Successfully connected and logged in to steam account.");
-            myCsgoClient = ConnectToCSGOGameCoodinator().Result;
         }
 
         public GameCoordinatorClient() : this(UnitTestLoggerCreator.CreateUnitTestLoggerFactory()) { }
@@ -126,7 +122,7 @@ namespace fairTeams.DemoHandling
             return taskCompletionSource.Task;
         }
 
-        private void ConnectAndLogin()
+        public void ConnectAndLogin()
         {
             try
             {
@@ -136,6 +132,9 @@ namespace fairTeams.DemoHandling
                 {
                     throw new GameCoordinatorException($"Couldn't login to the steam client. Result code: {loginResult}");
                 }
+
+                myLogger.LogTrace("Successfully connected and logged in to steam account.");
+                myCsgoClient = ConnectToCSGOGameCoodinator().Result;
             }
             catch (AggregateException e)
             {
@@ -284,9 +283,20 @@ namespace fairTeams.DemoHandling
 
         public void Dispose()
         {
-            myCsgoClient.Dispose();
-            mySteamUser.LogOff();
-            mySteamClient.Disconnect();
+            if (myCsgoClient != null)
+            {
+                myCsgoClient.Dispose();
+            }
+
+            if (mySteamUser != null)
+            {
+                mySteamUser.LogOff();
+            }
+            
+            if (mySteamClient != null)
+            {
+                mySteamClient.Disconnect();
+            }
         }
     }
 }

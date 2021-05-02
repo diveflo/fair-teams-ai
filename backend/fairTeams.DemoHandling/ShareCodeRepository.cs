@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,14 @@ namespace fairTeams.DemoHandling
 {
     public class ShareCodeRepository : DbContext
     {
-        private const int myMaximumDownloadAttempts = 3;
+        private readonly ILogger<ShareCodeRepository> myLogger;
+        private const int myMaximumDownloadAttempts = 10;
         public DbSet<ShareCode> ShareCodes { get; set; }
 
-        public ShareCodeRepository(DbContextOptions<ShareCodeRepository> options) : base(options) { }
+        public ShareCodeRepository(DbContextOptions<ShareCodeRepository> options, ILogger<ShareCodeRepository> logger) : base(options)
+        { 
+            myLogger = logger;
+        }
 
         public void AddNew(List<ShareCode> codes)
         {
@@ -71,6 +76,7 @@ namespace fairTeams.DemoHandling
 
             if (dbShareCode.DownloadAttempt >= myMaximumDownloadAttempts)
             {
+                myLogger.LogInformation($"Share code {dbShareCode.Code} reached maximum number of attempts. Removing...");
                 ShareCodes.Remove(dbShareCode);
             }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using fairTeams.Core;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace fairTeams.DemoHandling.Tests
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
-            myShareCodeRepository = new ShareCodeRepository(options);
+            myShareCodeRepository = new ShareCodeRepository(options, UnitTestLoggerCreator.CreateUnitTestLogger<ShareCodeRepository>());
         }
 
         [Fact]

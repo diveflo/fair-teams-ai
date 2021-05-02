@@ -17,9 +17,9 @@ namespace fairTeams.DemoHandling
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
-        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 15;
+        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
         private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 0;
+        private const int myRankCheckerTriggerOffsetInMinutes = 15;
         private Timer myMatchMakingCollectionSchedule;
         private Timer myRankCheckerSchedule;
 
@@ -55,10 +55,14 @@ namespace fairTeams.DemoHandling
         public void ProcessNewMatches(object state)
         {
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
-
             try
             {
+                gameCoordinatorClient.ConnectAndLogin();
                 ProcessNewMatches(gameCoordinatorClient);
+            }
+            catch (GameCoordinatorException)
+            {
+                myLogger.LogWarning("Error while trying to process new matches");
             }
             finally
             {
@@ -156,7 +160,12 @@ namespace fairTeams.DemoHandling
 
             try
             {
+                gameCoordinatorClient.ConnectAndLogin();
                 UpdateRanksForPlayers(gameCoordinatorClient);
+            }
+            catch (GameCoordinatorException)
+            {
+                myLogger.LogWarning("Error while trying to update ranks");
             }
             finally
             {
