@@ -19,7 +19,7 @@ namespace fairTeams.DemoHandling
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
         private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
         private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 15;
+        private const int myRankCheckerTriggerOffsetInMinutes = 375;
         private Timer myMatchMakingCollectionSchedule;
         private Timer myRankCheckerSchedule;
 
@@ -82,7 +82,6 @@ namespace fairTeams.DemoHandling
             }
 
             myLogger.LogDebug($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes.Select(x => x.Code))}");
-            var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
             var demoDownloader = new DemoDownloader(myLoggerFactory.CreateLogger<DemoDownloader>());
             var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
@@ -116,8 +115,6 @@ namespace fairTeams.DemoHandling
                 }
 
                 myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}");
-
-                successfullyDownloadedSharingCodes.Add(sharingCode);
                 match.Demo.FilePath = demoFilePath;
 
                 using var demoReader = new DemoReader(match, 0, 0);
@@ -142,14 +139,9 @@ namespace fairTeams.DemoHandling
             myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
             myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
-            matchRepository.AddMatchesAndSave(newMatches);
+            var successfullySavedMatches = matchRepository.AddMatchesAndSave(newMatches);
 
-            foreach (var successfullyDownloadedSharingCode in successfullyDownloadedSharingCodes)
-            {
-                shareCodeRepository.Remove(successfullyDownloadedSharingCode);
-            }
-
-            shareCodeRepository.SaveChanges();
+            shareCodeRepository.RemoveCodes(successfullySavedMatches.Select(x => x.Demo.ShareCode));
 
             UpdateRanksForPlayers(gameCoordinatorClient);
         }
@@ -165,7 +157,7 @@ namespace fairTeams.DemoHandling
             }
             catch (GameCoordinatorException)
             {
-                myLogger.LogWarning("Error while trying to update ranks");
+                myLogger.LogError("Error while trying to update ranks");
             }
             finally
             {
@@ -181,7 +173,7 @@ namespace fairTeams.DemoHandling
             }
             catch (Exception)
             {
-                myLogger.LogWarning($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
+                myLogger.LogError($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
             }
         }
 

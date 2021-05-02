@@ -64,6 +64,29 @@ namespace fairTeams.DemoHandling
             return batch;
         }
 
+        public void RemoveCodes(IEnumerable<string> shareCodes)
+        {
+            foreach (var code in shareCodes)
+            {
+                RemoveCode(code);
+            }
+        }
+
+        public void RemoveCode(string shareCode)
+        {
+            var allShareCodes = ShareCodes.AsEnumerable().ToList();
+            var matchingRepositoryItem = allShareCodes.Where(x => x.Code.Equals(shareCode));
+
+            if (matchingRepositoryItem.Any())
+            {
+                Remove(matchingRepositoryItem.Single());
+                SaveChanges();
+                return;
+            }
+
+            myLogger.LogWarning($"ShareCode repository doesn't contain {shareCode}");
+        }
+
         private ShareCode IncrementDownloadAttemptCount(ShareCode code)
         {
             var dbShareCode = ShareCodes.AsEnumerable().Single(x => x.Equals(code));

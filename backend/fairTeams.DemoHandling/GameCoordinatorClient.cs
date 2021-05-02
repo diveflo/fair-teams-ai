@@ -27,6 +27,8 @@ namespace fairTeams.DemoHandling
             myLoggerFactory = loggerFactory;
             myLogger = myLoggerFactory.CreateLogger<GameCoordinatorClient>();
 
+            myLogger.LogTrace("Creating GameCoordinatorClient instance");
+
             mySteamClient = new SteamClient();
             myCallbackManager = new CallbackManager(mySteamClient);
             mySteamUser = mySteamClient.GetHandler<SteamUser>();
@@ -114,7 +116,7 @@ namespace fairTeams.DemoHandling
                 }
                 else
                 {
-                    myLogger.LogWarning($"Couldn't get rank for account id {accountId}");
+                    myLogger.LogError($"Couldn't get rank for account id {accountId}");
                     taskCompletionSource.SetException(new GameCoordinatorException($"Couldn't get rank for account id {accountId}"));
                 }
             });
@@ -143,7 +145,7 @@ namespace fairTeams.DemoHandling
                 if (innerExceptions.Any(x => x is TimeoutException))
                 {
                     var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
-                    myLogger.LogWarning(timeoutMessage);
+                    myLogger.LogError(timeoutMessage);
                     throw new GameCoordinatorException(timeoutMessage);
                 }
             }
@@ -283,6 +285,7 @@ namespace fairTeams.DemoHandling
 
         public void Dispose()
         {
+            myLogger.LogTrace("Disposing GameCoordinatorClient");
             if (myCsgoClient != null)
             {
                 myCsgoClient.Dispose();

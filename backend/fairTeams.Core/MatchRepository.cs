@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,8 +19,10 @@ namespace fairTeams.Core
 
         public MatchRepository(DbContextOptions<MatchRepository> options) : this(options, UnitTestLoggerCreator.CreateUnitTestLogger<MatchRepository>()) { }
 
-        public void AddMatchesAndSave(IEnumerable<Match> newMatches)
+        public IList<Match> AddMatchesAndSave(IEnumerable<Match> newMatches)
         {
+            var successfullyAddedMatches = new List<Match>();
+
             if (newMatches.Any())
             {
                 Matches.Load();
@@ -28,7 +31,7 @@ namespace fairTeams.Core
                     var alreadyExists = Matches.Any(x => x.Id == match.Id);
                     if (alreadyExists)
                     {
-                        myLogger.LogDebug($"Match with id: {match.Id} already exists in repository.");
+                        myLogger.LogWarning($"Match with id: {match.Id} already exists in repository.");
                         continue;
                     }
 
@@ -36,21 +39,29 @@ namespace fairTeams.Core
                     {
                         Matches.Add(match);
                         SaveChanges();
+                        successfullyAddedMatches.Add(match);
                     }
                     catch (DbUpdateException e)
                     {
                         var innerSqlException = e.InnerException as SqliteException;
+                        
                         var isAlreadyAdded = innerSqlException.SqliteErrorCode == 19;
                         if (isAlreadyAdded)
                         {
-                            myLogger.LogDebug($"Match with id: {match.Id} already exists in repository.");
+                            myLogger.LogWarning($"Match with id: {match.Id} already exists in repository.");
                             continue;
                         }
 
                         throw;
                     }
+                    catch (Exception e)
+                    {
+                        myLogger.LogCritical($"Unexpected exception: {e.Message} while trying to save match for ShareCode {match.Demo.ShareCode}");
+                    }
                 }
             }
+
+            return successfullyAddedMatches;
         }
 
         public IList<MatchStatistics> GetAllMatchStatisticsForSteamId(long steamId)
