@@ -54,6 +54,20 @@ namespace fairTeams.DemoHandling
 
         public void ProcessNewMatches(object state)
         {
+            var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
+
+            try
+            {
+                ProcessNewMatches(gameCoordinatorClient);
+            }
+            finally
+            {
+                gameCoordinatorClient.Dispose();
+            }
+        }
+
+        private void ProcessNewMatches(GameCoordinatorClient gameCoordinatorClient)
+        {
             using var scope = myScopeFactory.CreateScope();
             var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
             var newSharingCodes = shareCodeRepository.GetRetrieableBatch(5);
@@ -66,7 +80,6 @@ namespace fairTeams.DemoHandling
             myLogger.LogDebug($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes.Select(x => x.Code))}");
             var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
-            var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
             var demoDownloader = new DemoDownloader(myLoggerFactory.CreateLogger<DemoDownloader>());
             var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
 
@@ -140,7 +153,15 @@ namespace fairTeams.DemoHandling
         public void CheckForRankChanges(object state)
         {
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
-            UpdateRanksForPlayers(gameCoordinatorClient);
+
+            try
+            {
+                UpdateRanksForPlayers(gameCoordinatorClient);
+            }
+            finally
+            {
+                gameCoordinatorClient.Dispose();
+            }
         }
 
         private void BackupDemo(Demo demo, DemoBackuper backuper)
