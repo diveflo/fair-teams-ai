@@ -35,6 +35,13 @@ namespace fairTeams.DemoAnalyzer
             myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
 
+        public Match Parse()
+        {
+            ReadHeader();
+            Read();
+            return Match;
+        }
+
         public void ReadHeader()
         {
             myDemoFileStream = File.OpenRead(myDemo.FilePath);
