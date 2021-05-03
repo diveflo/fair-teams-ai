@@ -44,7 +44,7 @@ namespace fairTeams.DemoHandling
                 myFtpClient.AutoConnect();
             }
 
-            var remoteDemoFileName = $"{demo.Id}.dem";
+            var remoteDemoFileName = demo.State == DemoState.ParseFailure ? $"{demo.Id}_parseFailure.dem" : $"{demo.Id}.dem";
             var remoteFilePath = $"/csgo/{remoteDemoFileName}";
 
             var successfulUpload = myFtpClient.UploadFile(filePath, remoteFilePath, FtpRemoteExists.Skip, false, FtpVerify.Retry);

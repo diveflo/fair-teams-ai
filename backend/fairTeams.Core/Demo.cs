@@ -4,7 +4,8 @@ namespace fairTeams.Core
     {
         New,
         Downloaded,
-        Processed
+        Processed,
+        ParseFailure
     }
 
     public class Demo

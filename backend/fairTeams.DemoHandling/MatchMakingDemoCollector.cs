@@ -126,6 +126,7 @@ namespace fairTeams.DemoHandling
                 catch (DemoReaderException e)
                 {
                     myLogger.LogWarning($"Analyzing demo for share code {sharingCode.Code} failed: {e.Message}");
+                    demo.State = DemoState.ParseFailure;
                     continue;
                 }
                 finally
