@@ -154,22 +154,22 @@ namespace fairTeams.API
 
         private (Team, Team) GetRandomSelectionOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
         {
-            var orderedByCosts = assignmentsAndCosts.OrderBy(x => x.Value);
-            var numberOfAssignments = orderedByCosts.Count();
+            var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= 0.075);
+            var numberOfAssignments = assignmentsWithAcceptableSkillDifference.Count();
             const int minimumNumberOfAssignments = 3;
 
             IEnumerable<KeyValuePair<(Team, Team), double>> selectedSubset;
 
             if (numberOfAssignments >= minimumNumberOfAssignments)
             {
-                selectedSubset = orderedByCosts.Take(minimumNumberOfAssignments);
+                selectedSubset = assignmentsAndCosts.OrderBy(x => x.Value).Take(minimumNumberOfAssignments);
 
-                myLogger.LogInformation($"Using subset of best {minimumNumberOfAssignments} (hard-coded value!) assignments." +
-                    $"Their skill-difference is {selectedSubset.ElementAt(0).Value}, {selectedSubset.ElementAt(1).Value} and {selectedSubset.ElementAt(2).Value} respectively");
+                myLogger.LogInformation($"Using subset of best {selectedSubset.Count()} assignments (skill difference max. 0.075)." +
+                    $"Their skill-difference is {string.Join(",", selectedSubset.Select(x => x.Value))} respectively");
             }
             else
             {
-                selectedSubset = orderedByCosts;
+                selectedSubset = assignmentsWithAcceptableSkillDifference;
                 myLogger.LogInformation($"Using all possible assignments as there are so few.");
             }
 
