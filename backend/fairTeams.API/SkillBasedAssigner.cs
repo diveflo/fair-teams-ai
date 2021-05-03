@@ -162,14 +162,14 @@ namespace fairTeams.API
 
             if (numberOfAssignments >= minimumNumberOfAssignments)
             {
-                selectedSubset = assignmentsAndCosts.OrderBy(x => x.Value).Take(minimumNumberOfAssignments);
+                selectedSubset = assignmentsWithAcceptableSkillDifference;
 
                 myLogger.LogInformation($"Using subset of best {selectedSubset.Count()} assignments (skill difference max. 0.075)." +
                     $"Their skill-difference is {string.Join(",", selectedSubset.Select(x => x.Value))} respectively");
             }
             else
             {
-                selectedSubset = assignmentsWithAcceptableSkillDifference;
+                selectedSubset = assignmentsAndCosts.OrderBy(x => x.Value).Take(minimumNumberOfAssignments);
                 myLogger.LogInformation($"Using all possible assignments as there are so few.");
             }
 
