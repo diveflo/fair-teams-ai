@@ -161,13 +161,13 @@ namespace fairTeams.DemoHandling
             }
             else
             {
-                myCallbackManager.Subscribe<SteamClient.ConnectedCallback>((callback) => taskCompletionSource.SetResult());
+                myCallbackManager.Subscribe<SteamClient.ConnectedCallback>(
+                    (callback) => taskCompletionSource.SetResult());
+                myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>(
+                    (callback) => taskCompletionSource.SetException(new GameCoordinatorException("Steam server seems to be down. Please try again.")));
 
-                if (!mySteamClient.IsConnected)
-                {
-                    mySteamClient.Connect();
-                    myLogger.LogTrace("Connecting to Steam...");
-                }
+                mySteamClient.Connect();
+                myLogger.LogTrace("Connecting to Steam...");
             }
 
             return taskCompletionSource.Task;
@@ -227,10 +227,18 @@ namespace fairTeams.DemoHandling
             Thread.Sleep(5000);
             csgoClient.RequestGame(request, matchList =>
             {
+                if (matchList.matches == null)
+                {
+                    myLogger.LogError("Unexpected empty result from game coodinator (matchList.matches is null)");
+                    taskCompletionSource.SetException(new GameCoordinatorException("Unexpected empty result from game coodinator (matchList.matches is null)"));
+                    return;
+                }
+
                 if (!matchList.matches.Any())
                 {
                     myLogger.LogWarning("Game coordinator doesn't have match details (probably expired).");
                     taskCompletionSource.SetException(new GameCoordinatorException("Game coordinator doesn't have match details (probably expired)."));
+                    return;
                 }
 
                 var matchInfo = matchList.matches.First();
