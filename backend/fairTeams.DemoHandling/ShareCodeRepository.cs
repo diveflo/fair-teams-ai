@@ -81,10 +81,7 @@ namespace fairTeams.DemoHandling
             {
                 Remove(matchingRepositoryItem.Single());
                 SaveChanges();
-                return;
             }
-
-            myLogger.LogWarning($"ShareCode repository doesn't contain {shareCode}");
         }
 
         private ShareCode IncrementDownloadAttemptCount(ShareCode code)

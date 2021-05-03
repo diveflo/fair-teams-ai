@@ -1,5 +1,6 @@
 ﻿using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -74,6 +75,10 @@ namespace fairTeams.DemoHandling
         {
             using var scope = myScopeFactory.CreateScope();
             var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
+            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+
+            PruneShareCodeRepository(shareCodeRepository, matchRepository);
+
             var newSharingCodes = shareCodeRepository.GetRetrieableBatch(5);
 
             if (!newSharingCodes.Any())
@@ -138,7 +143,7 @@ namespace fairTeams.DemoHandling
 
             myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
             myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
-            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+
             var successfullySavedMatches = matchRepository.AddMatchesAndSave(newMatches);
 
             shareCodeRepository.RemoveCodes(successfullySavedMatches.Select(x => x.Demo.ShareCode));
@@ -163,6 +168,12 @@ namespace fairTeams.DemoHandling
             {
                 gameCoordinatorClient.Dispose();
             }
+        }
+
+        private void PruneShareCodeRepository(ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
+        {
+            var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
+            shareCodeRepository.RemoveCodes(alreadyProcessedSharingCodes);
         }
 
         private void BackupDemo(Demo demo, DemoBackuper backuper)
