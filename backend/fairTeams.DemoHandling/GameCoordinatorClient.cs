@@ -108,6 +108,11 @@ namespace fairTeams.DemoHandling
             Thread.Sleep(2000);
             csgoClient.PlayerProfileRequest(accountId, callback =>
             {
+                if (callback.account_profiles == null || !callback.account_profiles.Any())
+                {
+                    taskCompletionSource.SetException(new GameCoordinatorException($"Empty response while trying to get rank for account id {accountId}"));
+                }
+
                 var profile = callback.account_profiles.First();
                 if (profile.ranking != null)
                 {
