@@ -70,8 +70,8 @@ namespace fairTeams.DemoAnalyzer
                 throw new DemoReaderException($"Unexpected exception thrown during demo analysis: {e.Message}");
             }
 
-            ParseFinalTeamScores();
             ProcessMissingLastRound();
+            ParseFinalTeamScores();
 
             AssertMinimumRoundsAndPlayers();
             CheckResultConsistency();
