@@ -61,7 +61,7 @@ namespace fairTeams.DemoHandling
             var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
             var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
 
-			PruneShareCodeRepository(shareCodeRepository, matchRepository);
+            PruneShareCodeRepository(shareCodeRepository, matchRepository);
 
             try
             {
@@ -164,7 +164,7 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        private void PruneShareCodeRepository(ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
+        private static void PruneShareCodeRepository(ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
         {
             var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
             shareCodeRepository.RemoveCodes(alreadyProcessedSharingCodes);

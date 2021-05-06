@@ -85,7 +85,7 @@ namespace fairTeams.DemoHandling.Tests
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
             myShareCodeRepository.SaveChanges();
-            var code = myShareCodeRepository.GetBatch(1).Single();
+            _ = myShareCodeRepository.GetBatch(1).Single();
 
             var secondRequestCode = myShareCodeRepository.GetBatch(1).Single();
 

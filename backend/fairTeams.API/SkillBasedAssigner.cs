@@ -67,7 +67,7 @@ namespace fairTeams.API
             {
                 var terrorists = new Team("Terrorists")
                 {
-                    Players = combination
+                    Players = (IList<Player>)combination
                 };
                 var counterTerrorists = new Team("CounterTerrorists")
                 {

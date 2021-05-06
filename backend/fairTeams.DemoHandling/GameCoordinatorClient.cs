@@ -14,7 +14,7 @@ namespace fairTeams.DemoHandling
     public sealed class GameCoordinatorClient : IDisposable
     {
         private bool myIsDisposing;
-        private IList<IDisposable> myRegisteredCallbacks;
+        private readonly IList<IDisposable> myRegisteredCallbacks;
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
 
