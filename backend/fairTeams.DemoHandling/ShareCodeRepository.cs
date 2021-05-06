@@ -47,6 +47,12 @@ namespace fairTeams.DemoHandling
             return batch;
         }
 
+        public bool HasRetrieableCodes()
+        {
+            var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
+            return orderedRetrieableCodes.Any();
+        }
+
         public IList<ShareCode> GetRetrieableBatch(int count)
         {
             var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
