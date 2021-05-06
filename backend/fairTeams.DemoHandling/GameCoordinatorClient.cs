@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SteamKit2;
 using SteamKit2.GC.CSGO.Internal;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace fairTeams.DemoHandling
 {
     public sealed class GameCoordinatorClient : IDisposable
     {
+        private bool myIsDisposing;
+        private IList<IDisposable> myRegisteredCallbacks;
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
 
@@ -32,6 +35,9 @@ namespace fairTeams.DemoHandling
             mySteamClient = new SteamClient();
             myCallbackManager = new CallbackManager(mySteamClient);
             mySteamUser = mySteamClient.GetHandler<SteamUser>();
+
+            myIsDisposing = false;
+            myRegisteredCallbacks = new List<IDisposable>();
 
             Task.Run(() => HandleCallbacks());
         }
@@ -65,6 +71,8 @@ namespace fairTeams.DemoHandling
                     myLogger.LogWarning(timeoutMessage);
                     throw new GameCoordinatorException(timeoutMessage);
                 }
+
+                throw;
             }
 
             return match;
@@ -95,6 +103,8 @@ namespace fairTeams.DemoHandling
                     myLogger.LogWarning(timeoutMessage);
                     throw new GameCoordinatorException(timeoutMessage);
                 }
+
+                throw;
             }
 
             return rank;
@@ -166,10 +176,20 @@ namespace fairTeams.DemoHandling
             }
             else
             {
-                myCallbackManager.Subscribe<SteamClient.ConnectedCallback>(
-                    (callback) => taskCompletionSource.SetResult());
-                myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>(
-                    (callback) => taskCompletionSource.SetException(new GameCoordinatorException("Steam server seems to be down. Please try again.")));
+                var connectedCallbackRegistration = myCallbackManager.Subscribe<SteamClient.ConnectedCallback>((callback) =>
+                {
+                    myLogger.LogTrace("Successfully connected to steam");
+                    taskCompletionSource.SetResult();
+                });
+
+                var disconnectedCallbackRegistration = myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>((callback) =>
+                {
+                    myLogger.LogError("Steam server seems to be down. Please try again.");
+                    taskCompletionSource.SetException(new GameCoordinatorException("Steam server seems to be down. Please try again."));
+                });
+
+                myRegisteredCallbacks.Add(connectedCallbackRegistration);
+                myRegisteredCallbacks.Add(disconnectedCallbackRegistration);
 
                 mySteamClient.Connect();
                 myLogger.LogTrace("Connecting to Steam...");
@@ -182,13 +202,26 @@ namespace fairTeams.DemoHandling
         {
             var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<EResult>(myWaitTimeInMilliseconds);
 
+            if (!mySteamClient.IsConnected)
+            {
+                myLogger.LogCritical("Steam client wasn't connected while trying to login. How?");
+                taskCompletionSource.SetException(new GameCoordinatorException("Steam client wasn't connected while trying to login. How?"));
+                return taskCompletionSource.Task;
+            }
+
             if (mySteamClient.SessionID != null)
             {
                 taskCompletionSource.SetResult(EResult.OK);
             }
             else
             {
-                myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>((callback) => taskCompletionSource.SetResult(callback.Result));
+                var loggedOnCallbackRegistration = myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>((callback) =>
+                {
+                    myLogger.LogTrace($"Log on result: {callback.Result}");
+                    taskCompletionSource.SetResult(callback.Result);
+                });
+
+                myRegisteredCallbacks.Add(loggedOnCallbackRegistration);
 
                 var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
                 try
@@ -207,7 +240,7 @@ namespace fairTeams.DemoHandling
 
         private void HandleCallbacks()
         {
-            while (true)
+            while (!myIsDisposing)
             {
                 myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
             }
@@ -219,7 +252,11 @@ namespace fairTeams.DemoHandling
 
             var csgo = new CsgoClient(mySteamClient, myCallbackManager, myLoggerFactory.CreateLogger<CsgoClient>());
             myLogger.LogTrace("Telling Steam we're playing CS:GO to connect to game coordinator.");
-            csgo.Launch((_) => taskCompletionSource.SetResult(csgo));
+            csgo.Launch((callback) =>
+            {
+                var balance = callback.balance;
+                taskCompletionSource.SetResult(csgo);
+            });
 
             return taskCompletionSource.Task;
         }
@@ -229,7 +266,7 @@ namespace fairTeams.DemoHandling
             var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<CDataGCCStrike15_v2_MatchInfo>(myWaitTimeInMilliseconds);
 
             myLogger.LogTrace("Asking game coordinator for match details.");
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             if (csgoClient == null)
             {
                 myLogger.LogError("CsGoClient is unexpectedly null");
@@ -304,6 +341,14 @@ namespace fairTeams.DemoHandling
 
         public void Dispose()
         {
+            foreach (var registeredCallback in myRegisteredCallbacks)
+            {
+                registeredCallback.Dispose();
+            }
+
+            myIsDisposing = true;
+            myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+
             myLogger.LogTrace("Disposing GameCoordinatorClient");
             if (myCsgoClient != null)
             {
