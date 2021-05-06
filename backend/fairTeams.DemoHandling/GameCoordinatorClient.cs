@@ -230,11 +230,17 @@ namespace fairTeams.DemoHandling
 
             myLogger.LogTrace("Asking game coordinator for match details.");
             Thread.Sleep(5000);
+            if (csgoClient == null)
+            {
+                myLogger.LogError("CsGoClient is unexpectedly null");
+                taskCompletionSource.SetException(new GameCoordinatorException("CsGoClient is unexpectedly null"));
+                return taskCompletionSource.Task;
+            }
             csgoClient.RequestGame(request, matchList =>
             {
-                if (matchList.matches == null)
+                if (matchList == null || matchList.matches == null)
                 {
-                    myLogger.LogError("Unexpected empty result from game coodinator (matchList.matches is null)");
+                    myLogger.LogError("Unexpected empty result from game coodinator (matchList or matchList.matches is null)");
                     taskCompletionSource.SetException(new GameCoordinatorException("Unexpected empty result from game coodinator (matchList.matches is null)"));
                     return;
                 }

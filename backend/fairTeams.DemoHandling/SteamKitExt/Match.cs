@@ -52,6 +52,12 @@ namespace fairTeams.DemoHandling.SteamKitExt
 
         public void RequestGame(GameRequest request, Action<CMsgGCCStrike15_v2_MatchList> callback)
         {
+            if (myCallbackStore == null)
+            {
+                myLogger.LogError("Callbackstore unexpectedly is null");
+                throw new GameCoordinatorException("Callbackstore unexpectedly is null while trying to request game");
+            }
+
             myCallbackStore.Add((uint)ECsgoGCMsg.k_EMsgGCCStrike15_v2_MatchList,
                 msg => callback(new ClientGCMsgProtobuf<CMsgGCCStrike15_v2_MatchList>(msg).Body));
 
@@ -60,6 +66,12 @@ namespace fairTeams.DemoHandling.SteamKitExt
             clientGcMsgProtobuf.Body.token = request.Token;
             clientGcMsgProtobuf.Body.matchid = request.MatchId;
             clientGcMsgProtobuf.Body.outcomeid = request.OutcomeId;
+
+            if (myGameCoordinator == null)
+            {
+                myLogger.LogError("GameCoordinator unexpectedly is null");
+                throw new GameCoordinatorException("GameCoordinator unexpectedly is null while trying to request game");
+            }
 
             myGameCoordinator.Send(clientGcMsgProtobuf, CsgoAppid);
         }
