@@ -154,29 +154,17 @@ namespace fairTeams.API
 
         private (Team, Team) GetRandomSelectionOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
         {
-            var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= 0.15);
+            var skillDifferenceThreshold = 0.15;
+            var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= skillDifferenceThreshold);
             var numberOfAssignments = assignmentsWithAcceptableSkillDifference.Count();
-            const int minimumNumberOfAssignments = 3;
 
-            IEnumerable<KeyValuePair<(Team, Team), double>> selectedSubset;
+            myLogger.LogInformation($"{numberOfAssignments} combinations are below the selected threshold {skillDifferenceThreshold}." +
+                $"Their skill-difference is {string.Join(",", assignmentsWithAcceptableSkillDifference.Select(x => x.Value))} respectively");
 
-            if (numberOfAssignments >= minimumNumberOfAssignments)
-            {
-                selectedSubset = assignmentsWithAcceptableSkillDifference;
-
-                myLogger.LogInformation($"Using subset of best {selectedSubset.Count()} assignments (skill difference max. 0.075)." +
-                    $"Their skill-difference is {string.Join(",", selectedSubset.Select(x => x.Value))} respectively");
-            }
-            else
-            {
-                selectedSubset = assignmentsAndCosts.OrderBy(x => x.Value).Take(minimumNumberOfAssignments);
-                myLogger.LogInformation($"Using all possible assignments as there are so few.");
-            }
-
-            var indexOfAssignment = myRandom.Next(0, selectedSubset.Count());
+            var indexOfAssignment = myRandom.Next(0, numberOfAssignments);
             myLogger.LogTrace($"Generated random index for assignment selection: {indexOfAssignment}");
 
-            var selectedAssignment = selectedSubset.ElementAt(indexOfAssignment);
+            var selectedAssignment = assignmentsWithAcceptableSkillDifference.ElementAt(indexOfAssignment);
             myLogger.LogInformation($"The selected teams have a skill difference of {selectedAssignment.Value}");
 
             return selectedAssignment.Key;
