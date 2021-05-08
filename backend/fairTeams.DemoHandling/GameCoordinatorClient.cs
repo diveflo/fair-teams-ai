@@ -164,6 +164,11 @@ namespace fairTeams.DemoHandling
             {
                 var innerExceptions = e.InnerExceptions;
 
+                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                {
+                    throw innerExceptions.Single(x => x is GameCoordinatorException);
+                }
+
                 if (innerExceptions.Any(x => x is TimeoutException))
                 {
                     var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
