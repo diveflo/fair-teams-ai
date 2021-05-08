@@ -74,9 +74,9 @@ namespace fairTeams.DemoHandling
                 gameCoordinatorClient.ConnectAndLogin();
                 ProcessNewMatches(gameCoordinatorClient, shareCodeRepository, matchRepository);
             }
-            catch (GameCoordinatorException)
+            catch (GameCoordinatorException e)
             {
-                myLogger.LogWarning("Error while trying to process new matches");
+                myLogger.LogWarning($"Exception while trying to process new matches: {e.Message}");
             }
             finally
             {
@@ -160,9 +160,9 @@ namespace fairTeams.DemoHandling
                 gameCoordinatorClient.ConnectAndLogin();
                 UpdateRanksForPlayers(gameCoordinatorClient);
             }
-            catch (GameCoordinatorException)
+            catch (GameCoordinatorException e)
             {
-                myLogger.LogError("Error while trying to update ranks");
+                myLogger.LogWarning($"Exception while trying to update ranks: {e.Message}");
             }
             finally
             {
