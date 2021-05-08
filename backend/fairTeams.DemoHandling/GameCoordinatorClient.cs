@@ -115,7 +115,14 @@ namespace fairTeams.DemoHandling
             var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(100000);
 
             myLogger.LogTrace("Asking game coordinator for rank");
-            Thread.Sleep(2000);
+
+            if (csgoClient == null)
+            {
+                myLogger.LogError("CsGoClient is unexpectedly null");
+                taskCompletionSource.SetException(new GameCoordinatorException("CsGoClient is unexpectedly null"));
+                return taskCompletionSource.Task;
+            }
+
             csgoClient.PlayerProfileRequest(accountId, callback =>
             {
                 if (callback.account_profiles == null || !callback.account_profiles.Any())
@@ -163,6 +170,8 @@ namespace fairTeams.DemoHandling
                     myLogger.LogError(timeoutMessage);
                     throw new GameCoordinatorException(timeoutMessage);
                 }
+
+                throw;
             }
         }
 
@@ -254,7 +263,6 @@ namespace fairTeams.DemoHandling
             myLogger.LogTrace("Telling Steam we're playing CS:GO to connect to game coordinator.");
             csgo.Launch((callback) =>
             {
-                var balance = callback.balance;
                 taskCompletionSource.SetResult(csgo);
             });
 
