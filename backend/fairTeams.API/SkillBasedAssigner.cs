@@ -48,9 +48,23 @@ namespace fairTeams.API
             }
 
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
+
+            if (myRandom.NextDouble() <= 0.5)
+            {
+                (terrorists, counterTerrorists) = FlipTeams(terrorists, counterTerrorists);
+            }
+
             terrorists.Players = terrorists.Players.OrderBy(x => x.Name).ToList();
             counterTerrorists.Players = counterTerrorists.Players.OrderBy(x => x.Name).ToList();
 
+            return (terrorists, counterTerrorists);
+        }
+
+        private (Team terrorists, Team counterTerrorists) FlipTeams(Team terrorists, Team counterTerrorists)
+        {
+            var oldTerrorists = terrorists.Players;
+            terrorists.Players = counterTerrorists.Players;
+            counterTerrorists.Players = oldTerrorists;
             return (terrorists, counterTerrorists);
         }
 
