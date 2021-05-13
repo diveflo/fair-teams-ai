@@ -330,7 +330,7 @@ namespace fairTeams.DemoAnalyzer
                 if (Match.Rounds != myNumberOfRounds)
                 {
                     throw new InconsistentStatisticsException($"The number of rounds parsed from the demo ({myNumberOfRounds})" +
-                        $"is different than what the game coodinator told us ({Match.Rounds})");
+                        $" is different than what the game coodinator told us ({Match.Rounds})");
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace fairTeams.DemoAnalyzer
                 if (Match.TScore != myTScore || Match.CTScore != myCTScore)
                 {
                     throw new InconsistentStatisticsException($"The score parsed from the demo (CT: {myCTScore} v. T: {myTScore})" +
-                        $"is different than what the game coodinator told us (CT: {Match.CTScore} v. T: {Match.TScore})");
+                        $" is different than what the game coodinator told us (CT: {Match.CTScore} v. T: {Match.TScore})");
                 }
             }
         }

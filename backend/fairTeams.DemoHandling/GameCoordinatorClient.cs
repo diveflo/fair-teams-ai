@@ -11,10 +11,17 @@ using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
+    internal enum CallbackType
+    {
+        Connected,
+        Disconnected,
+        LoggedOn
+    }
+
     public sealed class GameCoordinatorClient : IDisposable
     {
         private bool myIsDisposing;
-        private readonly IList<IDisposable> myRegisteredCallbacks;
+        private readonly IDictionary<CallbackType, IDisposable> myRegisteredCallbacks;
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger myLogger;
 
@@ -37,7 +44,7 @@ namespace fairTeams.DemoHandling
             mySteamUser = mySteamClient.GetHandler<SteamUser>();
 
             myIsDisposing = false;
-            myRegisteredCallbacks = new List<IDisposable>();
+            myRegisteredCallbacks = new Dictionary<CallbackType, IDisposable>();
 
             Task.Run(() => HandleCallbacks());
         }
@@ -151,7 +158,12 @@ namespace fairTeams.DemoHandling
             try
             {
                 Connect().Wait();
+
+                UnregisterCallback(CallbackType.Connected);
+                UnregisterCallback(CallbackType.Disconnected);
+
                 var loginResult = Login().Result;
+                UnregisterCallback(CallbackType.LoggedOn);
                 if (loginResult != EResult.OK)
                 {
                     throw new GameCoordinatorException($"Couldn't login to the steam client. Result code: {loginResult}");
@@ -194,6 +206,7 @@ namespace fairTeams.DemoHandling
                 {
                     myLogger.LogTrace("Successfully connected to steam");
                     taskCompletionSource.SetResult();
+                    UnregisterCallback(CallbackType.Connected);
                 });
 
                 var disconnectedCallbackRegistration = myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>((callback) =>
@@ -202,8 +215,8 @@ namespace fairTeams.DemoHandling
                     taskCompletionSource.SetException(new GameCoordinatorException("Steam server seems to be down. Please try again."));
                 });
 
-                myRegisteredCallbacks.Add(connectedCallbackRegistration);
-                myRegisteredCallbacks.Add(disconnectedCallbackRegistration);
+                myRegisteredCallbacks.Add(CallbackType.Connected, connectedCallbackRegistration);
+                myRegisteredCallbacks.Add(CallbackType.Disconnected, disconnectedCallbackRegistration);
 
                 mySteamClient.Connect();
                 myLogger.LogTrace("Connecting to Steam...");
@@ -235,7 +248,7 @@ namespace fairTeams.DemoHandling
                     taskCompletionSource.SetResult(callback.Result);
                 });
 
-                myRegisteredCallbacks.Add(loggedOnCallbackRegistration);
+                myRegisteredCallbacks.Add(CallbackType.LoggedOn, loggedOnCallbackRegistration);
 
                 var steamCredentials = new SteamUser.LogOnDetails { Username = Settings.SteamUsername, Password = Settings.SteamPassword };
                 try
@@ -248,6 +261,23 @@ namespace fairTeams.DemoHandling
                     taskCompletionSource.SetException(new Exception("No steam account provided via environment variables STEAM_USERNAME and STEAM_PASSWORD"));
                 }
             }
+
+            return taskCompletionSource.Task;
+        }
+
+        private Task LogOff()
+        {
+            var taskCompletionSource = TaskHelper.CreateResultlessTaskCompletionSourceWithTimeout(myWaitTimeInMilliseconds, $"Steam user didn't log off within {myWaitTimeInMilliseconds} milliseconds.");
+
+            UnregisterCallback(CallbackType.Disconnected);
+
+            myRegisteredCallbacks[CallbackType.Disconnected] = myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>((callback) =>
+            {
+                myLogger.LogInformation("Successfully logged off & disconnected steam client");
+                taskCompletionSource.SetResult();
+            });
+
+            mySteamUser.LogOff();
 
             return taskCompletionSource.Task;
         }
@@ -352,31 +382,33 @@ namespace fairTeams.DemoHandling
             return (finalRoundStats.team_scores[0], finalRoundStats.team_scores[1]);
         }
 
+        private void UnregisterCallback(CallbackType type)
+        {
+            if (myRegisteredCallbacks.ContainsKey(type))
+            {
+                myRegisteredCallbacks[type]?.Dispose();
+                myRegisteredCallbacks.Remove(type);
+            }
+        }
+
         public void Dispose()
         {
-            foreach (var registeredCallback in myRegisteredCallbacks)
+            myLogger.LogTrace("Disposing GameCoordinatorClient");
+
+            if (myCsgoClient != null)
+            {
+                myCsgoClient.Dispose();
+            }
+
+            LogOff().Wait();
+
+            foreach (var registeredCallback in myRegisteredCallbacks.Values)
             {
                 registeredCallback.Dispose();
             }
 
             myIsDisposing = true;
             myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
-
-            myLogger.LogTrace("Disposing GameCoordinatorClient");
-            if (myCsgoClient != null)
-            {
-                myCsgoClient.Dispose();
-            }
-
-            if (mySteamUser != null)
-            {
-                mySteamUser.LogOff();
-            }
-            
-            if (mySteamClient != null)
-            {
-                mySteamClient.Disconnect();
-            }
         }
     }
 }

@@ -65,14 +65,16 @@ namespace fairTeams.DemoHandling
 
             try
             {
+                gameCoordinatorClient.ConnectAndLogin();
                 if (!shareCodeRepository.HasRetrieableCodes())
                 {
                     myLogger.LogInformation("No retrieable share codes available right now");
                     return;
                 }
 
-                gameCoordinatorClient.ConnectAndLogin();
+                
                 ProcessNewMatches(gameCoordinatorClient, shareCodeRepository, matchRepository);
+                Thread.Sleep(5000);
             }
             catch (GameCoordinatorException e)
             {
