@@ -60,7 +60,7 @@ namespace fairTeams.API
             return (terrorists, counterTerrorists);
         }
 
-        private (Team terrorists, Team counterTerrorists) FlipTeams(Team terrorists, Team counterTerrorists)
+        private static (Team terrorists, Team counterTerrorists) FlipTeams(Team terrorists, Team counterTerrorists)
         {
             var oldTerrorists = terrorists.Players;
             terrorists.Players = counterTerrorists.Players;
