@@ -172,6 +172,16 @@ namespace fairTeams.API
             var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= skillDifferenceThreshold);
             var numberOfAssignments = assignmentsWithAcceptableSkillDifference.Count();
 
+            if (!assignmentsWithAcceptableSkillDifference.Any())
+            {
+                var bestAssignment = assignmentsAndCosts.OrderBy(x => x.Value).First();
+
+                myLogger.LogInformation($"None of the combinations are below the selected threshold {skillDifferenceThreshold}." +
+                    $"Selecting the lowest skill-difference option: {bestAssignment.Value}");
+
+                return bestAssignment.Key;
+            }
+
             myLogger.LogInformation($"{numberOfAssignments} combinations are below the selected threshold {skillDifferenceThreshold}." +
                 $"Their skill-difference is {string.Join(",", assignmentsWithAcceptableSkillDifference.Select(x => x.Value))} respectively");
 

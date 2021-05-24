@@ -93,13 +93,15 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
-        public void GetBatch_RequestSingleForFourthTime_EmptyList()
+        public void GetBatch_RequestSingleForEleventhTime_EmptyList()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
             myShareCodeRepository.SaveChanges();
-            _ = myShareCodeRepository.GetBatch(1).Single();
-            _ = myShareCodeRepository.GetBatch(1).Single();
-            _ = myShareCodeRepository.GetBatch(1).Single();
+
+            for (var i = 0; i < 10; i++)
+            {
+                _ = myShareCodeRepository.GetBatch(1);
+            }
 
             var code = myShareCodeRepository.GetBatch(1);
 
