@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,14 @@ namespace fairTeams.DemoHandling
 {
     public class ShareCodeRepository : DbContext
     {
-        private const int myMaximumDownloadAttempts = 3;
+        private readonly ILogger<ShareCodeRepository> myLogger;
+        private const int myMaximumDownloadAttempts = 10;
         public DbSet<ShareCode> ShareCodes { get; set; }
 
-        public ShareCodeRepository(DbContextOptions<ShareCodeRepository> options) : base(options) { }
+        public ShareCodeRepository(DbContextOptions<ShareCodeRepository> options, ILogger<ShareCodeRepository> logger) : base(options)
+        { 
+            myLogger = logger;
+        }
 
         public void AddNew(List<ShareCode> codes)
         {
@@ -42,6 +47,12 @@ namespace fairTeams.DemoHandling
             return batch;
         }
 
+        public bool HasRetrieableCodes()
+        {
+            var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
+            return orderedRetrieableCodes.Any();
+        }
+
         public IList<ShareCode> GetRetrieableBatch(int count)
         {
             var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
@@ -59,6 +70,26 @@ namespace fairTeams.DemoHandling
             return batch;
         }
 
+        public void RemoveCodes(IEnumerable<string> shareCodes)
+        {
+            foreach (var code in shareCodes)
+            {
+                RemoveCode(code);
+            }
+        }
+
+        public void RemoveCode(string shareCode)
+        {
+            var allShareCodes = ShareCodes.AsEnumerable().ToList();
+            var matchingRepositoryItem = allShareCodes.Where(x => x.Code.Equals(shareCode));
+
+            if (matchingRepositoryItem.Any())
+            {
+                Remove(matchingRepositoryItem.Single());
+                SaveChanges();
+            }
+        }
+
         private ShareCode IncrementDownloadAttemptCount(ShareCode code)
         {
             var dbShareCode = ShareCodes.AsEnumerable().Single(x => x.Equals(code));
@@ -71,6 +102,7 @@ namespace fairTeams.DemoHandling
 
             if (dbShareCode.DownloadAttempt >= myMaximumDownloadAttempts)
             {
+                myLogger.LogInformation($"Share code {dbShareCode.Code} reached maximum number of attempts. Removing...");
                 ShareCodes.Remove(dbShareCode);
             }
 

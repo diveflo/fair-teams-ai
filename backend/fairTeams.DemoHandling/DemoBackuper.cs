@@ -44,11 +44,11 @@ namespace fairTeams.DemoHandling
                 myFtpClient.AutoConnect();
             }
 
-            var remoteDemoFileName = $"{demo.Id}.dem";
+            var remoteDemoFileName = demo.State == DemoState.ParseFailure ? $"{demo.Id}_parseFailure.dem" : $"{demo.Id}.dem";
             var remoteFilePath = $"/csgo/{remoteDemoFileName}";
 
-            var successfulUpload = myFtpClient.UploadFile(filePath, remoteFilePath, FtpRemoteExists.Skip, false, FtpVerify.Retry);
-            if (successfulUpload.IsFailure())
+            var uploadResultStatus = myFtpClient.UploadFile(filePath, remoteFilePath, FtpRemoteExists.Skip, false, FtpVerify.Retry);
+            if (uploadResultStatus == FtpStatus.Failed)
             {
                 myLogger.LogWarning($"Uploading the demo file ({remoteDemoFileName}) to the FTP failed.");
                 throw new Exception($"Uploading the demo file ({remoteDemoFileName}) to the FTP failed.");

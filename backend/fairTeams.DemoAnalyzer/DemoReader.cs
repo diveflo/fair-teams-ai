@@ -35,6 +35,13 @@ namespace fairTeams.DemoAnalyzer
             myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
 
+        public Match Parse()
+        {
+            ReadHeader();
+            Read();
+            return Match;
+        }
+
         public void ReadHeader()
         {
             myDemoFileStream = File.OpenRead(myDemo.FilePath);
@@ -63,8 +70,8 @@ namespace fairTeams.DemoAnalyzer
                 throw new DemoReaderException($"Unexpected exception thrown during demo analysis: {e.Message}");
             }
 
-            ParseFinalTeamScores();
             ProcessMissingLastRound();
+            ParseFinalTeamScores();
 
             AssertMinimumRoundsAndPlayers();
             CheckResultConsistency();
@@ -322,8 +329,8 @@ namespace fairTeams.DemoAnalyzer
             {
                 if (Match.Rounds != myNumberOfRounds)
                 {
-                    throw new InconsistentStatisticsException($"The from the demo parsed number of rounds for the match {myNumberOfRounds}" +
-                        $"is different than what the game coodinator told us ({Match.Rounds})");
+                    throw new InconsistentStatisticsException($"The number of rounds parsed from the demo ({myNumberOfRounds})" +
+                        $" is different than what the game coodinator told us ({Match.Rounds})");
                 }
             }
         }
@@ -336,8 +343,8 @@ namespace fairTeams.DemoAnalyzer
             {
                 if (Match.TScore != myTScore || Match.CTScore != myCTScore)
                 {
-                    throw new InconsistentStatisticsException($"The from the demo parsed score for the match (CT: {myCTScore} v. T: {myTScore})" +
-                        $"is different than what the game coodinator told us (CT: {Match.CTScore} v. T: {Match.TScore})");
+                    throw new InconsistentStatisticsException($"The score parsed from the demo (CT: {myCTScore} v. T: {myTScore})" +
+                        $" is different than what the game coodinator told us (CT: {Match.CTScore} v. T: {Match.TScore})");
                 }
             }
         }

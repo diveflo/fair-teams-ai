@@ -48,9 +48,23 @@ namespace fairTeams.API
             }
 
             (var terrorists, var counterTerrorists) = OptimalAssigner(playersList);
+
+            if (myRandom.NextDouble() <= 0.5)
+            {
+                (terrorists, counterTerrorists) = FlipTeams(terrorists, counterTerrorists);
+            }
+
             terrorists.Players = terrorists.Players.OrderBy(x => x.Name).ToList();
             counterTerrorists.Players = counterTerrorists.Players.OrderBy(x => x.Name).ToList();
 
+            return (terrorists, counterTerrorists);
+        }
+
+        private static (Team terrorists, Team counterTerrorists) FlipTeams(Team terrorists, Team counterTerrorists)
+        {
+            var oldTerrorists = terrorists.Players;
+            terrorists.Players = counterTerrorists.Players;
+            counterTerrorists.Players = oldTerrorists;
             return (terrorists, counterTerrorists);
         }
 
@@ -67,7 +81,7 @@ namespace fairTeams.API
             {
                 var terrorists = new Team("Terrorists")
                 {
-                    Players = combination
+                    Players = (IList<Player>)combination
                 };
                 var counterTerrorists = new Team("CounterTerrorists")
                 {
@@ -154,29 +168,17 @@ namespace fairTeams.API
 
         private (Team, Team) GetRandomSelectionOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
         {
-            var orderedByCosts = assignmentsAndCosts.OrderBy(x => x.Value);
-            var numberOfAssignments = orderedByCosts.Count();
-            const int minimumNumberOfAssignments = 3;
+            var skillDifferenceThreshold = 0.15;
+            var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= skillDifferenceThreshold);
+            var numberOfAssignments = assignmentsWithAcceptableSkillDifference.Count();
 
-            IEnumerable<KeyValuePair<(Team, Team), double>> selectedSubset;
+            myLogger.LogInformation($"{numberOfAssignments} combinations are below the selected threshold {skillDifferenceThreshold}." +
+                $"Their skill-difference is {string.Join(",", assignmentsWithAcceptableSkillDifference.Select(x => x.Value))} respectively");
 
-            if (numberOfAssignments >= minimumNumberOfAssignments)
-            {
-                selectedSubset = orderedByCosts.Take(minimumNumberOfAssignments);
-
-                myLogger.LogInformation($"Using subset of best {minimumNumberOfAssignments} (hard-coded value!) assignments." +
-                    $"Their skill-difference is {selectedSubset.ElementAt(0).Value}, {selectedSubset.ElementAt(1).Value} and {selectedSubset.ElementAt(2).Value} respectively");
-            }
-            else
-            {
-                selectedSubset = orderedByCosts;
-                myLogger.LogInformation($"Using all possible assignments as there are so few.");
-            }
-
-            var indexOfAssignment = myRandom.Next(0, selectedSubset.Count());
+            var indexOfAssignment = myRandom.Next(0, numberOfAssignments);
             myLogger.LogTrace($"Generated random index for assignment selection: {indexOfAssignment}");
 
-            var selectedAssignment = selectedSubset.ElementAt(indexOfAssignment);
+            var selectedAssignment = assignmentsWithAcceptableSkillDifference.ElementAt(indexOfAssignment);
             myLogger.LogInformation($"The selected teams have a skill difference of {selectedAssignment.Value}");
 
             return selectedAssignment.Key;

@@ -69,8 +69,18 @@ namespace fairTeams.DemoHandling
 
             foreach (var user in steamUsers)
             {
-                var sharingCode = await steamworksApi.GetNextMatchSharingCode(user.SteamID.ToString(), user.AuthenticationCode, user.LastSharingCode);
-                if (sharingCode.Equals("n/a") || sharingCode.Equals(user.LastSharingCode))
+                var sharingCode = string.Empty;
+                try
+                {
+                    sharingCode = await steamworksApi.GetNextMatchSharingCode(user.SteamID.ToString(), user.AuthenticationCode, user.LastSharingCode);
+                }
+                catch (SteamIdAuthCodeShareCodeMismatchException e)
+                {
+                    myLogger.LogError(e.Message);
+                    continue;
+                }
+                
+                if (string.IsNullOrEmpty(sharingCode) || sharingCode.Equals("n/a") || sharingCode.Equals(user.LastSharingCode))
                 {
                     myLogger.LogTrace($"No new sharing code for Steam ID: {user.SteamID}");
                     continue;

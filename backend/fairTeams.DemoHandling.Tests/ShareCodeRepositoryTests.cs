@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using fairTeams.Core;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace fairTeams.DemoHandling.Tests
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
-            myShareCodeRepository = new ShareCodeRepository(options);
+            myShareCodeRepository = new ShareCodeRepository(options, UnitTestLoggerCreator.CreateUnitTestLogger<ShareCodeRepository>());
         }
 
         [Fact]
@@ -84,7 +85,7 @@ namespace fairTeams.DemoHandling.Tests
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
             myShareCodeRepository.SaveChanges();
-            var code = myShareCodeRepository.GetBatch(1).Single();
+            _ = myShareCodeRepository.GetBatch(1).Single();
 
             var secondRequestCode = myShareCodeRepository.GetBatch(1).Single();
 

@@ -1,5 +1,6 @@
 ﻿using fairTeams.Core;
 using fairTeams.DemoAnalyzer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,9 +18,9 @@ namespace fairTeams.DemoHandling
         private readonly ILoggerFactory myLoggerFactory;
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
-        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 15;
+        private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
         private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 0;
+        private const int myRankCheckerTriggerOffsetInMinutes = 375;
         private Timer myMatchMakingCollectionSchedule;
         private Timer myRankCheckerSchedule;
 
@@ -56,20 +57,40 @@ namespace fairTeams.DemoHandling
         {
             var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
 
+            using var scope = myScopeFactory.CreateScope();
+            var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
+            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
+
+            PruneShareCodeRepository(shareCodeRepository, matchRepository);
+
             try
             {
-                ProcessNewMatches(gameCoordinatorClient);
+                gameCoordinatorClient.ConnectAndLogin();
+                if (!shareCodeRepository.HasRetrieableCodes())
+                {
+                    myLogger.LogInformation("No retrieable share codes available right now");
+                    return;
+                }
+
+                
+                ProcessNewMatches(gameCoordinatorClient, shareCodeRepository, matchRepository);
+                Thread.Sleep(5000);
+            }
+            catch (GameCoordinatorException e)
+            {
+                myLogger.LogWarning($"Exception while trying to process new matches: {e.Message}");
             }
             finally
             {
+                matchRepository.Dispose();
+                shareCodeRepository.Dispose();
+                scope.Dispose();
                 gameCoordinatorClient.Dispose();
             }
         }
 
-        private void ProcessNewMatches(GameCoordinatorClient gameCoordinatorClient)
+        private void ProcessNewMatches(GameCoordinatorClient gameCoordinatorClient, ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
         {
-            using var scope = myScopeFactory.CreateScope();
-            var shareCodeRepository = scope.ServiceProvider.GetRequiredService<ShareCodeRepository>();
             var newSharingCodes = shareCodeRepository.GetRetrieableBatch(5);
 
             if (!newSharingCodes.Any())
@@ -78,74 +99,56 @@ namespace fairTeams.DemoHandling
             }
 
             myLogger.LogDebug($"Retrieved {newSharingCodes.Count} new sharing codes: {string.Join(", ", newSharingCodes.Select(x => x.Code))}");
-            var successfullyDownloadedSharingCodes = new List<ShareCode>();
             var newMatches = new List<Match>();
             var demoDownloader = new DemoDownloader(myLoggerFactory.CreateLogger<DemoDownloader>());
             var demoBackuper = new DemoBackuper(myLoggerFactory.CreateLogger<DemoBackuper>());
 
             foreach (var sharingCode in newSharingCodes)
             {
-                var gameRequest = ShareCodeDecoder.Decode(sharingCode.Code);
-                myLogger.LogTrace($"Decoded sharing code {sharingCode.Code} into Request with Match ID: {gameRequest.MatchId}, Outcome ID: {gameRequest.OutcomeId} and Token: {gameRequest.Token}");
-                var demo = new Demo { ShareCode = sharingCode.Code, GameRequest = gameRequest };
-                Match match;
+                var demo = CreateNewDemoForShareCode(sharingCode);
 
                 try
                 {
-                    match = gameCoordinatorClient.GetMatchInfo(demo);
+                    var match = gameCoordinatorClient.GetMatchInfo(demo);
+                    myLogger.LogTrace($"Got match details for sharing code {sharingCode.Code}");
+
+                    match.Demo.FilePath = demoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
+                    myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}");
+
+                    using var demoReader = new DemoReader(match, 0, 0);
+                    match = demoReader.Parse();
+
+                    myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
+                    newMatches.Add(match);
                 }
                 catch (GameCoordinatorException)
                 {
                     myLogger.LogWarning($"Couldn't get download url for sharing code {sharingCode.Code}. See previous logs/exceptions for explanation. Continuing.");
                     continue;
                 }
-
-                string demoFilePath;
-                try
-                {
-                    demoFilePath = demoDownloader.DownloadAndDecompressDemo(match.Demo.DownloadURL);
-                }
                 catch (DemoDownloaderException exception)
                 {
-                    myLogger.LogWarning($"Demo downloading or decompressing failed: {exception.Message}");
+                    myLogger.LogWarning($"Demo downloading or decompressing failed: {exception.Message} for sharing code {sharingCode.Code}.");
                     continue;
-                }
-
-                myLogger.LogTrace($"Downloaded and decompressed demo file for sharing code {sharingCode.Code}");
-
-                successfullyDownloadedSharingCodes.Add(sharingCode);
-                match.Demo.FilePath = demoFilePath;
-
-                using var demoReader = new DemoReader(match, 0, 0);
-                try
-                {
-                    demoReader.ReadHeader();
-                    demoReader.Read();
                 }
                 catch (DemoReaderException e)
                 {
                     myLogger.LogWarning($"Analyzing demo for share code {sharingCode.Code} failed: {e.Message}");
-                    BackupDemo(demo, demoBackuper);
+                    demo.State = DemoState.ParseFailure;
                     continue;
                 }
-
-                BackupDemo(demo, demoBackuper);
-
-                myLogger.LogTrace($"Finished analyzing demo file for sharing code {sharingCode.Code}");
-                newMatches.Add(demoReader.Match);
+                finally
+                {
+                    TryBackupDemo(demo, demoBackuper);
+                }
             }
 
             myLogger.LogDebug($"Downloaded and analyzed {newMatches.Count} new matches (from {newSharingCodes.Count} new sharing codes).");
-            myLogger.LogTrace($"Getting match repository to save {newMatches.Count} new matches.");
-            var matchRepository = scope.ServiceProvider.GetRequiredService<MatchRepository>();
-            matchRepository.AddMatchesAndSave(newMatches);
+            myLogger.LogTrace($"Saving {newMatches.Count} new matches to repository.");
 
-            foreach (var successfullyDownloadedSharingCode in successfullyDownloadedSharingCodes)
-            {
-                shareCodeRepository.Remove(successfullyDownloadedSharingCode);
-            }
+            var successfullySavedMatches = matchRepository.AddMatchesAndSave(newMatches);
 
-            shareCodeRepository.SaveChanges();
+            shareCodeRepository.RemoveCodes(successfullySavedMatches.Select(x => x.Demo.ShareCode));
 
             UpdateRanksForPlayers(gameCoordinatorClient);
         }
@@ -156,7 +159,12 @@ namespace fairTeams.DemoHandling
 
             try
             {
+                gameCoordinatorClient.ConnectAndLogin();
                 UpdateRanksForPlayers(gameCoordinatorClient);
+            }
+            catch (GameCoordinatorException e)
+            {
+                myLogger.LogWarning($"Exception while trying to update ranks: {e.Message}");
             }
             finally
             {
@@ -164,15 +172,34 @@ namespace fairTeams.DemoHandling
             }
         }
 
-        private void BackupDemo(Demo demo, DemoBackuper backuper)
+        private static void PruneShareCodeRepository(ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
         {
+            var alreadyProcessedSharingCodes = matchRepository.Matches.Include("Demo").AsEnumerable().Select(x => x.Demo.ShareCode);
+            shareCodeRepository.RemoveCodes(alreadyProcessedSharingCodes);
+        }
+
+        private Demo CreateNewDemoForShareCode(ShareCode shareCode)
+        {
+            var gameRequest = ShareCodeDecoder.Decode(shareCode.Code);
+            myLogger.LogTrace($"Decoded sharing code {shareCode.Code} into Request with Match ID: {gameRequest.MatchId}, Outcome ID: {gameRequest.OutcomeId} and Token: {gameRequest.Token}");
+            return new Demo { ShareCode = shareCode.Code, GameRequest = gameRequest };
+        }
+
+        private void TryBackupDemo(Demo demo, DemoBackuper backuper)
+        {
+            if (string.IsNullOrEmpty(demo.FilePath))
+            {
+                myLogger.LogWarning($"No local file path for demo to backup given (share code: {demo.ShareCode}");
+                return;
+            }
+
             try
             {
                 backuper.BackupDemoFile(demo);
             }
             catch (Exception)
             {
-                myLogger.LogWarning($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
+                myLogger.LogError($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
             }
         }
 
