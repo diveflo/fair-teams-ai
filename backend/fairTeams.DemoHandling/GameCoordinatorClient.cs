@@ -119,7 +119,9 @@ namespace fairTeams.DemoHandling
 
         private Task<uint> GetRank(uint accountId, CsgoClient csgoClient)
         {
-            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(100000);
+            var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<uint>(
+                myWaitTimeInMilliseconds,
+                $"Game coordinator didn't provide profile within {myWaitTimeInMilliseconds} milliseconds.");
 
             myLogger.LogTrace("Asking game coordinator for rank");
 
