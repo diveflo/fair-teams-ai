@@ -402,15 +402,38 @@ namespace fairTeams.DemoHandling
                 myCsgoClient.Dispose();
             }
 
-            LogOff().Wait();
-
-            foreach (var registeredCallback in myRegisteredCallbacks.Values)
+            try
             {
-                registeredCallback.Dispose();
+                LogOff().Wait();
             }
+            catch (AggregateException e)
+            {
+                var innerExceptions = e.InnerExceptions;
 
-            myIsDisposing = true;
-            myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                {
+                    throw innerExceptions.Single(x => x is GameCoordinatorException);
+                }
+
+                if (innerExceptions.Any(x => x is TimeoutException))
+                {
+                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
+                    myLogger.LogWarning(timeoutMessage);
+                    throw new GameCoordinatorException(timeoutMessage);
+                }
+
+                throw;
+            }
+            finally
+            {
+                foreach (var registeredCallback in myRegisteredCallbacks.Values)
+                {
+                    registeredCallback.Dispose();
+                }
+
+                myIsDisposing = true;
+                myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+            }
         }
     }
 }
