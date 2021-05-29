@@ -11,12 +11,12 @@ namespace fairTeams.DemoHandling.Tests
         [InlineData("CSGO-fCLxU-j7kLH-XFfxT-y47pa-FkBAA", 3455526464961643008u, 3455531870177985027u, 9615u)]
         [InlineData("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM", 3455498807519740337u, 3455504648675263354u, 21931u)]
         [InlineData("CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ", 3455512396796264580u, 3455518115545219333u, 8129u)]
-        public void Decode_ValidShareCode_ReturnsValidMatchId(string shareCode, ulong matchId, ulong outcomdeId, uint token)
+        public void Decode_ValidShareCode_ReturnsValidMatchId(string shareCode, ulong matchId, ulong outcomeId, uint token)
         {
             var gameRequest = ShareCodeDecoder.Decode(shareCode);
 
             Assert.Equal(matchId, gameRequest.MatchId);
-            Assert.Equal(outcomdeId, gameRequest.OutcomeId);
+            Assert.Equal(outcomeId, gameRequest.OutcomeId);
             Assert.Equal(token, gameRequest.Token);
         }
     }

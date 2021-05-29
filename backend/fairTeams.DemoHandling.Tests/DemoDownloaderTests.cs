@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 using Xunit;
 

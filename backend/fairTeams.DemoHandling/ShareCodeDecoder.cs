@@ -27,10 +27,10 @@ namespace fairTeams.DemoHandling
             var bitmask64 = BigInteger.Pow(2, 64) - 1;
 
             var matchId = big & bitmask64;
-            var outcomdeId = big >> 64 & bitmask64;
+            var outcomeId = big >> 64 & bitmask64;
             var token = big >> 128;// & 0xFFF;
 
-            return new GameRequest { MatchId = (ulong)matchId, OutcomeId = (ulong)outcomdeId, Token = (uint)token };
+            return new GameRequest { MatchId = (ulong)matchId, OutcomeId = (ulong)outcomeId, Token = (uint)token };
         }
 
         private static BigInteger SwapEndianness(BigInteger number)

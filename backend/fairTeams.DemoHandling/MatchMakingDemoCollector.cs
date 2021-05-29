@@ -66,9 +66,9 @@ namespace fairTeams.DemoHandling
             try
             {
                 gameCoordinatorClient.ConnectAndLogin();
-                if (!shareCodeRepository.HasRetrieableCodes())
+                if (!shareCodeRepository.HasRetryableCodes())
                 {
-                    myLogger.LogInformation("No retrieable share codes available right now");
+                    myLogger.LogInformation("No retryable share codes available right now");
                     return;
                 }
 
@@ -91,7 +91,7 @@ namespace fairTeams.DemoHandling
 
         private void ProcessNewMatches(GameCoordinatorClient gameCoordinatorClient, ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
         {
-            var newSharingCodes = shareCodeRepository.GetRetrieableBatch(5);
+            var newSharingCodes = shareCodeRepository.GetRetryableBatch(5);
 
             if (!newSharingCodes.Any())
             {

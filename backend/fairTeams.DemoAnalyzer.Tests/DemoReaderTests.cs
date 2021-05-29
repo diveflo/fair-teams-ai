@@ -136,7 +136,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact(Skip = "Data only locally available")]
-        public void Read_WarumupIsRestarted_DoesNotCountEventsFromAnyWarmup()
+        public void Read_WarmupIsRestarted_DoesNotCountEventsFromAnyWarmup()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-215342-2066393818-de_inferno-honigbiene_vs_waldfrosch.dem" };
             var demoReader = new DemoReader(new Match { Demo = demo });

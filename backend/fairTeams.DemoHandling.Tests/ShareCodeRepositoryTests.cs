@@ -171,32 +171,32 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
-        public void GetRetrieableBatch_RequestSingleBeforeEarliestRetry_EmptyList()
+        public void GetRetryableBatch_RequestSingleBeforeEarliestRetry_EmptyList()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
             myShareCodeRepository.SaveChanges();
             _ = myShareCodeRepository.GetBatch(1);
 
-            var secondRequest = myShareCodeRepository.GetRetrieableBatch(1);
+            var secondRequest = myShareCodeRepository.GetRetryableBatch(1);
 
             Assert.Empty(secondRequest);
         }
 
         [Fact]
-        public void GetRetrieableBatch_RequestSingleAfterEarliestRetry_ReturnsCode()
+        public void GetRetryableBatch_RequestSingleAfterEarliestRetry_ReturnsCode()
         {
             var codeWithZeroRetryCooldown = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM", TimeSpan.Zero);
             myShareCodeRepository.ShareCodes.Add(codeWithZeroRetryCooldown);
             myShareCodeRepository.SaveChanges();
             _ = myShareCodeRepository.GetBatch(1);
 
-            var secondRequest = myShareCodeRepository.GetRetrieableBatch(1).Single();
+            var secondRequest = myShareCodeRepository.GetRetryableBatch(1).Single();
 
             Assert.Equal(codeWithZeroRetryCooldown.Code, secondRequest.Code);
         }
 
         [Fact]
-        public void GetRetrieableBatch_RepositoryHasOneEntryBeforeAndOneAfterEarliestRetryRequestTwo_ReturnsOneRetrieableEntry()
+        public void GetRetryableBatch_RepositoryHasOneEntryBeforeAndOneAfterEarliestRetryRequestTwo_ReturnsOneRetryableEntry()
         {
             var codeWithRegularCooldown = new ShareCode("CSGO-b7UOr-F4sao-znyvb-3Q3HM-tJpxA");
             var codeWithZeroRetryCooldown = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM", TimeSpan.Zero);
@@ -205,7 +205,7 @@ namespace fairTeams.DemoHandling.Tests
             myShareCodeRepository.SaveChanges();
             _ = myShareCodeRepository.GetBatch(2);
 
-            var secondRequest = myShareCodeRepository.GetRetrieableBatch(2);
+            var secondRequest = myShareCodeRepository.GetRetryableBatch(2);
 
             Assert.Single(secondRequest);
             Assert.Equal(codeWithZeroRetryCooldown.Code, secondRequest.Single().Code);

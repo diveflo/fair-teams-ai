@@ -2,7 +2,7 @@
 
 ![backend ci/cd](https://github.com/diveflo/fair-teams-ai/workflows/backend%20ci/cd/badge.svg) ![frontend ci/cd](https://github.com/diveflo/fair-teams-ai/workflows/frontend%20ci/cd/badge.svg)
 
-Tired of listening to your friends whine about how unfair your CS:GO teams are? Enraged by the arrays, I'm sorry..."matrices", that start at `1` of your buddys MATLAB script?
+Tired of listening to your friends whine about how unfair your CS:GO teams are? Enraged by the arrays, I'm sorry..."matrices", that start at `1` of your buddy's MATLAB script?
 *Fair Teams AI* automagically creates balanced team assignments for your next match.
 
 <https://diveflo.github.io/fair-teams-ai/#/>
@@ -14,4 +14,4 @@ The backend is using .NET 5.0 and is providing a REST API to communicate with th
 
 ## Deployment
 
-The frontend can be deployed on any http host, e.g., GitHub Pages as is done for our version. The backend only requires a bit of processing power. Our current deployment runs on a 1 vCPU, 1 GB RAM shared instance hostes on [linode](https://www.linode.com/products/shared/).
+The frontend can be deployed on any http host, e.g., GitHub Pages as is done for our version. The backend only requires a bit of processing power. Our current deployment runs on a 1 vCPU, 1 GB RAM shared instance host on [linode](https://www.linode.com/products/shared/).

@@ -47,21 +47,21 @@ namespace fairTeams.DemoHandling
             return batch;
         }
 
-        public bool HasRetrieableCodes()
+        public bool HasRetryableCodes()
         {
-            var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
-            return orderedRetrieableCodes.Any();
+            var orderedRetryableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
+            return orderedRetryableCodes.Any();
         }
 
-        public IList<ShareCode> GetRetrieableBatch(int count)
+        public IList<ShareCode> GetRetryableBatch(int count)
         {
-            var orderedRetrieableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
-            if (!orderedRetrieableCodes.Any())
+            var orderedRetryableCodes = ShareCodes.AsEnumerable().OrderBy(x => x.EarliestRetry).Where(x => x.EarliestRetry <= DateTime.UtcNow);
+            if (!orderedRetryableCodes.Any())
             {
                 return new List<ShareCode>();
             }
 
-            var batch = orderedRetrieableCodes.Take(count).ToList();
+            var batch = orderedRetryableCodes.Take(count).ToList();
             foreach (var code in batch)
             {
                 _ = IncrementDownloadAttemptCount(code);

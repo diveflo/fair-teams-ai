@@ -24,7 +24,7 @@ namespace fairTeams.Core.Tests
         [InlineData(76561197984050254, 0.9542)]
         [InlineData(76561197995643389, 1.056)]
         [InlineData(76561198011775117, 1.0368)]
-        public void Matches_ReadExisitingRepository_CorrectAverageHLTVScore(long steamID, double expectedHLTVScore)
+        public void Matches_ReadExistingRepository_CorrectAverageHLTVScore(long steamID, double expectedHLTVScore)
         {
             using var repository = ReadTestRepository("TestData" + Path.DirectorySeparatorChar + "matchRepository_0.db");
             repository.Matches.Load();
