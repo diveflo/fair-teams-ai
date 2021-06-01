@@ -168,7 +168,7 @@ namespace fairTeams.API
 
         private (Team, Team) GetRandomSelectionOfBestAssignments(Dictionary<(Team, Team), double> assignmentsAndCosts)
         {
-            var skillDifferenceThreshold = 0.15;
+            var skillDifferenceThreshold = 0.25;
             var assignmentsWithAcceptableSkillDifference = assignmentsAndCosts.Where(x => x.Value <= skillDifferenceThreshold);
             var numberOfAssignments = assignmentsWithAcceptableSkillDifference.Count();
 
