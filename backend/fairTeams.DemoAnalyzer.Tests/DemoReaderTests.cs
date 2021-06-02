@@ -51,6 +51,18 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        public void Parse_MatchHasDifferentNumberOfRoundsPreset_ThrowsInconsistentStatistics()
+        {
+            var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
+            var match = new Match { Demo = demo, Rounds = 6 };
+
+            //Setting minimum number of rounds & players to 0 (different than during runtime) to allow reading this smaller demo file
+            var demoReader = new DemoReader(match, 0, 0);
+
+            Assert.Throws<InconsistentStatisticsException>(() => demoReader.Parse());
+        }
+
+        [Fact]
         public void Read_MatchHasDifferentScorePreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
