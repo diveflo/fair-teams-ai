@@ -30,6 +30,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Update="TestData\auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         <None Update="TestData\auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>

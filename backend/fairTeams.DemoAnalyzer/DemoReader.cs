@@ -77,6 +77,7 @@ namespace fairTeams.DemoAnalyzer
             CheckResultConsistency();
 
             SetMatchRoundsAndScore();
+            CalculateHLTVScores();
         }
 
         // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
@@ -276,7 +277,7 @@ namespace fairTeams.DemoAnalyzer
         {
             // RoundOfficiallyEnded event is more stable than RoundEnd but isn't fired for the last round of a match.
             // Hence, we process one more round if have a mismatch between our counted rounds and the sum of both teams scores.
-            if (myNumberOfRounds != myCTScore + myTScore)
+            if (myNumberOfRounds != myDemoParser.CTScore + myDemoParser.TScore)
             {
                 UpdateKillCounts();
                 UpdateRounds();
@@ -367,6 +368,13 @@ namespace fairTeams.DemoAnalyzer
             Match.Rounds = myNumberOfRounds;
             Match.TScore = myTScore;
             Match.CTScore = myCTScore;
+        }
+        private void CalculateHLTVScores()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                player.CalculateHLTVScore();
+            }
         }
 
         public void Dispose()

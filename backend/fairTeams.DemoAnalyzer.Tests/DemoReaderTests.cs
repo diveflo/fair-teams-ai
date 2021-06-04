@@ -179,10 +179,10 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountRoundsBeforeRealMatchStart()
         {
-            var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem" };
+            var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem") };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.ReadHeader();
