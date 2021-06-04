@@ -96,7 +96,7 @@ class Images extends StatelessWidget {
             image: AssetImage(imagePath),
           ),
           Image(
-            image: AssetImage("global_elite.png"),
+            image: AssetImage("assets/global_elite.png"),
           )
         ],
       ),

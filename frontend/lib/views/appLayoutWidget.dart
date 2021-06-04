@@ -26,7 +26,9 @@ class AppLayoutWidget extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 5,
-                  child: Image.asset("assets/cs.jpg", fit: BoxFit.fitHeight),
+                  child: Image(
+                      image: AssetImage("assets/cs.jpg"),
+                      fit: BoxFit.fitHeight),
                 ),
                 Expanded(
                   flex: 4,
