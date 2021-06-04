@@ -99,9 +99,8 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
                           StoreProvider.of<AppState>(context).dispatch(
                               ToggleMapSelectionAction(mapPool.maps[index]));
                         },
-                        secondary: Image.asset(
-                          mapPool.maps[index].imagePath,
-                        ),
+                        secondary: Image(
+                            image: AssetImage(mapPool.maps[index].imagePath)),
                         title: Text(mapPool.maps[index].name),
                       ),
                     );
