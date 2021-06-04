@@ -4,9 +4,9 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/state/appState.dart';
-import 'package:frontend/thunks/scramble.dart';
-import 'package:frontend/views/myButtonWidget.dart';
+import 'package:NoCrybabies/state/appState.dart';
+import 'package:NoCrybabies/thunks/scramble.dart';
+import 'package:NoCrybabies/views/myButtonWidget.dart';
 
 class ScrambleWidget extends StatefulWidget {
   const ScrambleWidget({

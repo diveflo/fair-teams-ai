@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/model/player.dart';
-import 'package:frontend/model/skill.dart';
-import 'package:frontend/model/team.dart';
-import 'package:frontend/state/gameState.dart';
+import 'package:NoCrybabies/model/player.dart';
+import 'package:NoCrybabies/model/skill.dart';
+import 'package:NoCrybabies/model/team.dart';
+import 'package:NoCrybabies/state/gameState.dart';
 
 void main() {
   group("initial constructor", () {

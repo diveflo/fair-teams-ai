@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/reducer/gameConfigReducer.dart';
-import 'package:frontend/state/appState.dart';
+import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
+import 'package:NoCrybabies/state/appState.dart';
 
 class BotsWidget extends StatelessWidget {
   _onValueChanged(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:frontend/model/team.dart';
+import 'package:NoCrybabies/model/team.dart';
 
 class GameState {
   final Team t;

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/model/candidate.dart';
-import 'package:frontend/model/map.dart';
-import 'package:frontend/reducer/gameConfigReducer.dart';
-import 'package:frontend/state/gameConfigState.dart';
+import 'package:NoCrybabies/model/candidate.dart';
+import 'package:NoCrybabies/model/map.dart';
+import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
+import 'package:NoCrybabies/state/gameConfigState.dart';
 
 void main() {
   test('AddPlayerAction', () {
@@ -85,8 +85,8 @@ void main() {
       expect(outputState.includeBot, true);
     });
     test('from true to false', () {
-      GameConfigState inputState = GameConfigState(
-          mapPool: MapPool(), includeBot: true, candidates: []);
+      GameConfigState inputState =
+          GameConfigState(mapPool: MapPool(), includeBot: true, candidates: []);
 
       var toggleAction = ToggleincludeBotAction();
 

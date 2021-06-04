@@ -1,4 +1,4 @@
-import 'package:frontend/model/skill.dart';
+import 'package:NoCrybabies/model/skill.dart';
 
 class Player {
   String name;

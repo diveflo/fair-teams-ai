@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/state/appState.dart';
-import 'package:frontend/state/gameState.dart';
-import 'package:frontend/views/candidatesWidget.dart';
-import 'package:frontend/views/teamWidget.dart';
-import 'package:frontend/views/mapPoolWidget.dart';
-import 'package:frontend/views/newPlayerWidget.dart';
-import 'package:frontend/views/scrambleWidget.dart';
+import 'package:NoCrybabies/state/appState.dart';
+import 'package:NoCrybabies/state/gameState.dart';
+import 'package:NoCrybabies/views/candidatesWidget.dart';
+import 'package:NoCrybabies/views/teamWidget.dart';
+import 'package:NoCrybabies/views/mapPoolWidget.dart';
+import 'package:NoCrybabies/views/newPlayerWidget.dart';
+import 'package:NoCrybabies/views/scrambleWidget.dart';
 
 import 'botsWidget.dart';
 

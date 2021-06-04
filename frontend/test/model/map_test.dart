@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/model/map.dart';
+import 'package:NoCrybabies/model/map.dart';
 
 void main() {
   group("constructor", () {

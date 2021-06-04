@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/model/candidate.dart';
+import 'package:NoCrybabies/model/candidate.dart';
 
 void main() {
   test("toJson", () {
