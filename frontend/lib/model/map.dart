@@ -9,13 +9,13 @@ class MapPool {
 
   MapPool() {
     this.maps = [
-      CsMap(name: "Inferno", imagePath: "inferno.jpg"),
-      CsMap(name: "Dust2", imagePath: "dust2.jpg"),
-      CsMap(name: "Mirage", imagePath: "mirage.jpg"),
-      CsMap(name: "Nuke", imagePath: "nuke.jpg"),
-      CsMap(name: "Train", imagePath: "train.jpg"),
-      CsMap(name: "Overpass", imagePath: "overpass.jpg"),
-      CsMap(name: "Vertigo", imagePath: "vertigo.jpg"),
+      CsMap(name: "Inferno", imagePath: "assets/inferno.jpg"),
+      CsMap(name: "Dust2", imagePath: "assets/dust2.jpg"),
+      CsMap(name: "Mirage", imagePath: "assets/mirage.jpg"),
+      CsMap(name: "Nuke", imagePath: "assets/nuke.jpg"),
+      CsMap(name: "Train", imagePath: "assets/train.jpg"),
+      CsMap(name: "Overpass", imagePath: "assets/overpass.jpg"),
+      CsMap(name: "Vertigo", imagePath: "assets/vertigo.jpg"),
     ];
   }
 

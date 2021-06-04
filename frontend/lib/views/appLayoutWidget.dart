@@ -26,7 +26,7 @@ class AppLayoutWidget extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 5,
-                  child: Image.asset("cs.jpg", fit: BoxFit.fitHeight),
+                  child: Image.asset("assets/cs.jpg", fit: BoxFit.fitHeight),
                 ),
                 Expanded(
                   flex: 4,
@@ -60,7 +60,7 @@ class AppLayoutWidget extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: TeamWidget(
-                        imagePath: 't.png',
+                        imagePath: 'assets/t.png',
                         team: game.t.players,
                         name: "Terrorists",
                         color: Colors.orange,
@@ -69,7 +69,7 @@ class AppLayoutWidget extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: TeamWidget(
-                        imagePath: 'ct.png',
+                        imagePath: 'assets/ct.png',
                         team: game.ct.players,
                         name: "Counter Terrorists",
                         color: Colors.blueGrey,
