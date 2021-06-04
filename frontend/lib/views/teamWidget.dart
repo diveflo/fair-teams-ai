@@ -54,7 +54,8 @@ class TeamWidget extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: Image(
-                          image: AssetImage(team[index].skill.rank + ".png"),
+                          image: AssetImage(
+                              "assets/" + team[index].skill.rank + ".png"),
                         ),
                         title: Text(
                           team[index].name,
