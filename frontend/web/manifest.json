@@ -1,11 +1,11 @@
 {
-    "name": "frontend",
-    "short_name": "frontend",
+    "name": "No Cry-babies",
+    "short_name": "NoCrybabies",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "An awesome project for creating fair Counter Strike teams without crying from any player.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
