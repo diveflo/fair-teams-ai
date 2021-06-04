@@ -1,11 +1,11 @@
 import 'package:confetti/confetti.dart';
-import 'package:frontend/model/candidate.dart';
-import 'package:frontend/model/player.dart';
-import 'package:frontend/model/team.dart';
-import 'package:frontend/reducer/gameReducer.dart';
+import 'package:NoCrybabies/model/candidate.dart';
+import 'package:NoCrybabies/model/player.dart';
+import 'package:NoCrybabies/model/team.dart';
+import 'package:NoCrybabies/reducer/gameReducer.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
-import 'package:frontend/apiService.dart';
+import 'package:NoCrybabies/apiService.dart';
 
 PlayerApi api = PlayerApi();
 

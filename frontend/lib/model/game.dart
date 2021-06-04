@@ -1,5 +1,5 @@
-import 'package:frontend/model/player.dart';
-import 'package:frontend/model/team.dart';
+import 'package:NoCrybabies/model/player.dart';
+import 'package:NoCrybabies/model/team.dart';
 
 class Game {
   Team t;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:frontend/model/candidate.dart';
-import 'package:frontend/reducer/gameConfigReducer.dart';
-import 'package:frontend/state/appState.dart';
+import 'package:NoCrybabies/model/candidate.dart';
+import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
+import 'package:NoCrybabies/state/appState.dart';
 
 class CandidatesWidget extends StatefulWidget {
   @override
