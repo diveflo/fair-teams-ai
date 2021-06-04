@@ -77,7 +77,6 @@ namespace fairTeams.DemoAnalyzer
             CheckResultConsistency();
 
             SetMatchRoundsAndScore();
-            CalculateHLTVScores();
         }
 
         // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
@@ -368,13 +367,6 @@ namespace fairTeams.DemoAnalyzer
             Match.Rounds = myNumberOfRounds;
             Match.TScore = myTScore;
             Match.CTScore = myCTScore;
-        }
-        private void CalculateHLTVScores()
-        {
-            foreach (var player in Match.PlayerResults)
-            {
-                player.CalculateHLTVScore();
-            }
         }
 
         public void Dispose()
