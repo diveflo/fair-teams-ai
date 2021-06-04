@@ -9,8 +9,6 @@ The frontend for the awesome fair-teams-ai.
 ## Run flutter application
 
 Run and build webapp:  
-
-`$ flutter channel beta` (because this feature is still in alpha)  
 `$ flutter upgrade`  
 `$ flutter config --enable-web`  
 `$ flutter run` (to start the application)  
