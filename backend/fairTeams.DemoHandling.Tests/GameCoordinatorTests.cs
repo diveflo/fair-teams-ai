@@ -6,7 +6,7 @@ namespace fairTeams.DemoHandling.Tests
 {
     public class GameCoordinatorTests
     {
-        [Fact (Skip = "The match/demo link will expire at some point")]
+        [Fact(Skip = "The match/demo link will expire at some point")]
         public void GetMatchInfo_ShareCodeInput_ReturnsCorrectDateAndDownloadURL()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();
@@ -25,7 +25,7 @@ namespace fairTeams.DemoHandling.Tests
             Assert.Equal(29, match.Rounds);
         }
 
-        [Fact (Skip = "The match/demo links will expire at some point")]
+        [Fact(Skip = "The match/demo links will expire at some point")]
         public void GetMatchInfo_MultipleCallsSameObject_ReturnsCorrectDateAndDownloadURL()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();
@@ -59,7 +59,7 @@ namespace fairTeams.DemoHandling.Tests
             Assert.Equal(2, matches.Count);
         }
 
-        [Fact (Skip = "Obviously this isn't stable...")]
+        [Fact(Skip = "Obviously this isn't stable...")]
         public void GetRank_GoldNovaI_GoldNovaI()
         {
             var gameCoordinatorClient = new GameCoordinatorClient();

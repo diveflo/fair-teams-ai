@@ -79,7 +79,7 @@ namespace fairTeams.DemoHandling
                     myLogger.LogError(e.Message);
                     continue;
                 }
-                
+
                 if (string.IsNullOrEmpty(sharingCode) || sharingCode.Equals("n/a") || sharingCode.Equals(user.LastSharingCode))
                 {
                     myLogger.LogTrace($"No new sharing code for Steam ID: {user.SteamID}");
