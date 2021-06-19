@@ -77,16 +77,6 @@ namespace fairTeams.Core
             return allMatchstatistics.Where(x => x.SteamID == steamId).ToList();
         }
 
-        public IList<Tuple<DateTime, MatchStatistics>> GetAllMatchStatisticsWithDateForSteamId(long steamId)
-        {
-            Matches.Load();
-            return (from match in Matches
-                    from stat in match.PlayerResults
-                    where stat.SteamID == steamId
-                    select Tuple.Create(match.Date, stat)
-                       ).ToList();
-        }
-
         public MatchStatistics GetLatestMatchStatisticForSteamId(long steamId)
         {
             Matches.Load();
