@@ -54,7 +54,7 @@ namespace fairTeams.DemoHandling
             return downloadLocation;
         }
 
-        public string DecompressDemoArchive(string bz2FilePath)
+        public static string DecompressDemoArchive(string bz2FilePath)
         {
             if (!File.Exists(bz2FilePath))
             {

@@ -30,7 +30,7 @@ namespace fairTeams.DemoHandling.Tests
             var demoDownloader = new DemoDownloader();
             var locallyDownloadedDemoFile = demoDownloader.DownloadDemoArchive(downloadUrl);
 
-            var decompressedFile = demoDownloader.DecompressDemoArchive(locallyDownloadedDemoFile);
+            var decompressedFile = DemoDownloader.DecompressDemoArchive(locallyDownloadedDemoFile);
 
             var content = File.ReadAllText(decompressedFile);
             Assert.Equal("hi", content);
