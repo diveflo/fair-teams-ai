@@ -5,6 +5,7 @@ namespace fairTeams.DemoHandling.Tests
     public class ShareCodeDecoderTests
     {
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData("CSGO-c8yAf-mYUVd-EYMDm-YZkqQ-66r4N", 3456660989162815693u, 3456667023591866681u, 30789u)]
         [InlineData("CSGO-JyGRk-R6F42-BNsVL-UaMAV-QmeqA", 3455336489968206603u, 3455341431328080096u, 2615u)]
         [InlineData("CSGO-U6UbF-rpnN5-yhxh5-xpYju-YDERE", 3455505353049899588u, 3455511353119211701u, 62578u)]

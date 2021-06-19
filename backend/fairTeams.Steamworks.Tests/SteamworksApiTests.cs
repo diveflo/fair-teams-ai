@@ -12,6 +12,7 @@ namespace fairTeams.Steamworks.Tests
         private const string myPublicProfilePlayerSteamID = "76561197973591119";
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public void ParseSteamUsernames_ValidSteamID_ReturnsFairTeamsAIUsername()
         {
             var steamworksApi = new SteamworksApi();
@@ -22,6 +23,7 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public void ParseSteamUsernames_InvalidSteamID_ReturnsNothing()
         {
             var invalidSteamID = "0";
@@ -33,6 +35,7 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public void ParseSteamUsernames_OneValidOneInvalidSteamID_ReturnsUsernameForValidSteamID()
         {
             var invalidSteamID = "0";
@@ -46,6 +49,7 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public async Task ParsePlayerStatistics_ProfileNotPublic_ThrowsProfileNotPublicException()
         {
             var steamworksApi = new SteamworksApi();
@@ -56,6 +60,7 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public void ParsePlayerStatistics_ProfilePublic_ReturnsExpectedStatistics()
         {
             var expectedStatistics = new List<string>
@@ -78,6 +83,7 @@ namespace fairTeams.Steamworks.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit-requires-secrets")]
         public async Task GetNextMatchSharingCode_PreviousCodeIsNotNewest_ReturnsNextSharingCode()
         {
             var previousSharingCode = "CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ";

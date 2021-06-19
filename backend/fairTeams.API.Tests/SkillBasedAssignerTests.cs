@@ -26,6 +26,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_TwoPlayers_OnePlayerAssignedToEachTeam()
         {
             var match = new Match { Id = "M1" };
@@ -42,6 +43,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_ThreePlayers_TwoPlayersVersusOnePlayerPlusBot()
         {
             var match = new Match { Id = "M1" };
@@ -63,6 +65,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_ThreePlayersIncludeBotParameterFalse_NoBotAddedToBalanceTeamSizes()
         {
             var match = new Match { Id = "M1" };
@@ -85,6 +88,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_TwoStrongPlayersAndFourMediumPlayers_OneStrongTwoMediumEach()
         {
             var match = new Match { Id = "M1" };
@@ -113,6 +117,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_NoMatchesForPlayer_UsesKDRating()
         {
             var steamworksApiMock = new Mock<SteamworksApi>();
@@ -136,6 +141,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "integration")]
         public async Task GetAssignedPlayers_NoMatchesForPlayerProfileNotPublic_UsesDummyRating()
         {
             var steamworksApiMock = new Mock<SteamworksApi>();
@@ -151,6 +157,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void ScrambledEquals_Test()
         {
             var player1 = new Player { Name = "Player 1", SteamID = "1" };

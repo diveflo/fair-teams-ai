@@ -10,6 +10,7 @@ namespace fairTeams.DemoParser.Tests
     public class DemoReaderTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -38,6 +39,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchHasDifferentNumberOfRoundsPreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -63,6 +65,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchHasDifferentScorePreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -75,7 +78,8 @@ namespace fairTeams.DemoParser.Tests
             Assert.Throws<InconsistentStatisticsException>(() => demoReader.Read());
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
+        [Trait("Category", "unit-requires-data")]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountEventsBeforeRealMatchStart()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem" };
@@ -110,7 +114,8 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
+        [Trait("Category", "unit-requires-data")]
         public void Read_OnlyFourRounds_CorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem" };
@@ -147,7 +152,8 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
+        [Trait("Category", "unit-requires-data")]
         public void Read_WarmupIsRestarted_DoesNotCountEventsFromAnyWarmup()
         {
             var demo = new Demo { FilePath = @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-215342-2066393818-de_inferno-honigbiene_vs_waldfrosch.dem" };
@@ -180,6 +186,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountRoundsBeforeRealMatchStart()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -195,7 +202,8 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
+        [Trait("Category", "unit-requires-data")]
         public void Read_CompetitiveMatch_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = @"C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\csgo\replays\match730_003455341431328080096_0558631479_137.dem" };
@@ -235,7 +243,8 @@ namespace fairTeams.DemoParser.Tests
             }
         }
 
-        [Fact(Skip = "Data only locally available")]
+        [Fact]
+        [Trait("Category", "unit-requires-data")]
         public void Read_MatchWithTeamkills_CountedAsNegativeKill()
         {
             var teamkillerSteamID = 76561198021024163;

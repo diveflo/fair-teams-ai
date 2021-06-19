@@ -7,6 +7,7 @@ namespace fairTeams.DemoHandling.Tests
     public class DemoDownloaderTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void DownloadDemoArchive_SmallTestFile_SuccessfullyDownloaded()
         {
             var downloadUrl = @"https://fairteamsai.backend.files.entertainment720.eu/test.txt.bz2";
@@ -22,6 +23,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void DecompressDemoArchive_SmallTestFile_SuccessfullyDecompressedAsync()
         {
             var downloadUrl = @"https://fairteamsai.backend.files.entertainment720.eu/test.txt.bz2";

@@ -8,6 +8,7 @@ namespace fairTeams.Core.Tests
     public class MatchRepositoryTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void MatchesAdd_RepositoryEmptyBeforehand_RepositoryHasOneMatch()
         {
             using var repository = CreateEmptyRepository();
@@ -20,6 +21,7 @@ namespace fairTeams.Core.Tests
         }
 
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData(76561197973591119, 1.1974)]
         [InlineData(76561197984050254, 0.9542)]
         [InlineData(76561197995643389, 1.056)]

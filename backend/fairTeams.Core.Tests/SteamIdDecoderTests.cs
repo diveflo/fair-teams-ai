@@ -5,6 +5,7 @@ namespace fairTeams.Core.Tests
     public class SteamIdDecoderTests
     {
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData(76561197973591119, 13325391u)]
         [InlineData(76561198258023370, 297757642u)]
         [InlineData(76561198011775117, 51509389u)]

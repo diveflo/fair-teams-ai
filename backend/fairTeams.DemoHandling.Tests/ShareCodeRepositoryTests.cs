@@ -21,6 +21,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void AddNew_EmptyRepository_IsAdded()
         {
             var shareCode = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM");
@@ -31,6 +32,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void AddNew_ShareCodeDoesNotExistYet_IsAdded()
         {
             var existingShareCode = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM");
@@ -44,6 +46,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RepositoryHasEnough_RequestedCountReturned()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -57,6 +60,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RequestSingleForFirstTime_DownloadAttemptCountIsOne()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -68,6 +72,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RepositoryHasSingleEntryRequestSingleForSecondTime_CodeIsTheSame()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -81,6 +86,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RequestSingleForSecondTime_DownloadAttemptCountIsTwo()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -93,6 +99,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RequestSingleForEleventhTime_EmptyList()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -109,6 +116,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RepositoryHasTwoEntriesRequestTwoTimes_SecondCallReturnsSecondEntry()
         {
             var first = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM");
@@ -124,6 +132,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RepositoryHasFourEntriesAlreadyRequestedOneAfterTheOtherSubsequentRequestBatchOfTwo_FirstTwo()
         {
             var first = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM");
@@ -148,6 +157,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RequestSingle_EarliestRetryRoughly30Minutes()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -159,6 +169,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetBatch_RequestSingleSecondTime_EarliestRetryIncreased()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -171,6 +182,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetRetryableBatch_RequestSingleBeforeEarliestRetry_EmptyList()
         {
             myShareCodeRepository.ShareCodes.Add(new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM"));
@@ -183,6 +195,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetRetryableBatch_RequestSingleAfterEarliestRetry_ReturnsCode()
         {
             var codeWithZeroRetryCooldown = new ShareCode("CSGO-XPBWY-U43tj-DpmEA-jsZRk-34OJM", TimeSpan.Zero);
@@ -196,6 +209,7 @@ namespace fairTeams.DemoHandling.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void GetRetryableBatch_RepositoryHasOneEntryBeforeAndOneAfterEarliestRetryRequestTwo_ReturnsOneRetryableEntry()
         {
             var codeWithRegularCooldown = new ShareCode("CSGO-b7UOr-F4sao-znyvb-3Q3HM-tJpxA");

@@ -38,12 +38,8 @@ jobs:
         with:
           dotnet-version: "5.0.100"
       - name: run tests
-        run: dotnet test
+        run: dotnet test --filter Category=unit,integration
         working-directory: backend
-        env:
-          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
-          STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
-          STEAM_WEBAPI_KEY: ${{ secrets.STEAM_WEBAPI_KEY }}
 
   code-analysis:
     runs-on: ubuntu-latest

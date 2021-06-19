@@ -7,6 +7,7 @@ namespace fairTeams.API.Tests
     public class SkillLevelTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void SkillScore_NoRatingsAdded_ThrowsNullRef()
         {
             var skillLevel = new SkillLevel();
@@ -15,6 +16,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void SkillScore_DummyRatingAdded_ReturnsRatingValue()
         {
             var expectedScore = 1.0d;
@@ -27,6 +29,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void CompareTo_FirstBetterThanSecond_ReturnsNegativeValue()
         {
             var firstSkillLevel = new SkillLevel();
@@ -40,6 +43,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void CompareTo_SameScore_ReturnsZero()
         {
             var firstSkillLevel = new SkillLevel();
@@ -53,6 +57,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void CompareTo_SecondBetterThanFirst_ReturnsPositiveValue()
         {
             var firstSkillLevel = new SkillLevel();

@@ -5,6 +5,7 @@ namespace fairTeams.Core.Tests
     public class MatchStatisticsTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void Equals_SameObject_ReturnsTrue()
         {
             var first = new MatchStatistics { Kills = 5, Deaths = 5, Rounds = 10, OneKill = 1, TwoKill = 2 };
@@ -13,6 +14,7 @@ namespace fairTeams.Core.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Equals_DifferentObjectsSameId_ReturnsTrue()
         {
             var first = new MatchStatistics { Id = "ibims1id" };
@@ -22,6 +24,7 @@ namespace fairTeams.Core.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void HLTVScore_RealStatsFromPastGame_CorrectScore()
         {
             var expectedHLTVScore = 1.831;

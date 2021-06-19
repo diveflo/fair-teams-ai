@@ -9,6 +9,7 @@ namespace fairTeams.API.Tests
     public class KDRatingTests
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_EqualNumberOfKillsAndDeaths_ReturnsOne()
         {
             var kills = new Statistic { Name = "total_kills", Value = 10 };
@@ -22,6 +23,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_TwiceAsManyKillsAsDeaths_ReturnsTwo()
         {
             var kills = new Statistic { Name = "total_kills", Value = 20 };
@@ -44,6 +46,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_MissingLastMatchKillsStatistic_ThrowsArgumentException()
         {
             var kills = new Statistic { Name = "total_kills", Value = 10 };
@@ -56,6 +59,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_MissingDeathsStatistic_ThrowsArgumentException()
         {
             var kills = new Statistic { Name = "total_kills", Value = 20 };
@@ -65,6 +69,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_MissingLastMatchDeathsStatistic_ThrowsArgumentException()
         {
             var kills = new Statistic { Name = "total_kills", Value = 10 };
@@ -77,6 +82,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Score_ZeroDeaths_ReturnsInfinity()
         {
             var kills = new Statistic { Name = "total_kills", Value = 20 };

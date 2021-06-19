@@ -52,6 +52,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Constructor_RealWorldUweStatistics_CorrectHLTVScore()
         {
             var matches = CreateMultipleMatchesWithStatistics(myRealUweStatistics);
@@ -64,6 +65,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Constructor_LastMatchHigherScore_UpwardsTrend()
         {
             var matches = CreateMultipleMatchesWithStatistics(myRealUweStatistics);
@@ -87,6 +89,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Constructor_LastMatchLowerScore_DownwardTrend()
         {
             var matches = CreateMultipleMatchesWithStatistics(myRealUweStatistics);
@@ -110,6 +113,7 @@ namespace fairTeams.API.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Constructor_LastMatchSimilarScore_PlateauTrend()
         {
             var statistics = new List<MatchStatistics>
