@@ -176,20 +176,20 @@ namespace fairTeams.API
             {
                 var bestAssignment = assignmentsAndCosts.OrderBy(x => x.Value).First();
 
-                myLogger.LogInformation($"None of the combinations are below the selected threshold {skillDifferenceThreshold}." +
-                    $"Selecting the lowest skill-difference option: {bestAssignment.Value}");
+                myLogger.LogInformation($"None of the combinations are below the selected threshold {skillDifferenceThreshold}. " +
+                    $"Selecting the lowest skill-difference option: {bestAssignment.Value}.");
 
                 return bestAssignment.Key;
             }
 
-            myLogger.LogInformation($"{numberOfAssignments} combinations are below the selected threshold {skillDifferenceThreshold}." +
-                $"Their skill-difference is {string.Join(",", assignmentsWithAcceptableSkillDifference.Select(x => x.Value))} respectively");
+            myLogger.LogInformation($"{numberOfAssignments} combinations are below the selected threshold {skillDifferenceThreshold}. " +
+                $"Their skill-differences are: {string.Join(",", assignmentsWithAcceptableSkillDifference.Select(x => x.Value))} respectively.");
 
             var indexOfAssignment = myRandom.Next(0, numberOfAssignments);
-            myLogger.LogTrace($"Generated random index for assignment selection: {indexOfAssignment}");
+            myLogger.LogTrace($"Generated random index for assignment selection: {indexOfAssignment}.");
 
             var selectedAssignment = assignmentsWithAcceptableSkillDifference.ElementAt(indexOfAssignment);
-            myLogger.LogInformation($"The selected teams have a skill difference of {selectedAssignment.Value}");
+            myLogger.LogInformation($"The selected teams have a skill difference of {selectedAssignment.Value}.");
 
             return selectedAssignment.Key;
         }
