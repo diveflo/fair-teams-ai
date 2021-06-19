@@ -408,18 +408,10 @@ namespace fairTeams.DemoHandling
             }
             catch (AggregateException e)
             {
-                var innerExceptions = e.InnerExceptions;
-
-                if (innerExceptions.Any(x => x is GameCoordinatorException))
+                if (e.InnerException is TimeoutException)
                 {
-                    throw innerExceptions.Single(x => x is GameCoordinatorException);
-                }
-
-                if (innerExceptions.Any(x => x is TimeoutException))
-                {
-                    var timeoutMessage = innerExceptions.Single(x => x is TimeoutException).Message;
-                    myLogger.LogWarning(timeoutMessage);
-                    throw new GameCoordinatorException(timeoutMessage);
+                    myLogger.LogWarning(e.InnerException.Message);
+                    return;
                 }
 
                 throw;
