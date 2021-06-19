@@ -16,8 +16,8 @@ namespace fairTeams.API
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();
-                    logging.AddConsole();
                     logging.AddDebug();
+                    logging.AddSimpleConsole(c => c.TimestampFormat = "MMM dd HH:mm:ss ");
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
