@@ -38,7 +38,7 @@ jobs:
         with:
           dotnet-version: "5.0.100"
       - name: run tests
-        run: dotnet test --filter Category=unit,integration
+        run: dotnet test --filter "Category=unit|Category=integration"
         working-directory: backend
 
   code-analysis:
