@@ -140,7 +140,7 @@ namespace fairTeams.DemoHandling
         private static List<FtpListItem> GetDemoFilesForFinishedMatches(List<FtpListItem> files)
         {
             var finishedDemoFiles = new List<FtpListItem>();
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var tenMinutesAgo = DateTime.UtcNow - TimeSpan.FromMinutes(10.0);
                 if (file.Modified <= tenMinutesAgo)

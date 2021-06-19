@@ -44,7 +44,7 @@ namespace fairTeams.Core
                     catch (DbUpdateException e)
                     {
                         var innerSqlException = e.InnerException as SqliteException;
-                        
+
                         var isAlreadyAdded = innerSqlException.SqliteErrorCode == 19;
                         if (isAlreadyAdded)
                         {

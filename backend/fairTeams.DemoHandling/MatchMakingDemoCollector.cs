@@ -72,7 +72,6 @@ namespace fairTeams.DemoHandling
                     return;
                 }
 
-                
                 ProcessNewMatches(gameCoordinatorClient, shareCodeRepository, matchRepository);
                 Thread.Sleep(5000);
             }

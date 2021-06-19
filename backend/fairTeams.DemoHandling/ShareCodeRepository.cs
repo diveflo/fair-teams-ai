@@ -13,7 +13,7 @@ namespace fairTeams.DemoHandling
         public DbSet<ShareCode> ShareCodes { get; set; }
 
         public ShareCodeRepository(DbContextOptions<ShareCodeRepository> options, ILogger<ShareCodeRepository> logger) : base(options)
-        { 
+        {
             myLogger = logger;
         }
 
