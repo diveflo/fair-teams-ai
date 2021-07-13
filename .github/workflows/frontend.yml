@@ -44,6 +44,6 @@ jobs:
       - run: flutter config --enable-web
       - run: flutter pub get
         working-directory: frontend
-      - uses: erickzanardo/flutter-gh-pages@v4
+      - uses: erickzanardo/flutter-gh-pages@v6
         with:
           workingDir: frontend
