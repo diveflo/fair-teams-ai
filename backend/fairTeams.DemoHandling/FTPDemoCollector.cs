@@ -74,11 +74,22 @@ namespace fairTeams.DemoHandling
                 myFtpClient.Connect();
             }
 
-            return myFtpClient.GetListing()
-                .Where(x => x.Type == FtpFileSystemObjectType.File)
-                .Where(x => x.FullName.EndsWith(".dem"))
-                .Where(x => x.Size >= minimumFileSize.Bytes)
-                .ToList();
+            var demoFiles = new List<FtpListItem>();
+
+            try
+            {
+                demoFiles = myFtpClient.GetListing()
+                    .Where(x => x.Type == FtpFileSystemObjectType.File)
+                    .Where(x => x.FullName.EndsWith(".dem"))
+                    .Where(x => x.Size >= minimumFileSize.Bytes)
+                    .ToList();
+            }
+            catch (FtpCommandException e)
+            {
+                myLogger.LogWarning($"Error while trying to look for new demo files on CSGO ftp server: {e.Message}");
+            }
+
+            return demoFiles;
         }
 
         public List<FtpListItem> GetNewDemoFiles(List<FtpListItem> allDemoFiles)
