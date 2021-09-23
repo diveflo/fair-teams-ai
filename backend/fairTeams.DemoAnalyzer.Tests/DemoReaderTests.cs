@@ -44,6 +44,7 @@ namespace fairTeams.DemoParser.Tests
     public class DemoReaderTests : IClassFixture<AzureStorageFixture>
     {
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchOnOurServer_ReturnsCorrectStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -72,6 +73,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData(@"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem", 0, 3)]
         [InlineData(@"auto0-20210403-200450-1500889020-de_mirage-honigbiene_vs_waldfrosch.dem", 3, 16)]
         [InlineData(@"auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem", 2, 2)]
@@ -89,6 +91,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData(@"de_inferno_56500117958089672.dem", 16, 9)]
         [InlineData(@"de_mirage_5631969914449548.dem", 9, 7)]
         public void Read_MatchMakingGame_ReturnsCorrectScores(string demoFileName, int CTScore, int TScore)
@@ -104,6 +107,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Theory]
+        [Trait("Category", "unit")]
         [InlineData(@"de_inferno_56500117958089672.dem", "76561198996567053", "76561198021024163")]
         [InlineData(@"de_mirage_5631969914449548.dem", "76561198055707754", "76561197995643389")]
         public void Read_MatchMakingGame_ReturnsCorrectPlayerHighestAndLowestHLTV(string demoFileName, string highestHLTVPlayerSteamId, string lowestHLTVPlayerSteamId)
@@ -121,6 +125,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchHasDifferentNumberOfRoundsPreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -134,6 +139,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Parse_MatchHasDifferentNumberOfRoundsPreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -146,6 +152,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_MatchHasDifferentScorePreset_ThrowsInconsistentStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem") };
@@ -159,6 +166,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountEventsBeforeRealMatchStart()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem") };
@@ -194,6 +202,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_OnlyFourRounds_CorrectStatistics()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem") };
@@ -231,6 +240,7 @@ namespace fairTeams.DemoParser.Tests
         }
 
         [Fact]
+        [Trait("Category", "unit")]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountRoundsBeforeRealMatchStart()
         {
             var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem") };
