@@ -251,15 +251,8 @@ namespace fairTeams.DemoAnalyzer
         private void ParseFinalTeamScores()
         {
             // At the end of the game, the initial CT team is T side and vice versa
-            if (myNumberOfRounds > 15)
-            {
-                myTScore = myDemoParser.CTScore;
-                myCTScore = myDemoParser.TScore;
-                return;
-            }
-
-            myCTScore = myDemoParser.CTScore;
-            myTScore = myDemoParser.TScore;
+            myCTScore = myDemoParser.TScore;
+            myTScore = myDemoParser.CTScore;
         }
 
         private void ProcessNewPlayers()
