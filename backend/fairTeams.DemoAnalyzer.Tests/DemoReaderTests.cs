@@ -169,7 +169,7 @@ namespace fairTeams.DemoParser.Tests
         [Trait("Category", "unit")]
         public void Read_GameIsRestartedAfterMatchStarted_DoesNotCountEventsBeforeRealMatchStart()
         {
-            var demo = new Demo { FilePath = Path.Combine("TestData", @"C:\Users\Flo\projects\csgo-demo-server\auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem") };
+            var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem") };
             var demoReader = new DemoReader(new Match { Demo = demo });
 
             demoReader.ReadHeader();
@@ -205,7 +205,7 @@ namespace fairTeams.DemoParser.Tests
         [Trait("Category", "unit")]
         public void Read_OnlyFourRounds_CorrectStatistics()
         {
-            var demo = new Demo { FilePath = Path.Combine("TestData", @"C:\Users\Flo\projects\csgo-demo-server\auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem") };
+            var demo = new Demo { FilePath = Path.Combine("TestData", @"auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem") };
             var demoReader = new DemoReader(new Match { Demo = demo }, 0, 0);
 
             demoReader.ReadHeader();
