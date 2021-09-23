@@ -47,3 +47,4 @@ jobs:
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
           workingDir: frontend
+          baseHref: /fair-teams-ai/
