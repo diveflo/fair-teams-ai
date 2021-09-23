@@ -39,6 +39,8 @@ jobs:
           dotnet-version: "5.0.301"
       - name: run tests
         run: dotnet test --filter "Category=unit|Category=integration"
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         working-directory: backend
 
   code-analysis:
