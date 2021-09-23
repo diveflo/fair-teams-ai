@@ -54,3 +54,10 @@ http://ipofyourserver/images/pull?token=TOKYMCTOKENFACE&restart_containers=true&
 ```
 
 We send a request in that format in our GitHub Actions CI/CD pipeline after successfully building and pushing a new docker image of the backend.
+
+## Continous integration
+
+GitHub Actions run our automated tests for the frontend and backend. The backend tests, especially the demo analyzer tests, require a large
+amount of test data. That data is not checked into the repository, but stored in an Azure Blob Storage and downloaded at runtime.
+
+For this to work, the environment variable `AZURE_STORAGE_CONNECTION_STRING` has to be set to the connection string of the blob container.

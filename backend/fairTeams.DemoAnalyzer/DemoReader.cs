@@ -19,6 +19,7 @@ namespace fairTeams.DemoAnalyzer
         private int myTScore;
         private int myCTScore;
         private bool myHasMatchStarted;
+        private bool myLastRoundHalfOccurred;
 
         public Match Match { get; }
 
@@ -32,6 +33,7 @@ namespace fairTeams.DemoAnalyzer
             myMinimumPlayers = minimumPlayers;
 
             myHasMatchStarted = false;
+            myLastRoundHalfOccurred = false;
             myKillsThisRound = new Dictionary<Player, int>(new SteamIdBasedPlayerEqualityComparer());
         }
 
@@ -60,6 +62,7 @@ namespace fairTeams.DemoAnalyzer
             myDemoParser.RoundStart += HandleRoundStarted;
             myDemoParser.PlayerKilled += HandlePlayerKilled;
             myDemoParser.RoundOfficiallyEnd += HandleRoundOfficiallyEnd;
+            myDemoParser.LastRoundHalf += HandleLastRoundHalf;
 
             try
             {
@@ -79,6 +82,11 @@ namespace fairTeams.DemoAnalyzer
             SetMatchRoundsAndScore();
         }
 
+        private void HandleLastRoundHalf(object sender, LastRoundHalfEventArgs e)
+        {
+            myLastRoundHalfOccurred = true;
+        }
+
         // we clear the kill counts etc. additionally here because MatchStarted is only thrown once somehow
         // and doesn't correctly handle the case that the game is restarted (e.g. on our server)
         private void HandleRoundAnnounceMatchStarted(object sender, RoundAnnounceMatchStartedEventArgs e)
@@ -86,6 +94,10 @@ namespace fairTeams.DemoAnalyzer
             myKillsThisRound.Clear();
             Match.PlayerResults.Clear();
             myNumberOfRounds = 0;
+
+            myHasMatchStarted = true;
+
+            ProcessNewPlayers();
         }
 
         private void HandleMatchStarted(object sender, MatchStartedEventArgs e)
@@ -250,9 +262,18 @@ namespace fairTeams.DemoAnalyzer
 
         private void ParseFinalTeamScores()
         {
-            // At the end of the game, the initial CT team is T side and vice versa
-            myCTScore = myDemoParser.TScore;
-            myTScore = myDemoParser.CTScore;
+            // If the game had a second half, i.e., no team surrendered or the match ended before
+            // the half time for other reasons, the initial CT team is T side and vice versa
+            if (myLastRoundHalfOccurred)
+            {
+                myCTScore = myDemoParser.TScore;
+                myTScore = myDemoParser.CTScore;
+            }
+            else
+            {
+                myCTScore = myDemoParser.CTScore;
+                myTScore = myDemoParser.TScore;
+            }
         }
 
         private void ProcessNewPlayers()

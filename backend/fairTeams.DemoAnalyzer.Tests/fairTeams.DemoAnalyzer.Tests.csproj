@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
         <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -27,15 +28,6 @@
     <ItemGroup>
         <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
         <ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="TestData\auto0-20210102-225615-1235223714-de_dust2-honigbiene_vs_waldfrosch.dem">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestData\auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
 </Project>
