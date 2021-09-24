@@ -6,6 +6,7 @@ namespace fairTeams.Core
     {
         public long SteamID { get; set; }
         public string Id { get; set; }
+        public Side InitialSide { get; set; }
         public int Kills { get; set; }
         public int Deaths { get; set; }
         public int Rounds { get; set; }

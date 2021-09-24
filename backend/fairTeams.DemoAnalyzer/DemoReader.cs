@@ -92,23 +92,85 @@ namespace fairTeams.DemoAnalyzer
         private void HandleRoundAnnounceMatchStarted(object sender, RoundAnnounceMatchStartedEventArgs e)
         {
             myKillsThisRound.Clear();
-            Match.PlayerResults.Clear();
+            ClearPlayerStatistics();
+            AddPlayerIds();
             myNumberOfRounds = 0;
 
             myHasMatchStarted = true;
 
             ProcessNewPlayers();
+
+            CheckInitialSideAssignments();
         }
 
         private void HandleMatchStarted(object sender, MatchStartedEventArgs e)
         {
             myKillsThisRound.Clear();
-            Match.PlayerResults.Clear();
+            ClearPlayerStatistics();
+            AddPlayerIds();
             myNumberOfRounds = 0;
 
             myHasMatchStarted = true;
 
             ProcessNewPlayers();
+
+            CheckInitialSideAssignments();
+        }
+
+        private void ClearPlayerStatistics()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                player.Rounds = 0;
+                player.Kills = 0;
+                player.Deaths = 0;
+                player.OneKill = 0;
+                player.TwoKill = 0;
+                player.ThreeKill = 0;
+                player.FourKill = 0;
+                player.FiveKill = 0;
+            }
+        }
+
+        private void AddPlayerIds()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                player.Id = $"{player.SteamID}_{Match.Id}";
+            }
+        }
+
+        private void CheckInitialSideAssignments()
+        {
+            var players = Match.PlayerResults;
+
+            if (players.All(IsInitialSideAssignmentCorrect))
+            {
+                return;
+            }
+
+            FixIncorrectInitialSideAssignmentsAndScore();
+        }
+
+        private bool IsInitialSideAssignmentCorrect(MatchStatistics player)
+        {
+            var correspondingParserPlayer = myDemoParser.PlayingParticipants.Single(x => x.SteamID == player.SteamID);
+            var parserPlayerSide = correspondingParserPlayer.Team.ToSide();
+            return parserPlayerSide == player.InitialSide;
+        }
+
+        private void FixIncorrectInitialSideAssignmentsAndScore()
+        {
+            var players = Match.PlayerResults;
+
+            foreach (var player in players)
+            {
+                player.InitialSide = player.InitialSide == Side.Terrorists ? Side.CounterTerrorists : Side.Terrorists;
+            }
+
+            var correctedCTScore = Match.TScore;
+            Match.TScore = Match.CTScore;
+            Match.CTScore = correctedCTScore;
         }
 
         private void HandleRoundStarted(object sender, RoundStartedEventArgs e)

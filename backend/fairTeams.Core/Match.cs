@@ -7,7 +7,7 @@ namespace fairTeams.Core
     {
         public string Id { get; set; }
         public Demo Demo { get; set; }
-        public IList<MatchStatistics> PlayerResults { get; }
+        public IList<MatchStatistics> PlayerResults { get; set; }
         public DateTime Date { get; set; }
         public string Map { get; set; }
         public int TScore { get; set; }
