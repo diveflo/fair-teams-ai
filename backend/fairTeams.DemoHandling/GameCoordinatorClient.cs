@@ -61,6 +61,7 @@ namespace fairTeams.DemoHandling
                 match.Date = GetMatchDate(matchInfo);
                 match.Rounds = GetNumberOfRounds(matchInfo);
                 (match.CTScore, match.TScore) = GetScore(matchInfo);
+                match.PlayerResults = GetMatchPlayerStatistics(matchInfo);
             }
             catch (AggregateException e)
             {
@@ -352,6 +353,30 @@ namespace fairTeams.DemoHandling
             date = date.AddSeconds(matchInfo.matchtime);
             myLogger.LogTrace($"Extracted match date/time: {date}");
             return date;
+        }
+
+        private IList<MatchStatistics> GetMatchPlayerStatistics(CDataGCCStrike15_v2_MatchInfo matchInfo)
+        {
+            var roundStats = matchInfo.roundstatsall;
+            var finalRoundStats = roundStats.Last();
+
+            var accountIds = finalRoundStats.reservation.account_ids;
+
+            var players = new List<MatchStatistics>();
+            
+            for (var i = 0; i < accountIds.Count; i++)
+            {
+                var steamId = SteamIdDecoder.ToSteamId(accountIds[i]);
+                var playerStatistics = new MatchStatistics
+                {
+                    SteamID = steamId,
+                    InitialSide = i < 5 ? Side.CounterTerrorists : Side.Terrorists
+                };
+
+                players.Add(playerStatistics);
+            }
+
+            return players;
         }
 
         private string GetDownloadURL(CDataGCCStrike15_v2_MatchInfo matchInfo)
