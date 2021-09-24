@@ -161,9 +161,6 @@ namespace fairTeams.DemoHandling
             {
                 Connect().Wait();
 
-                UnregisterCallback(CallbackType.Connected);
-                UnregisterCallback(CallbackType.Disconnected);
-
                 var loginResult = Login().Result;
                 UnregisterCallback(CallbackType.LoggedOn);
                 if (loginResult != EResult.OK)
@@ -211,14 +208,7 @@ namespace fairTeams.DemoHandling
                     UnregisterCallback(CallbackType.Connected);
                 });
 
-                var disconnectedCallbackRegistration = myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>((callback) =>
-                {
-                    myLogger.LogError("Steam server seems to be down. Please try again.");
-                    taskCompletionSource.SetException(new GameCoordinatorException("Steam server seems to be down. Please try again."));
-                });
-
                 myRegisteredCallbacks.Add(CallbackType.Connected, connectedCallbackRegistration);
-                myRegisteredCallbacks.Add(CallbackType.Disconnected, disconnectedCallbackRegistration);
 
                 mySteamClient.Connect();
                 myLogger.LogTrace("Connecting to Steam...");
@@ -267,23 +257,6 @@ namespace fairTeams.DemoHandling
             return taskCompletionSource.Task;
         }
 
-        private Task LogOff()
-        {
-            var taskCompletionSource = TaskHelper.CreateResultlessTaskCompletionSourceWithTimeout(myWaitTimeInMilliseconds, $"Steam user didn't log off within {myWaitTimeInMilliseconds} milliseconds.");
-
-            UnregisterCallback(CallbackType.Disconnected);
-
-            myRegisteredCallbacks[CallbackType.Disconnected] = myCallbackManager.Subscribe<SteamClient.DisconnectedCallback>((callback) =>
-            {
-                myLogger.LogInformation("Successfully logged off & disconnected steam client");
-                taskCompletionSource.SetResult();
-            });
-
-            mySteamUser.LogOff();
-
-            return taskCompletionSource.Task;
-        }
-
         private void HandleCallbacks()
         {
             while (!myIsDisposing)
@@ -311,7 +284,6 @@ namespace fairTeams.DemoHandling
             var taskCompletionSource = TaskHelper.CreateTaskCompletionSourceWithTimeout<CDataGCCStrike15_v2_MatchInfo>(myWaitTimeInMilliseconds);
 
             myLogger.LogTrace("Asking game coordinator for match details.");
-            //Thread.Sleep(5000);
             if (csgoClient == null)
             {
                 myLogger.LogError("CsGoClient is unexpectedly null");
@@ -363,7 +335,7 @@ namespace fairTeams.DemoHandling
             var accountIds = finalRoundStats.reservation.account_ids;
 
             var players = new List<MatchStatistics>();
-            
+
             for (var i = 0; i < accountIds.Count; i++)
             {
                 var steamId = SteamIdDecoder.ToSteamId(accountIds[i]);
@@ -424,31 +396,7 @@ namespace fairTeams.DemoHandling
             if (myCsgoClient != null)
             {
                 myCsgoClient.Dispose();
-            }
-
-            try
-            {
-                LogOff().Wait();
-            }
-            catch (AggregateException e)
-            {
-                if (e.InnerException is TimeoutException)
-                {
-                    myLogger.LogWarning(e.InnerException.Message);
-                    return;
-                }
-
-                throw;
-            }
-            finally
-            {
-                foreach (var registeredCallback in myRegisteredCallbacks.Values)
-                {
-                    registeredCallback.Dispose();
-                }
-
-                myIsDisposing = true;
-                myCallbackManager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+                mySteamClient.Disconnect();
             }
         }
     }

@@ -65,12 +65,13 @@ namespace fairTeams.DemoHandling
 
             try
             {
-                gameCoordinatorClient.ConnectAndLogin();
                 if (!shareCodeRepository.HasRetryableCodes())
                 {
                     myLogger.LogInformation("No retryable share codes available right now");
                     return;
                 }
+
+                gameCoordinatorClient.ConnectAndLogin();
 
                 ProcessNewMatches(gameCoordinatorClient, shareCodeRepository, matchRepository);
                 Thread.Sleep(5000);
