@@ -6,5 +6,10 @@
         {
             return (uint)(steamId & 0xFFffFFff);
         }
+
+        public static long ToSteamId(uint accountId)
+        {
+            return accountId + 76561197960265728L;
+        }
     }
 }
