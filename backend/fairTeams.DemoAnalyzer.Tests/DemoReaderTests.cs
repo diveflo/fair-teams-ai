@@ -124,6 +124,44 @@ namespace fairTeams.DemoParser.Tests
             Assert.Equal(long.Parse(lowestHLTVPlayerSteamId), orderedByDescendingHLTV.Last().SteamID);
         }
 
+        [Theory]
+        [Trait("Category", "unit")]
+        [InlineData(@"auto0-20210103-190414-139014994-de_dust2-honigbiene_vs_waldfrosch.dem", CompetitiveMatchType.Short)]
+        [InlineData(@"auto0-20210403-200450-1500889020-de_mirage-honigbiene_vs_waldfrosch.dem", CompetitiveMatchType.Standard)]
+        [InlineData(@"auto0-20201222-213144-349508145-de_inferno-honigbiene_vs_waldfrosch.dem", CompetitiveMatchType.Short)]
+        [InlineData(@"auto0-20210102-204730-1247575572-de_mirage-honigbiene_vs_waldfrosch.dem", CompetitiveMatchType.Standard)]
+        public void Read_GameOnOurServer_ReturnsCorrectMatchType(string demoFileName, CompetitiveMatchType expectedMatchType)
+        {
+            var demo = new Demo { FilePath = Path.Combine("TestData", demoFileName) };
+
+            var demoReader = new DemoReader(new Match { Demo = demo }, 0, 0);
+
+            var match = demoReader.Parse();
+
+            foreach(var matchStatistics in match.PlayerResults)
+            {
+                Assert.Equal(expectedMatchType, matchStatistics.MatchType);
+            }
+        }
+
+        [Theory]
+        [Trait("Category", "unit")]
+        [InlineData(@"de_inferno_56500117958089672.dem", CompetitiveMatchType.Standard)]
+        [InlineData(@"de_mirage_5631969914449548.dem", CompetitiveMatchType.Short)]
+        public void Read_MatchMakingGame_ReturnsCorrectMatchType(string demoFileName, CompetitiveMatchType expectedMatchType)
+        {
+            var demo = new Demo { FilePath = Path.Combine("TestData", demoFileName) };
+
+            var demoReader = new DemoReader(new Match { Demo = demo }, 0, 0);
+
+            var match = demoReader.Parse();
+
+            foreach (var matchStatistics in match.PlayerResults)
+            {
+                Assert.Equal(expectedMatchType, matchStatistics.MatchType);
+            }
+        }
+
         [Fact]
         [Trait("Category", "unit")]
         public void Read_MatchHasDifferentNumberOfRoundsPreset_ThrowsInconsistentStatistics()

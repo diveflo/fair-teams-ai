@@ -13,7 +13,8 @@ namespace fairTeams.API.Rating
         public HLTVRating(long steamID, MatchRepository matchRepository)
         {
             var allMatchStatisticsForPlayer = matchRepository.GetAllMatchStatisticsForSteamId(steamID);
-            Score = allMatchStatisticsForPlayer.Average(z => z.HLTVScore);
+
+            Score = MatchStatisticsCalculator.MatchTypeNormalizedHLTVScore(allMatchStatisticsForPlayer);
 
             var latestMatchStatisticForPlayer = matchRepository.GetLatestMatchStatisticForSteamId(steamID);
             Trend = TrendHelper.GetTrend(Score, latestMatchStatisticForPlayer.HLTVScore);
