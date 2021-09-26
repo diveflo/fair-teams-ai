@@ -80,6 +80,7 @@ namespace fairTeams.DemoAnalyzer
             CheckResultConsistency();
 
             SetMatchRoundsAndScore();
+            SetMatchType();
         }
 
         private void HandleLastRoundHalf(object sender, LastRoundHalfEventArgs e)
@@ -443,6 +444,15 @@ namespace fairTeams.DemoAnalyzer
             Match.Rounds = myNumberOfRounds;
             Match.TScore = myTScore;
             Match.CTScore = myCTScore;
+        }
+
+        private void SetMatchType()
+        {
+            foreach (var player in Match.PlayerResults)
+            {
+                var shutoutMatch = myTScore == 0 || myCTScore == 0 && myNumberOfRounds == 16;
+                player.MatchType = myNumberOfRounds <= 16 && !shutoutMatch ? CompetitiveMatchType.Short : CompetitiveMatchType.Standard;
+            }
         }
 
         public void Dispose()
