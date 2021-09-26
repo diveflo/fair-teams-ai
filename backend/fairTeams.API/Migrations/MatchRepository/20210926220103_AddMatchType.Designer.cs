@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fairTeams.Core;
 
 namespace fairTeams.API.Migrations.MatchRepository
 {
     [DbContext(typeof(fairTeams.Core.MatchRepository))]
-    partial class MatchRepositoryModelSnapshot : ModelSnapshot
+    [Migration("20210926220103_AddMatchType")]
+    partial class AddMatchType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,6 +117,7 @@ namespace fairTeams.API.Migrations.MatchRepository
 
                     b.Property<int>("MatchType")
                         .HasColumnType("INTEGER");
+
                     b.Property<int>("OneKill")
                         .HasColumnType("INTEGER");
 
