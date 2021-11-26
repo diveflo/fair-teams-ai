@@ -78,7 +78,10 @@ namespace fairTeams.DemoHandling
 
             try
             {
-                demoFiles = myFtpClient.GetListing()
+                var names = myFtpClient.GetNameListing();
+                var files = myFtpClient.GetListing();
+
+                demoFiles = files
                     .Where(x => x.Type == FtpFileSystemObjectType.File)
                     .Where(x => x.FullName.EndsWith(".dem"))
                     .Where(x => x.Size >= minimumFileSize.Bytes)
@@ -87,6 +90,10 @@ namespace fairTeams.DemoHandling
             catch (FtpCommandException e)
             {
                 myLogger.LogWarning($"Error while trying to look for new demo files on CSGO ftp server: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                myLogger.LogError($"Unexpected exception occured: {e.Message}");
             }
 
             return demoFiles;

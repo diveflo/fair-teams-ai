@@ -15,7 +15,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "5.0.301"
+          dotnet-version: "6.0"
       - name: build
         run: dotnet build --configuration Release
         working-directory: backend
@@ -36,7 +36,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "5.0.301"
+          dotnet-version: "6.0"
       - name: run tests
         run: dotnet test --filter "Category=unit|Category=integration"
         env:
@@ -55,7 +55,7 @@ jobs:
       - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "5.0.301"
+          dotnet-version: "6.0"
       - name: build
         run: dotnet build
         working-directory: backend
