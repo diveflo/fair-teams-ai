@@ -86,10 +86,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: floriang89/fair-teams-ai:latest
-
-  deploy:
-    needs: [docker]
-    runs-on: ubuntu-latest
-    steps:
-      - name: update deployed docker image
-        run: curl -X POST -d 'token=${{ secrets.IMAGE_PULLER_TOKEN }}&restart_containers=true&image=floriang89/fair-teams-ai:latest' ${{ secrets.IMAGE_PULLER_URI }}
