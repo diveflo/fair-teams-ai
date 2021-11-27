@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -10,7 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\fairTeams.Core.Tests\fairTeams.Core.Tests.csproj" />
         <ProjectReference Include="..\fairTeams.Core\fairTeams.Core.csproj" />
+        <ProjectReference Include="..\fairTeams.DemoAnalyzer.Tests\fairTeams.DemoAnalyzer.Tests.csproj" />
+        <ProjectReference Include="..\fairTeams.DemoAnalyzer\fairTeams.DemoAnalyzer.csproj" />
     </ItemGroup>
 
 </Project>

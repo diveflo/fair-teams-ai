@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 
 namespace fairTeams.DemoHandling
 {
@@ -49,8 +50,8 @@ namespace fairTeams.DemoHandling
             var realFileExtension = GetRealFileExtensionFromBZip2DownloadURL(downloadUrl);
             var downloadLocation = Path.GetTempFileName().Replace(".tmp", realFileExtension + ".bz2");
             myLogger.LogTrace($"Downloading to local temp file: {downloadLocation}");
-            using var webClient = new WebClient();
-            webClient.DownloadFile(downloadUrl, downloadLocation);
+            using var webClient = new HttpClient();
+            webClient.GetStreamAsync(downloadUrl).Result.CopyTo(File.Create(downloadLocation));
             return downloadLocation;
         }
 
