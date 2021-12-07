@@ -10,7 +10,7 @@ Tired of listening to your friends whine about how unfair your CS:GO teams are? 
 ## Development
 
 The frontend is developed using flutter. You can get more details in the [frontend-specific README](https://github.com/diveflo/fair-teams-ai/blob/main/frontend/README.md).
-The backend is using .NET 5.0 and is providing a REST API to communicate with the frontend. More details in the [backend-specific README](https://github.com/diveflo/fair-teams-ai/blob/main/backend/README.md).
+The backend is using .NET 6.0 and is providing a REST API to communicate with the frontend. More details in the [backend-specific README](https://github.com/diveflo/fair-teams-ai/blob/main/backend/README.md).
 
 ## Deployment
 

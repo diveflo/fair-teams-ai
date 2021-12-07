@@ -4,7 +4,7 @@ The backend for the awesome fair-teams-ai.
 
 ## Manual build & deploy
 
-You'll need the [.NET 5.0 SDK](https://dotnet.microsoft.com/download/dotnet/5.0) as it's an `ASP.NET Core` app, serving a REST Api for the frontend.
+You'll need the [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) as it's an `ASP.NET Core` app, serving a REST Api for the frontend.
 
 To restore the dependencies, build the app and run it locally just type:
 
