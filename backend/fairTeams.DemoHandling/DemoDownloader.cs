@@ -3,8 +3,6 @@ using ICSharpCode.SharpZipLib.BZip2;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -27,7 +25,7 @@ namespace fairTeams.DemoHandling
             string archivedDemoFilePath = String.Empty;
             try
             {
-                archivedDemoFilePath = DownloadDemoArchive(downloadUrl);
+                archivedDemoFilePath = DownloadDemoArchive(downloadUrl).Result;
             }
             catch (AggregateException exception)
             {
@@ -56,15 +54,23 @@ namespace fairTeams.DemoHandling
             return demoFilePath;
         }
 
-        public string DownloadDemoArchive(string downloadUrl)
+        public async Task<string> DownloadDemoArchive(string downloadUrl)
         {
-            myLogger.LogTrace($"Trying to download: {downloadUrl}");
+            myLogger.LogTrace("Trying to download: {downloadUrl}", downloadUrl);
             var realFileExtension = GetRealFileExtensionFromBZip2DownloadURL(downloadUrl);
             var downloadLocation = Path.GetTempFileName().Replace(".tmp", realFileExtension + ".bz2");
-            myLogger.LogTrace($"Downloading to local temp file: {downloadLocation}");
+            myLogger.LogTrace("Downloading to local temp file: {downloadLocation}", downloadLocation);
+            var fileInfo = new FileInfo(downloadLocation);
+
             using var webClient = new HttpClient();
-            webClient.GetStreamAsync(downloadUrl).Result.CopyTo(File.Create(downloadLocation));
-            return downloadLocation;
+            var response = await webClient.GetAsync(downloadUrl);
+            response.EnsureSuccessStatusCode();
+            await using var ms = await response.Content.ReadAsStreamAsync();
+            await using var fs = File.Create(fileInfo.FullName);
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.CopyTo(fs);
+
+            return fileInfo.FullName;
         }
 
         public static string DecompressDemoArchive(string bz2FilePath)
