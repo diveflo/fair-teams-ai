@@ -3,8 +3,11 @@ using ICSharpCode.SharpZipLib.BZip2;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace fairTeams.DemoHandling
 {
@@ -21,12 +24,21 @@ namespace fairTeams.DemoHandling
 
         public string DownloadAndDecompressDemo(string downloadUrl)
         {
-            string archivedDemoFilePath;
+            string archivedDemoFilePath = String.Empty;
             try
             {
                 archivedDemoFilePath = DownloadDemoArchive(downloadUrl);
             }
-            catch (WebException)
+            catch (AggregateException exception)
+            {
+                var innerExceptions = exception.InnerExceptions;
+
+                if (innerExceptions.Any(x => x is HttpRequestException))
+                {
+                    throw new DemoNotAvailableException();
+                }
+            }
+            catch (HttpRequestException)
             {
                 throw new DemoNotAvailableException();
             }
