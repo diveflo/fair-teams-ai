@@ -147,7 +147,7 @@ namespace fairTeams.DemoHandling
                 }
                 else
                 {
-                    myLogger.LogError($"Couldn't get rank for account id {accountId}");
+                    myLogger.LogError("Couldn't get rank for account id {accountId}", accountId);
                     taskCompletionSource.SetException(new GameCoordinatorException($"Couldn't get rank for account id {accountId}"));
                 }
             });
@@ -236,7 +236,7 @@ namespace fairTeams.DemoHandling
             {
                 var loggedOnCallbackRegistration = myCallbackManager.Subscribe<SteamUser.LoggedOnCallback>((callback) =>
                 {
-                    myLogger.LogTrace($"Log on result: {callback.Result}");
+                    myLogger.LogTrace("Log on result: {callBackResult}", callback.Result);
                     taskCompletionSource.SetResult(callback.Result);
                 });
 
@@ -323,7 +323,7 @@ namespace fairTeams.DemoHandling
 
             var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             date = date.AddSeconds(matchInfo.matchtime);
-            myLogger.LogTrace($"Extracted match date/time: {date}");
+            myLogger.LogTrace("Extracted match date/time: {date}", date);
             return date;
         }
 

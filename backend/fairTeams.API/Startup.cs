@@ -52,6 +52,7 @@ namespace fairTeams.API
 
             services.AddHostedService<ShareCodeCollector>();
             services.AddHostedService<MatchMakingDemoCollector>();
+            services.AddHostedService<RankUpdater>();
             services.AddHostedService<LocalDemoCollector>();
             services.AddHostedService<FTPDemoCollector>();
 

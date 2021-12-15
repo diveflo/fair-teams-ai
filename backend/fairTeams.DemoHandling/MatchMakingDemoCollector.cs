@@ -19,10 +19,7 @@ namespace fairTeams.DemoHandling
         private readonly ILogger<MatchMakingDemoCollector> myLogger;
         private const int myMatchMakingCollectionTriggerInMinutes = 30;
         private const int myMatchMakingCollectorTriggerOffsetInMinutes = 0;
-        private const int myRankCheckerTriggerInMinutes = 360;
-        private const int myRankCheckerTriggerOffsetInMinutes = 375;
         private Timer myMatchMakingCollectionSchedule;
-        private Timer myRankCheckerSchedule;
 
         public MatchMakingDemoCollector(IServiceScopeFactory scopeFactory, ILoggerFactory loggerFactory)
         {
@@ -36,11 +33,9 @@ namespace fairTeams.DemoHandling
         public Task StartAsync(CancellationToken cancellationToken)
         {
             myLogger.LogInformation($"MatchMakingDemoCollector timed hosted service started. {System.Environment.NewLine}" +
-                $"Match making collector schedule: {myMatchMakingCollectorTriggerOffsetInMinutes} min offset, trigger every {myMatchMakingCollectionTriggerInMinutes} min {Environment.NewLine}" +
-                $"Rank checker schedule: {myRankCheckerTriggerOffsetInMinutes} min offset, trigger every {myRankCheckerTriggerInMinutes}");
+                $"Match making collector schedule: {myMatchMakingCollectorTriggerOffsetInMinutes} min offset, trigger every {myMatchMakingCollectionTriggerInMinutes} min {Environment.NewLine}");
 
             myMatchMakingCollectionSchedule = new Timer(ProcessNewMatches, null, TimeSpan.FromMinutes(myMatchMakingCollectorTriggerOffsetInMinutes), TimeSpan.FromMinutes(myMatchMakingCollectionTriggerInMinutes));
-            myRankCheckerSchedule = new Timer(CheckForRankChanges, null, TimeSpan.FromMinutes(myRankCheckerTriggerOffsetInMinutes), TimeSpan.FromMinutes(myRankCheckerTriggerInMinutes));
 
             return Task.CompletedTask;
         }
@@ -49,7 +44,6 @@ namespace fairTeams.DemoHandling
         {
             myLogger.LogInformation("MatchMakingDemoCollector timed hosted service is stopping");
             myMatchMakingCollectionSchedule?.Change(Timeout.Infinite, 0);
-            myRankCheckerSchedule?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
 
@@ -149,27 +143,6 @@ namespace fairTeams.DemoHandling
             var successfullySavedMatches = matchRepository.AddMatchesAndSave(newMatches);
 
             shareCodeRepository.RemoveCodes(successfullySavedMatches.Select(x => x.Demo.ShareCode));
-
-            UpdateRanksForPlayers(gameCoordinatorClient);
-        }
-
-        public void CheckForRankChanges(object state)
-        {
-            var gameCoordinatorClient = new GameCoordinatorClient(myLoggerFactory);
-
-            try
-            {
-                gameCoordinatorClient.ConnectAndLogin();
-                UpdateRanksForPlayers(gameCoordinatorClient);
-            }
-            catch (GameCoordinatorException e)
-            {
-                myLogger.LogWarning($"Exception while trying to update ranks: {e.Message}");
-            }
-            finally
-            {
-                gameCoordinatorClient.Dispose();
-            }
         }
 
         private static void PruneShareCodeRepository(ShareCodeRepository shareCodeRepository, MatchRepository matchRepository)
@@ -200,34 +173,6 @@ namespace fairTeams.DemoHandling
             catch (Exception)
             {
                 myLogger.LogError($"Backing up the downloaded demo file ({demo.FilePath}) failed.");
-            }
-        }
-
-        private void UpdateRanksForPlayers(GameCoordinatorClient gameCoordinatorClient)
-        {
-            using var scope = myScopeFactory.CreateScope();
-            var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
-
-            var steamUsers = userRepository.SteamUsers.AsEnumerable().ToList();
-            steamUsers = (List<MatchMakingSteamUser>)steamUsers.Randomize();
-            myLogger.LogInformation($"Checking for rank changes of {steamUsers.Count} players");
-
-            foreach (var user in steamUsers)
-            {
-                var steamId = user.SteamID;
-
-                try
-                {
-                    var rank = gameCoordinatorClient.GetRank(steamId);
-                    myLogger.LogTrace($"Got rank {rank} for steam id: {steamId}");
-                    user.Rank = rank;
-                    userRepository.SaveChanges();
-                }
-                catch (GameCoordinatorException)
-                {
-                    myLogger.LogWarning($"Couldn't get rank for steam id {steamId}");
-                    continue;
-                }
             }
         }
     }
