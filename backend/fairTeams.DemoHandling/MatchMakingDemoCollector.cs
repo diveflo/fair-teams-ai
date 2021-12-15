@@ -209,6 +209,7 @@ namespace fairTeams.DemoHandling
             var userRepository = scope.ServiceProvider.GetRequiredService<SteamUserRepository>();
 
             var steamUsers = userRepository.SteamUsers.AsEnumerable().ToList();
+            steamUsers = (List<MatchMakingSteamUser>)steamUsers.Randomize();
             myLogger.LogInformation($"Checking for rank changes of {steamUsers.Count} players");
 
             foreach (var user in steamUsers)
