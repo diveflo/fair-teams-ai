@@ -90,6 +90,8 @@ namespace fairTeams.DemoHandling
                     myLogger.LogWarning($"Couldn't get rank for steam id {steamId}");
                     continue;
                 }
+
+                Thread.Sleep(3000);
             }
         }
     }
