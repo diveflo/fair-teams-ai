@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
-import 'package:no_cry_babies/views/skillWidget.dart';
+import 'package:no_cry_babies/views/playerCardWidget.dart';
+import 'fractionIdentifierWidget.dart';
 
 class TeamWidget extends StatelessWidget {
   const TeamWidget({
@@ -20,58 +21,17 @@ class TeamWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          margin: EdgeInsets.only(bottom: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                image: AssetImage(imagePath),
-                height: 40,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                name,
-                style: TextStyle(
-                    color: color, fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-            ],
-          ),
-        ),
+        FractionIdentifierWidget(
+            imagePath: imagePath, name: name, color: color),
         Expanded(
           child: Container(
             child: ListView.builder(
               itemCount: team.length,
               itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: color, width: 2),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: Image(
-                          image: AssetImage(
-                              "assets/" + team[index].skill.rank + ".png"),
-                        ),
-                        title: Text(
-                          team[index].name,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(team[index].steamName,
-                                style: TextStyle(
-                                    color: color, fontWeight: FontWeight.bold)),
-                            SkillWidget(skill: team[index].skill),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                return PlayerCardWidget(
+                  color: color,
+                  team: team,
+                  playerIndex: index,
                 );
               },
             ),
