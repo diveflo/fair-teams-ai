@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
-import 'package:no_cry_babies/views/playerCardWidget.dart';
+import 'package:no_cry_babies/views/playerCard/playerCardWidget.dart';
 import 'fractionIdentifierWidget.dart';
 
 class TeamWidget extends StatelessWidget {
