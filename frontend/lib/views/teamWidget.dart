@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
-import 'package:no_cry_babies/model/skill.dart';
+import 'package:no_cry_babies/views/skillWidget.dart';
 
 class TeamWidget extends StatelessWidget {
   const TeamWidget({
@@ -79,81 +79,5 @@ class TeamWidget extends StatelessWidget {
         )
       ],
     );
-  }
-}
-
-class Images extends StatelessWidget {
-  final String imagePath;
-  Images({@required this.imagePath});
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 100,
-      child: Row(
-        children: [
-          Image(
-            image: AssetImage(imagePath),
-          ),
-          Image(
-            image: AssetImage("assets/global_elite.png"),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class SkillWidget extends StatelessWidget {
-  final Skill skill;
-  SkillWidget({@required this.skill});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Text(
-            skill.skillScore.toStringAsFixed(3),
-            style: TextStyle(fontStyle: FontStyle.italic, color: Colors.purple),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          SkillFormIcon(skillTrend: skill.skillTrend),
-        ],
-      ),
-    );
-  }
-}
-
-class SkillFormIcon extends StatelessWidget {
-  final String skillTrend;
-
-  SkillFormIcon({@required this.skillTrend});
-
-  _getFormIcon() {
-    if (skillTrend == PLATEAU) {
-      return Icon(
-        Icons.trending_flat,
-      );
-    }
-    if (skillTrend == UPWARDS) {
-      return Icon(
-        Icons.trending_up,
-        color: Colors.teal,
-      );
-    }
-    if (skillTrend == DOWNWARDS) {
-      return Icon(
-        Icons.trending_down,
-        color: Colors.red,
-      );
-    }
-    return Icon(Icons.trending_flat);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _getFormIcon();
   }
 }
