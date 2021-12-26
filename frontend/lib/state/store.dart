@@ -1,4 +1,4 @@
-import 'package:NoCrybabies/state/appState.dart';
+import 'package:no_cry_babies/state/appState.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_persist/redux_persist.dart';
 import 'package:redux_persist_web/redux_persist_web.dart';

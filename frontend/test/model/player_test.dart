@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:NoCrybabies/model/player.dart';
+import 'package:no_cry_babies/model/player.dart';
 
 void main() {
   group("constructor", () {

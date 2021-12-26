@@ -1,5 +1,5 @@
-import 'package:NoCrybabies/model/team.dart';
-import 'package:NoCrybabies/state/gameState.dart';
+import 'package:no_cry_babies/model/team.dart';
+import 'package:no_cry_babies/state/gameState.dart';
 import 'package:redux/redux.dart';
 
 final gameReducer = combineReducers<GameState>([

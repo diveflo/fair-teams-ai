@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:NoCrybabies/state/appState.dart';
-import 'package:NoCrybabies/views/appLayoutWidget.dart';
-import 'package:NoCrybabies/state/store.dart';
+import 'package:no_cry_babies/state/appState.dart';
+import 'package:no_cry_babies/views/appLayoutWidget.dart';
+import 'package:no_cry_babies/state/store.dart';
 import 'package:redux/redux.dart';
 
 Store<AppState> store;

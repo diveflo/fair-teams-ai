@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:NoCrybabies/model/player.dart';
-import 'package:NoCrybabies/model/skill.dart';
+import 'package:no_cry_babies/model/player.dart';
+import 'package:no_cry_babies/model/skill.dart';
 
 class TeamWidget extends StatelessWidget {
   const TeamWidget({

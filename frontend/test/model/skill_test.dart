@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:NoCrybabies/model/skill.dart';
+import 'package:no_cry_babies/model/skill.dart';
 
 void main() {
   group("constructor", () {

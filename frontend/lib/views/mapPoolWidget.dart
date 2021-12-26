@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:NoCrybabies/model/map.dart';
-import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
-import 'package:NoCrybabies/reducer/gameReducer.dart';
-import 'package:NoCrybabies/state/appState.dart';
+import 'package:no_cry_babies/model/map.dart';
+import 'package:no_cry_babies/reducer/gameConfigReducer.dart';
+import 'package:no_cry_babies/reducer/gameReducer.dart';
+import 'package:no_cry_babies/state/appState.dart';
 
 class MapPoolWidget extends StatefulWidget {
   @override

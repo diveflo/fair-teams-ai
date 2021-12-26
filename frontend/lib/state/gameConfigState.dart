@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:NoCrybabies/model/candidate.dart';
-import 'package:NoCrybabies/model/map.dart';
+import 'package:no_cry_babies/model/candidate.dart';
+import 'package:no_cry_babies/model/map.dart';
 
 class GameConfigState {
   final List<Candidate> candidates;

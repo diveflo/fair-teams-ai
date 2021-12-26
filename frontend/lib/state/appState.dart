@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
-import 'package:NoCrybabies/reducer/gameReducer.dart';
-import 'package:NoCrybabies/state/gameConfigState.dart';
-import 'package:NoCrybabies/state/gameState.dart';
+import 'package:no_cry_babies/reducer/gameConfigReducer.dart';
+import 'package:no_cry_babies/reducer/gameReducer.dart';
+import 'package:no_cry_babies/state/gameConfigState.dart';
+import 'package:no_cry_babies/state/gameState.dart';
 
 AppState appReducer(AppState state, dynamic action) => AppState(
       gameConfigState: gameConfigReducer(state.gameConfigState, action),
