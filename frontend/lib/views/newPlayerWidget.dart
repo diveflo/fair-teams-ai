@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:NoCrybabies/model/candidate.dart';
-import 'package:NoCrybabies/reducer/gameConfigReducer.dart';
-import 'package:NoCrybabies/state/appState.dart';
+import 'package:no_cry_babies/model/candidate.dart';
+import 'package:no_cry_babies/reducer/gameConfigReducer.dart';
+import 'package:no_cry_babies/state/appState.dart';
 
 class NewPlayerWidget extends StatefulWidget {
   @override
@@ -87,14 +87,13 @@ class _NewPlayerWidgetState extends State<NewPlayerWidget> {
           Container(
             margin: EdgeInsets.only(top: 5),
             child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: RaisedButton(
-                color: Colors.pink,
-                onPressed: _isValid ? _addPlayer : null,
-                child: Text("Add new player"),
-              ),
-            ),
+                width: double.infinity,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: _isValid ? _addPlayer : null,
+                  style: ElevatedButton.styleFrom(primary: Colors.pink),
+                  child: Text("Add new player"),
+                )),
           ),
         ],
       ),

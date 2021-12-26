@@ -16,13 +16,15 @@ class MyButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text(
-        buttonText,
-      ),
-      onPressed: isDisabled ? null : onPressed,
-      color: color,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    );
+    return ElevatedButton(
+        onPressed: isDisabled ? null : onPressed,
+        child: Text(
+          buttonText,
+        ),
+        style: ElevatedButton.styleFrom(
+            primary: color,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            )));
   }
 }

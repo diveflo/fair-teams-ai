@@ -1,4 +1,4 @@
-import 'package:NoCrybabies/model/player.dart';
+import 'package:no_cry_babies/model/player.dart';
 
 class Team {
   List<Player> players;
