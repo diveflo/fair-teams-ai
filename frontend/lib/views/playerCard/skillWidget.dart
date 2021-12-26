@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/skill.dart';
-import 'package:no_cry_babies/views/skillFormIconWidget.dart';
+import 'package:no_cry_babies/views/playerCard/skillFormIconWidget.dart';
 
 class SkillWidget extends StatelessWidget {
   final Skill skill;

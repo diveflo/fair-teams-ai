@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
-import 'package:no_cry_babies/views/skillWidget.dart';
+import 'package:no_cry_babies/views/playerCard/skillWidget.dart';
 
 class PlayerCardWidget extends StatelessWidget {
   const PlayerCardWidget({
