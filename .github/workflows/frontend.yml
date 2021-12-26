@@ -25,6 +25,19 @@ jobs:
           name: web-build
           path: frontend/build/web
 
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.8.0'
+      - run: flutter config --enable-web
+      - run: flutter pub get
+        working-directory: frontend
+      - run: flutter analyze
+        working-directory: frontend
+
   tests:
     runs-on: ubuntu-latest
     steps:
