@@ -82,6 +82,7 @@ class _MapPoolWidgetState extends State<MapPoolWidget> {
               converter: (store) => store.state.gameConfigState.mapPool,
               builder: (context, mapPool) {
                 return ListView.builder(
+                  controller: ScrollController(),
                   itemCount: mapPool.maps.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
