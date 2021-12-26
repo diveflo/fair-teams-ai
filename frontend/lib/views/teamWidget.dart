@@ -26,6 +26,7 @@ class TeamWidget extends StatelessWidget {
         Expanded(
           child: Container(
             child: ListView.builder(
+              controller: ScrollController(),
               itemCount: team.length,
               itemBuilder: (BuildContext context, int index) {
                 return PlayerCardWidget(
