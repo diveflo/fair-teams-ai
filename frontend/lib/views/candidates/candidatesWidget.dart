@@ -30,7 +30,7 @@ class _CandidatesWidgetState extends State<CandidatesWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 60),
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth > displayThreshold) {
+        if (constraints.maxHeight > 400) {
           return Column(
             children: [
               CandidateCountWidget(),
