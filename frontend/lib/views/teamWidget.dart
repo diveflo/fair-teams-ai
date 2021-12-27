@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
+import 'package:no_cry_babies/views/appLayoutWidget.dart';
 import 'package:no_cry_babies/views/playerCard/playerCardWidget.dart';
 import 'fractionIdentifierWidget.dart';
 
@@ -19,26 +20,45 @@ class TeamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FractionIdentifierWidget(
-            imagePath: imagePath, name: name, color: color),
-        Expanded(
-          child: Container(
-            child: ListView.builder(
-              controller: ScrollController(),
-              itemCount: team.length,
-              itemBuilder: (BuildContext context, int index) {
-                return PlayerCardWidget(
-                  color: color,
-                  team: team,
-                  playerIndex: index,
-                );
-              },
-            ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        if (constraints.maxWidth > displayThreshold) {
+          return Column(
+            children: [
+              FractionIdentifierWidget(
+                  imagePath: imagePath, name: name, color: color),
+              Expanded(
+                child: Container(
+                  child: ListView.builder(
+                    controller: ScrollController(),
+                    itemCount: team.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return PlayerCardWidget(
+                        color: color,
+                        team: team,
+                        playerIndex: index,
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          );
+        }
+        return Container(
+          child: ListView.builder(
+            controller: ScrollController(),
+            itemCount: team.length,
+            itemBuilder: (BuildContext context, int index) {
+              return PlayerCardWidget(
+                color: color,
+                team: team,
+                playerIndex: index,
+              );
+            },
           ),
-        )
-      ],
+        );
+      },
     );
   }
 }

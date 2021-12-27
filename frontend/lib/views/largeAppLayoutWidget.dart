@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
-import 'package:no_cry_babies/views/candidatesWidget.dart';
+import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
 import 'package:no_cry_babies/views/fractionsWidget.dart';
 import 'package:no_cry_babies/views/mapPoolWidget.dart';
 import 'package:no_cry_babies/views/newPlayerWidget.dart';

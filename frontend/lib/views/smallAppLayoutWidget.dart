@@ -3,7 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/state/gameState.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
-import 'package:no_cry_babies/views/candidatesWidget.dart';
+import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
 import 'package:no_cry_babies/views/teamWidget.dart';
 
