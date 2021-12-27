@@ -1,4 +1,4 @@
-import 'package:NoCrybabies/model/skill.dart';
+import 'package:no_cry_babies/model/skill.dart';
 
 class Player {
   String name;

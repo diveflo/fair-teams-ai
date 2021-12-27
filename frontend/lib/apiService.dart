@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:NoCrybabies/model/candidate.dart';
-import 'package:NoCrybabies/model/game.dart';
+import 'package:no_cry_babies/model/candidate.dart';
+import 'package:no_cry_babies/model/game.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';

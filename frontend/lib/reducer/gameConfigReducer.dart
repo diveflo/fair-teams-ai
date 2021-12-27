@@ -1,6 +1,6 @@
-import 'package:NoCrybabies/model/candidate.dart';
-import 'package:NoCrybabies/model/map.dart';
-import 'package:NoCrybabies/state/gameConfigState.dart';
+import 'package:no_cry_babies/model/candidate.dart';
+import 'package:no_cry_babies/model/map.dart';
+import 'package:no_cry_babies/state/gameConfigState.dart';
 import 'package:redux/redux.dart';
 
 final gameConfigReducer = combineReducers<GameConfigState>([
