@@ -7,6 +7,8 @@ import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
 import 'package:no_cry_babies/views/teamWidget.dart';
 
+import 'configWidget.dart';
+
 class SmallAppLayoutWidget extends StatelessWidget {
   const SmallAppLayoutWidget({
     Key key,
@@ -14,51 +16,54 @@ class SmallAppLayoutWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child: CandidatesWidget(),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BotsWidget(),
-            ScrambleWidget(),
-          ],
-        ),
-        Expanded(
-          flex: 2,
-          child: StoreConnector<AppState, GameState>(
-            converter: (store) => store.state.gameState,
-            builder: (context, game) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return StoreConnector<AppState, AppState>(
+        converter: (store) => store.state,
+        builder: (context, game) {
+          return Column(
+            children: [
+              Visibility(
+                visible: game.gameConfigState.isConfigVisible,
+                child: Expanded(
+                  flex: 1,
+                  child: CandidatesWidget(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: TeamWidget(
-                      imagePath: 'assets/t.png',
-                      team: game.t.players,
-                      name: "Terrorists",
-                      color: Colors.orange,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TeamWidget(
-                      imagePath: 'assets/ct.png',
-                      team: game.ct.players,
-                      name: "Counter Terrorists",
-                      color: Colors.blueGrey,
-                    ),
-                  ),
+                  ConfigWidget(),
+                  BotsWidget(),
+                  ScrambleWidget(),
                 ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 'assets/t.png',
+                        team: game.gameState.t.players,
+                        name: "Terrorists",
+                        color: Colors.orange,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TeamWidget(
+                        imagePath: 'assets/ct.png',
+                        team: game.gameState.ct.players,
+                        name: "Counter Terrorists",
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

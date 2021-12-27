@@ -6,11 +6,14 @@ class GameConfigState {
   final List<Candidate> candidates;
   final bool includeBot;
   final MapPool mapPool;
+  final bool isConfigVisible;
 
-  GameConfigState(
-      {@required this.candidates,
-      @required this.mapPool,
-      this.includeBot = true});
+  GameConfigState({
+    @required this.candidates,
+    @required this.mapPool,
+    this.includeBot = true,
+    this.isConfigVisible = true,
+  });
 
   factory GameConfigState.initial() {
     return GameConfigState(
@@ -32,6 +35,7 @@ class GameConfigState {
       ],
       mapPool: MapPool(),
       includeBot: true,
+      isConfigVisible: true,
     );
   }
 
@@ -40,9 +44,11 @@ class GameConfigState {
       List<Candidate> _candidates = parseList(json);
       bool _includeBot = json["includeBot"];
       return GameConfigState(
-          candidates: _candidates,
-          mapPool: MapPool.fromJson(json),
-          includeBot: _includeBot);
+        candidates: _candidates,
+        mapPool: MapPool.fromJson(json),
+        includeBot: _includeBot,
+        isConfigVisible: true,
+      );
     }
     return GameConfigState.initial();
   }
@@ -54,12 +60,17 @@ class GameConfigState {
         "includeBot": includeBot,
       };
 
-  GameConfigState copyWith(
-      {List<Candidate> candidates, MapPool mapPool, bool includeBot}) {
+  GameConfigState copyWith({
+    List<Candidate> candidates,
+    MapPool mapPool,
+    bool includeBot,
+    bool isConfigVisible,
+  }) {
     return new GameConfigState(
       candidates: candidates ?? this.candidates,
       mapPool: mapPool ?? this.mapPool,
       includeBot: includeBot ?? this.includeBot,
+      isConfigVisible: isConfigVisible ?? this.isConfigVisible,
     );
   }
 }
