@@ -9,6 +9,8 @@ final gameConfigReducer = combineReducers<GameConfigState>([
       _togglePlayerSelection),
   TypedReducer<GameConfigState, ToggleMapSelectionAction>(_toggleMapSelection),
   TypedReducer<GameConfigState, ToggleincludeBotAction>(_toggleincludeBot),
+  TypedReducer<GameConfigState, ToggleIsConfigVisibleAction>(
+      _toggleIsConfigVisible)
 ]);
 
 class AddPlayerAction {
@@ -28,6 +30,10 @@ class ToggleMapSelectionAction {
 
 class ToggleincludeBotAction {
   ToggleincludeBotAction();
+}
+
+class ToggleIsConfigVisibleAction {
+  ToggleIsConfigVisibleAction();
 }
 
 GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
@@ -61,4 +67,9 @@ GameConfigState _toggleMapSelection(
 GameConfigState _toggleincludeBot(
     GameConfigState state, ToggleincludeBotAction action) {
   return state.copyWith(includeBot: !state.includeBot);
+}
+
+GameConfigState _toggleIsConfigVisible(
+    GameConfigState state, ToggleIsConfigVisibleAction action) {
+  return state.copyWith(isConfigVisible: !state.isConfigVisible);
 }
