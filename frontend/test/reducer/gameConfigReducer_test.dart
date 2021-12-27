@@ -95,4 +95,27 @@ void main() {
       expect(outputState.includeBot, false);
     });
   });
+
+  group('ToggleIsConfigVisibleAction', () {
+    test('from false to true', () {
+      GameConfigState inputState = GameConfigState(
+          mapPool: MapPool(), isConfigVisible: false, candidates: []);
+
+      var toggleAction = ToggleIsConfigVisibleAction();
+
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.isConfigVisible, true);
+    });
+    test('from true to false', () {
+      GameConfigState inputState = GameConfigState(
+          mapPool: MapPool(), isConfigVisible: true, candidates: []);
+
+      var toggleAction = ToggleIsConfigVisibleAction();
+
+      GameConfigState outputState = gameConfigReducer(inputState, toggleAction);
+
+      expect(outputState.isConfigVisible, false);
+    });
+  });
 }

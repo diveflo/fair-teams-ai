@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/model/player.dart';
-import 'package:no_cry_babies/views/appLayoutWidget.dart';
 import 'package:no_cry_babies/views/playerCard/playerCardWidget.dart';
 import 'fractionIdentifierWidget.dart';
 

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:no_cry_babies/views/candidates/candidatesCountWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesListWidget.dart';
 
-import '../appLayoutWidget.dart';
-
 class CandidatesWidget extends StatefulWidget {
   @override
   _CandidatesWidgetState createState() => _CandidatesWidgetState();

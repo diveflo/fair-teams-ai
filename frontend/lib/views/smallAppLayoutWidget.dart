@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
-import 'package:no_cry_babies/state/gameState.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
