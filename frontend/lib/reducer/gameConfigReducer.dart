@@ -85,4 +85,5 @@ GameConfigState _nextMap(GameConfigState state, NextMapAction action) {
     playableMaps.shuffle();
     return state.copyWith(nextMap: playableMaps.first);
   }
+  return state;
 }
