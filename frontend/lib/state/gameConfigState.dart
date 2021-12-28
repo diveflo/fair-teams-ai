@@ -7,12 +7,14 @@ class GameConfigState {
   final bool includeBot;
   final MapPool mapPool;
   final bool isConfigVisible;
+  final CsMap nextMap;
 
   GameConfigState({
     @required this.candidates,
     @required this.mapPool,
     this.includeBot = true,
     this.isConfigVisible = true,
+    this.nextMap,
   });
 
   factory GameConfigState.initial() {
@@ -36,6 +38,7 @@ class GameConfigState {
       mapPool: MapPool(),
       includeBot: true,
       isConfigVisible: true,
+      nextMap: null,
     );
   }
 
@@ -48,6 +51,7 @@ class GameConfigState {
         mapPool: MapPool.fromJson(json),
         includeBot: _includeBot,
         isConfigVisible: true,
+        nextMap: null,
       );
     }
     return GameConfigState.initial();
@@ -65,12 +69,14 @@ class GameConfigState {
     MapPool mapPool,
     bool includeBot,
     bool isConfigVisible,
+    CsMap nextMap,
   }) {
     return new GameConfigState(
       candidates: candidates ?? this.candidates,
       mapPool: mapPool ?? this.mapPool,
       includeBot: includeBot ?? this.includeBot,
       isConfigVisible: isConfigVisible ?? this.isConfigVisible,
+      nextMap: nextMap ?? this.nextMap,
     );
   }
 }
