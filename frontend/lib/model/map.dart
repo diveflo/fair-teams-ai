@@ -13,9 +13,9 @@ class MapPool {
       CsMap(name: "Dust2", imagePath: "assets/dust2.jpg"),
       CsMap(name: "Mirage", imagePath: "assets/mirage.jpg"),
       CsMap(name: "Nuke", imagePath: "assets/nuke.jpg"),
-      CsMap(name: "Train", imagePath: "assets/train.jpg"),
       CsMap(name: "Overpass", imagePath: "assets/overpass.jpg"),
       CsMap(name: "Vertigo", imagePath: "assets/vertigo.jpg"),
+      CsMap(name: "Ancient", imagePath: "assets/ancient.jpg")
     ];
   }
 
