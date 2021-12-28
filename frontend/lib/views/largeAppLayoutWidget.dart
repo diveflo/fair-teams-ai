@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
-import 'package:no_cry_babies/views/teams/fractionsWidget.dart';
+import 'package:no_cry_babies/views/fractions/fractionsWidget.dart';
 import 'package:no_cry_babies/views/mapPool/mapPoolWidget.dart';
 import 'package:no_cry_babies/views/newPlayerWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';

@@ -3,8 +3,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
+import 'package:no_cry_babies/views/fractions/fractionsWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
-import 'package:no_cry_babies/views/teams/teamWidget.dart';
 
 import 'configWidget.dart';
 
@@ -37,29 +37,7 @@ class SmallAppLayoutWidget extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: TeamWidget(
-                        imagePath: 'assets/t.png',
-                        team: game.gameState.t.players,
-                        name: "Terrorists",
-                        color: Colors.orange,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: TeamWidget(
-                        imagePath: 'assets/ct.png',
-                        team: game.gameState.ct.players,
-                        name: "Counter Terrorists",
-                        color: Colors.blueGrey,
-                      ),
-                    ),
-                  ],
-                ),
+                child: FractionsWidget(),
               ),
             ],
           );
