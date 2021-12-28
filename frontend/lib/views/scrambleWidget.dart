@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/thunks/scramble.dart';
-import 'package:no_cry_babies/views/myButtonWidget.dart';
+import 'package:no_cry_babies/widgets/myButtonWidget.dart';
 
 class ScrambleWidget extends StatefulWidget {
   const ScrambleWidget({
