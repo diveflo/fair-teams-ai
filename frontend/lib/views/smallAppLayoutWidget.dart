@@ -3,11 +3,11 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
+import 'package:no_cry_babies/views/configWidget.dart';
 import 'package:no_cry_babies/views/fractions/fractionsWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
 
-import 'configWidget.dart';
-
+/// This class creates the app layout for small screen sizes
 class SmallAppLayoutWidget extends StatelessWidget {
   const SmallAppLayoutWidget({
     Key key,

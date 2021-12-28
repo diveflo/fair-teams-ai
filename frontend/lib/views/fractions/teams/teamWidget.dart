@@ -3,6 +3,7 @@ import 'package:no_cry_babies/model/player.dart';
 import 'package:no_cry_babies/views/fractions/teams/largeTeamWidget.dart';
 import 'package:no_cry_babies/views/fractions/teams/smallTeamWidget.dart';
 
+/// This class creates the layout of one team / fraction
 class TeamWidget extends StatelessWidget {
   const TeamWidget({
     Key key,
