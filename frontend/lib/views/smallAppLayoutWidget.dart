@@ -4,7 +4,7 @@ import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/views/botsWidget.dart';
 import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
-import 'package:no_cry_babies/views/teamWidget.dart';
+import 'package:no_cry_babies/views/teams/teamWidget.dart';
 
 import 'configWidget.dart';
 
