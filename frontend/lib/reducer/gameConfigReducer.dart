@@ -10,7 +10,8 @@ final gameConfigReducer = combineReducers<GameConfigState>([
   TypedReducer<GameConfigState, ToggleMapSelectionAction>(_toggleMapSelection),
   TypedReducer<GameConfigState, ToggleincludeBotAction>(_toggleincludeBot),
   TypedReducer<GameConfigState, ToggleIsConfigVisibleAction>(
-      _toggleIsConfigVisible)
+      _toggleIsConfigVisible),
+  TypedReducer<GameConfigState, NextMapAction>(_nextMap)
 ]);
 
 class AddPlayerAction {
@@ -34,6 +35,10 @@ class ToggleincludeBotAction {
 
 class ToggleIsConfigVisibleAction {
   ToggleIsConfigVisibleAction();
+}
+
+class NextMapAction {
+  NextMapAction();
 }
 
 GameConfigState _addPlayer(GameConfigState state, AddPlayerAction action) {
@@ -72,4 +77,12 @@ GameConfigState _toggleincludeBot(
 GameConfigState _toggleIsConfigVisible(
     GameConfigState state, ToggleIsConfigVisibleAction action) {
   return state.copyWith(isConfigVisible: !state.isConfigVisible);
+}
+
+GameConfigState _nextMap(GameConfigState state, NextMapAction action) {
+  List<CsMap> playableMaps = state.mapPool.getPlayableMaps();
+  if (playableMaps.length > 0) {
+    playableMaps.shuffle();
+    return state.copyWith(nextMap: playableMaps.first);
+  }
 }
