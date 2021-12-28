@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/state/gameState.dart';
-import 'package:no_cry_babies/views/teams/teamWidget.dart';
+import 'package:no_cry_babies/views/fractions/teams/teamWidget.dart';
 
-class FractionsWidget extends StatelessWidget {
-  const FractionsWidget({
+class LargeFractionsWidget extends StatelessWidget {
+  const LargeFractionsWidget({
     Key key,
   }) : super(key: key);
 
