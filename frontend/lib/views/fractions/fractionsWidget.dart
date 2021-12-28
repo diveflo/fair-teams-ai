@@ -5,6 +5,7 @@ import 'package:no_cry_babies/state/gameState.dart';
 import 'package:no_cry_babies/views/fractions/largeFractionsWidget.dart';
 import 'package:no_cry_babies/views/fractions/smallFractionsWidget.dart';
 
+/// This class creates the layout of the two fractions: t & ct
 class FractionsWidget extends StatelessWidget {
   const FractionsWidget({
     Key key,

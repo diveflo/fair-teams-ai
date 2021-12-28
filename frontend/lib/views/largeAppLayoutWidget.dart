@@ -6,6 +6,7 @@ import 'package:no_cry_babies/views/mapPool/mapPoolWidget.dart';
 import 'package:no_cry_babies/views/newPlayerWidget.dart';
 import 'package:no_cry_babies/views/scrambleWidget.dart';
 
+/// This class creates the app layout for large screen sizes
 class LargeAppLayoutWidget extends StatelessWidget {
   const LargeAppLayoutWidget({
     Key key,
@@ -18,6 +19,7 @@ class LargeAppLayoutWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // Upper layout row
           Expanded(
             flex: 2,
             child: Row(
@@ -50,6 +52,7 @@ class LargeAppLayoutWidget extends StatelessWidget {
           SizedBox(
             height: 30,
           ),
+          // lower layout row
           Expanded(
             flex: 2,
             child: Row(

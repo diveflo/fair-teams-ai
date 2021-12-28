@@ -4,6 +4,7 @@ import 'package:no_cry_babies/state/appState.dart';
 import 'package:no_cry_babies/state/gameState.dart';
 import 'package:no_cry_babies/views/fractions/teams/teamWidget.dart';
 
+/// This class creates the fractions layout for large screen sizes
 class LargeFractionsWidget extends StatelessWidget {
   const LargeFractionsWidget({
     Key key,
