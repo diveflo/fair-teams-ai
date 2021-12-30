@@ -12,7 +12,7 @@ namespace fairTeams.API.Rating
 
         public HLTVRating(long steamID, MatchRepository matchRepository)
         {
-            var allMatchStatisticsForPlayer = matchRepository.GetAllMatchStatisticsForSteamId(steamID);
+            var allMatchStatisticsForPlayer = matchRepository.GetLastMatchStatisticsForSteamId(steamID, 50);
 
             Score = MatchStatisticsCalculator.MatchTypeNormalizedHLTVScore(allMatchStatisticsForPlayer);
 

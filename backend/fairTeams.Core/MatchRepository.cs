@@ -77,6 +77,19 @@ namespace fairTeams.Core
             return allMatchstatistics.Where(x => x.SteamID == steamId).ToList();
         }
 
+        public IList<MatchStatistics> GetLastMatchStatisticsForSteamId(long steamId, int numberOfMatchStatistics)
+        {
+            Matches.Load();
+            var allMatchStatisticsOrderedByDate = Matches.OrderByDescending(x => x.Date).SelectMany(x => x.PlayerResults).ToList();
+            var hasMatchesForSteamId = allMatchStatisticsOrderedByDate.Any(x => x.SteamID == steamId);
+            if (!hasMatchesForSteamId)
+            {
+                throw new NoMatchstatisticsFoundException(steamId);
+            }
+
+            return allMatchStatisticsOrderedByDate.Where(x => x.SteamID == steamId).Take(numberOfMatchStatistics).ToList();
+        }
+
         public MatchStatistics GetLatestMatchStatisticForSteamId(long steamId)
         {
             Matches.Load();
