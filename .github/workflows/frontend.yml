@@ -59,7 +59,7 @@ jobs:
       - run: flutter config --enable-web
       - run: flutter pub get
         working-directory: frontend
-      - uses: bluefireteam/flutter-gh-pages@v7
+      - uses: bluefireteam/flutter-gh-pages@v8
         with:
           workingDir: frontend
           baseHref: /fair-teams-ai/
