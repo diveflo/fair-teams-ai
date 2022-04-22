@@ -9,13 +9,34 @@ class MapPool {
 
   MapPool() {
     this.maps = [
-      CsMap(name: "Inferno", imagePath: "assets/inferno.jpg"),
-      CsMap(name: "Dust2", imagePath: "assets/dust2.jpg"),
-      CsMap(name: "Mirage", imagePath: "assets/mirage.jpg"),
-      CsMap(name: "Nuke", imagePath: "assets/nuke.jpg"),
-      CsMap(name: "Overpass", imagePath: "assets/overpass.jpg"),
-      CsMap(name: "Vertigo", imagePath: "assets/vertigo.jpg"),
-      CsMap(name: "Ancient", imagePath: "assets/ancient.jpg")
+      CsMap(
+          name: "Inferno",
+          imagePath: "assets/inferno.jpg",
+          imageMapCallsPath: "assets/inferno_calls.jpeg"),
+      CsMap(
+          name: "Dust2",
+          imagePath: "assets/dust2.jpg",
+          imageMapCallsPath: "assets/dust2_calls.jpeg"),
+      CsMap(
+          name: "Mirage",
+          imagePath: "assets/mirage.jpg",
+          imageMapCallsPath: "assets/mirage_calls.jpeg"),
+      CsMap(
+          name: "Nuke",
+          imagePath: "assets/nuke.jpg",
+          imageMapCallsPath: "assets/nuke_calls.jpeg"),
+      CsMap(
+          name: "Overpass",
+          imagePath: "assets/overpass.jpg",
+          imageMapCallsPath: "assets/overpass_calls.jpeg"),
+      CsMap(
+          name: "Vertigo",
+          imagePath: "assets/vertigo.jpg",
+          imageMapCallsPath: "assets/vertigo_calls.jpeg"),
+      CsMap(
+        name: "Ancient",
+        imagePath: "assets/ancient.jpg",
+      )
     ];
   }
 
@@ -40,9 +61,15 @@ class MapPool {
 class CsMap {
   String name;
   String imagePath;
+  String imageMapCallsPath;
   bool isChecked;
 
-  CsMap({this.imagePath = "", @required this.name, this.isChecked = true});
+  CsMap({
+    this.imagePath = "",
+    @required this.name,
+    this.imageMapCallsPath,
+    this.isChecked = true,
+  });
 
   CsMap.fromJson(dynamic json) {
     name = json["name"] != null ? json["name"] : null;

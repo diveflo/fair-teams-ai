@@ -3,6 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/model/map.dart';
 import 'package:no_cry_babies/reducer/gameConfigReducer.dart';
 import 'package:no_cry_babies/state/appState.dart';
+import 'package:no_cry_babies/views/mapPool/mapWidget.dart';
 
 class MapPoolListWidget extends StatelessWidget {
   @override
@@ -54,8 +55,17 @@ class MapPoolListWidget extends StatelessWidget {
                     StoreProvider.of<AppState>(context).dispatch(
                         ToggleMapSelectionAction(mapPool.maps[index]));
                   },
-                  secondary:
-                      Image(image: AssetImage(mapPool.maps[index].imagePath)),
+                  secondary: GestureDetector(
+                      onTap: () async {
+                        if (mapPool.maps[index].imageMapCallsPath != null) {
+                          await showDialog(
+                              context: context,
+                              builder: (_) => MapWidget(
+                                  mapPool.maps[index].imageMapCallsPath));
+                        }
+                      },
+                      child: Image(
+                          image: AssetImage(mapPool.maps[index].imagePath))),
                   title: Text(mapPool.maps[index].name),
                 ),
               );
