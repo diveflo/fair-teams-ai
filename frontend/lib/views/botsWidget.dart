@@ -23,6 +23,9 @@ class BotsWidget extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Switch(
+                  activeColor: Theme.of(context).highlightColor,
+                  activeTrackColor: Theme.of(context).primaryColor,
+                  inactiveTrackColor: Theme.of(context).primaryColor,
                   value: includeBot,
                   onChanged: (bool isOn) {
                     _onValueChanged(context);

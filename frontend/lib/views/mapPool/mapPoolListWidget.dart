@@ -25,13 +25,13 @@ class MapPoolListWidget extends StatelessWidget {
       var _nextMap =
           StoreProvider.of<AppState>(context).state.gameConfigState.nextMap;
       if (!map.isChecked) {
-        return Colors.grey;
+        return Theme.of(context).primaryColor;
       }
       if (_nextMap != null && map.name == _nextMap.name) {
         return Colors.green;
       }
 
-      return Colors.grey;
+      return Theme.of(context).primaryColor;
     }
 
     return Container(
@@ -50,6 +50,8 @@ class MapPoolListWidget extends StatelessWidget {
                       color: _getBorderColor(mapPool.maps[index]), width: 2),
                 ),
                 child: CheckboxListTile(
+                  checkColor: Theme.of(context).primaryColor,
+                  activeColor: Theme.of(context).highlightColor,
                   value: mapPool.maps[index].isChecked,
                   onChanged: (bool value) {
                     StoreProvider.of<AppState>(context).dispatch(

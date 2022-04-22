@@ -49,7 +49,7 @@ class _ScrambleWidgetState extends State<ScrambleWidget> {
               child: MyButtonWidget(
                 buttonText: "Scramble",
                 onPressed: _scrambleApi,
-                color: Colors.lime,
+                color: Theme.of(context).highlightColor,
               ),
             ),
             isLoading ? CircularProgressIndicator() : Container(),

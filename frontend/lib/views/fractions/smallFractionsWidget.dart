@@ -24,7 +24,7 @@ class SmallFractionsWidget extends StatelessWidget {
                 imagePath: 'assets/t.png',
                 team: game.t.players,
                 name: "Terrorists",
-                color: Colors.orange,
+                color: Theme.of(context).highlightColor,
               ),
             ),
             Expanded(
