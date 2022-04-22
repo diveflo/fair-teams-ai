@@ -29,6 +29,8 @@ class CandidatesListWidget extends StatelessWidget {
                 itemExtent: 35,
                 itemBuilder: (BuildContext context, int index) {
                   return new CheckboxListTile(
+                    activeColor: Theme.of(context).highlightColor,
+                    checkColor: Theme.of(context).primaryColor,
                     title: Text(players[index].name,
                         style: Theme.of(context).primaryTextTheme.bodyText1),
                     value: players[index].isSelected,

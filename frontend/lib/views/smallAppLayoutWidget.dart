@@ -33,8 +33,8 @@ class _SmallAppLayoutWidgetState extends State<SmallAppLayoutWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).highlightColor,
         title: Text(widget.title),
         leading: Image(image: AssetImage("assets/hnyb.jpg")),
       ),
@@ -56,8 +56,8 @@ class _SmallAppLayoutWidgetState extends State<SmallAppLayoutWidget> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.white,
+        selectedItemColor: Theme.of(context).highlightColor,
+        unselectedItemColor: Theme.of(context).backgroundColor,
         onTap: _onItemTapped,
       ),
     );
