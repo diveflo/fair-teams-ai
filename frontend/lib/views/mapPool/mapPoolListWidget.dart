@@ -61,9 +61,10 @@ class MapPoolListWidget extends StatelessWidget {
                       onTap: () async {
                         if (mapPool.maps[index].imageMapCallsPath != null) {
                           await showDialog(
-                              context: context,
-                              builder: (_) => MapWidget(
-                                  mapPool.maps[index].imageMapCallsPath));
+                            context: context,
+                            builder: (_) => MapWidget(
+                                mapPool.maps[index].imageMapCallsPath),
+                          );
                         }
                       },
                       child: Image(
