@@ -1,46 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:no_cry_babies/state/appState.dart';
-import 'package:no_cry_babies/views/botsWidget.dart';
-import 'package:no_cry_babies/views/candidates/candidatesWidget.dart';
-import 'package:no_cry_babies/views/configWidget.dart';
-import 'package:no_cry_babies/views/fractions/fractionsWidget.dart';
-import 'package:no_cry_babies/views/scrambleWidget.dart';
+import 'package:no_cry_babies/views/mapPool/mapPoolWidget.dart';
+import 'package:no_cry_babies/views/scrambleTeamsView.dart';
 
 /// This class creates the app layout for small screen sizes
-class SmallAppLayoutWidget extends StatelessWidget {
-  const SmallAppLayoutWidget({
+class SmallAppLayoutWidget extends StatefulWidget {
+  final title;
+
+  const SmallAppLayoutWidget(
+    this.title, {
     Key key,
   }) : super(key: key);
 
   @override
+  State<SmallAppLayoutWidget> createState() => _SmallAppLayoutWidgetState();
+}
+
+class _SmallAppLayoutWidgetState extends State<SmallAppLayoutWidget> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    ScrambleTeamsView(),
+    MapPoolWidget(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, AppState>(
-        converter: (store) => store.state,
-        builder: (context, game) {
-          return Column(
-            children: [
-              Visibility(
-                visible: game.gameConfigState.isConfigVisible,
-                child: Expanded(
-                  flex: 1,
-                  child: CandidatesWidget(),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ConfigWidget(),
-                  BotsWidget(),
-                  ScrambleWidget(),
-                ],
-              ),
-              Expanded(
-                flex: 2,
-                child: FractionsWidget(),
-              ),
-            ],
-          );
-        });
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).highlightColor,
+        title: Text(widget.title),
+        leading: Image(image: AssetImage("assets/hnyb.jpg")),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shuffle_rounded),
+            label: 'Scramble',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline_rounded),
+            label: 'Maps',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Theme.of(context).highlightColor,
+        unselectedItemColor: Theme.of(context).backgroundColor,
+        onTap: _onItemTapped,
+      ),
+    );
   }
 }

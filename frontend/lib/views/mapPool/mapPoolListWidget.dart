@@ -3,6 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:no_cry_babies/model/map.dart';
 import 'package:no_cry_babies/reducer/gameConfigReducer.dart';
 import 'package:no_cry_babies/state/appState.dart';
+import 'package:no_cry_babies/views/mapPool/mapWidget.dart';
 
 class MapPoolListWidget extends StatelessWidget {
   @override
@@ -24,13 +25,13 @@ class MapPoolListWidget extends StatelessWidget {
       var _nextMap =
           StoreProvider.of<AppState>(context).state.gameConfigState.nextMap;
       if (!map.isChecked) {
-        return Colors.grey;
+        return Theme.of(context).primaryColor;
       }
       if (_nextMap != null && map.name == _nextMap.name) {
         return Colors.green;
       }
 
-      return Colors.grey;
+      return Theme.of(context).primaryColor;
     }
 
     return Container(
@@ -49,13 +50,24 @@ class MapPoolListWidget extends StatelessWidget {
                       color: _getBorderColor(mapPool.maps[index]), width: 2),
                 ),
                 child: CheckboxListTile(
+                  checkColor: Theme.of(context).primaryColor,
+                  activeColor: Theme.of(context).highlightColor,
                   value: mapPool.maps[index].isChecked,
                   onChanged: (bool value) {
                     StoreProvider.of<AppState>(context).dispatch(
                         ToggleMapSelectionAction(mapPool.maps[index]));
                   },
-                  secondary:
-                      Image(image: AssetImage(mapPool.maps[index].imagePath)),
+                  secondary: GestureDetector(
+                      onTap: () async {
+                        if (mapPool.maps[index].imageMapCallsPath != null) {
+                          await showDialog(
+                              context: context,
+                              builder: (_) => MapWidget(
+                                  mapPool.maps[index].imageMapCallsPath));
+                        }
+                      },
+                      child: Image(
+                          image: AssetImage(mapPool.maps[index].imagePath))),
                   title: Text(mapPool.maps[index].name),
                 ),
               );
