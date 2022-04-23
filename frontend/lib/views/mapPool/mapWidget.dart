@@ -8,8 +8,7 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: GestureDetector(
-        onTap: () => Navigator.pop(context),
+      child: InteractiveViewer(
         child: Image(
           image: AssetImage(mapCallsPath),
         ),
