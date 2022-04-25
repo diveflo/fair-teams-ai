@@ -12,8 +12,16 @@ void main() {
 
   group("convert", () {
     MapPool mapPool = MapPool.fromMaps([
-      CsMap(name: "inferno", imagePath: "i.png", isChecked: false),
-      CsMap(name: "nuke", imagePath: "n.png", isChecked: true)
+      CsMap(
+          name: "inferno",
+          imagePath: "i.png",
+          imageMapCallsPath: "i.jpeg",
+          isChecked: false),
+      CsMap(
+          name: "nuke",
+          imagePath: "n.png",
+          imageMapCallsPath: "n.jpeg",
+          isChecked: true),
     ]);
 
     var mapPoolJson = {
@@ -21,11 +29,13 @@ void main() {
         {
           "name": "inferno",
           "imagePath": "i.png",
+          "imageMapCallsPath": "i.jpeg",
           "isChecked": false,
         },
         {
           "name": "nuke",
           "imagePath": "n.png",
+          "imageMapCallsPath": "n.jpeg",
           "isChecked": true,
         }
       ]
@@ -41,9 +51,15 @@ void main() {
       MapPool convertedMapPool = MapPool.fromJson(mapPoolJson);
 
       expect(convertedMapPool.maps.length, 2);
+
       expect(convertedMapPool.maps.first.name, "inferno");
-      expect(convertedMapPool.maps.last.imagePath, "n.png");
+      expect(convertedMapPool.maps.first.imagePath, "i.png");
+      expect(convertedMapPool.maps.first.imageMapCallsPath, "i.jpeg");
       expect(convertedMapPool.maps.first.isChecked, false);
+
+      expect(convertedMapPool.maps.last.name, "nuke");
+      expect(convertedMapPool.maps.last.imagePath, "n.png");
+      expect(convertedMapPool.maps.last.imageMapCallsPath, "n.jpeg");
       expect(convertedMapPool.maps.last.isChecked, true);
     });
   });

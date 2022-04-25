@@ -74,12 +74,15 @@ class CsMap {
   CsMap.fromJson(dynamic json) {
     name = json["name"] != null ? json["name"] : null;
     imagePath = json["imagePath"] != null ? json["imagePath"] : null;
+    imageMapCallsPath =
+        json["imageMapCallsPath"] != null ? json["imageMapCallsPath"] : null;
     isChecked = json["isChecked"] != null ? json["isChecked"] : true;
   }
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'imagePath': imagePath,
+        'imageMapCallsPath': imageMapCallsPath,
         'isChecked': isChecked,
       };
 }
