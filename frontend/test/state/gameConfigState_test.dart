@@ -64,6 +64,7 @@ void main() {
         {
           "name": "inferno",
           "imagePath": "inferno.png",
+          "imageMapCallsPath": "inferno.jpeg",
           "isChecked": true,
         }
       ],
@@ -87,6 +88,7 @@ void main() {
         CsMap(
           name: "inferno",
           imagePath: "inferno.png",
+          imageMapCallsPath: "inferno.jpeg",
           isChecked: true,
         )
       ]),
