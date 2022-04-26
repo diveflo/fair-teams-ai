@@ -34,9 +34,9 @@ class MapPool {
           imagePath: "assets/vertigo.jpg",
           imageMapCallsPath: "assets/vertigo_calls.jpeg"),
       CsMap(
-        name: "Ancient",
-        imagePath: "assets/ancient.jpg",
-      )
+          name: "Ancient",
+          imagePath: "assets/ancient.jpg",
+          imageMapCallsPath: "assets/ancient_calls.webp")
     ];
   }
 
