@@ -82,7 +82,7 @@ namespace fairTeams.DemoHandling
                 var files = myFtpClient.GetListing();
 
                 demoFiles = files
-                    .Where(x => x.Type == FtpFileSystemObjectType.File)
+                    .Where(x => x.Type == FtpObjectType.File)
                     .Where(x => x.FullName.EndsWith(".dem"))
                     .Where(x => x.Size >= minimumFileSize.Bytes)
                     .ToList();
