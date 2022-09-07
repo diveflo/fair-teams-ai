@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
       - name: setup dotnet
         uses: actions/setup-dotnet@v2
         with:
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
       - name: setup dotnet
         uses: actions/setup-dotnet@v2
         with:
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
       - name: initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
       - name: setup platform emulator
         uses: docker/setup-qemu-action@v2
       - name: setup multi-arch docker build
