@@ -16,7 +16,7 @@ namespace fairTeams.DemoHandling
             myLogger = logger;
 
             var ftpCredentials = new NetworkCredential(Settings.DemoBackupFTPUsername, Settings.DemoBackupFTPPassword);
-            myFtpClient = new FtpClient(Settings.DemoBackupFTP, 1818, ftpCredentials);
+            myFtpClient = new FtpClient(Settings.DemoBackupFTP, ftpCredentials, 1818);
             myFtpClient.AutoConnect();
         }
 
