@@ -82,18 +82,18 @@ namespace fairTeams.Steamworks.Tests
             }
         }
 
-        [Fact]
+        [Fact (Skip = "Steam changed API. Previous code cannot be older than 1 month. Need alternative test approach.")]
         [Trait("Category", "unit-requires-secrets")]
         public async Task GetNextMatchSharingCode_PreviousCodeIsNotNewest_ReturnsNextSharingCode()
         {
-            var previousSharingCode = "CSGO-ndsnw-9jkUc-six5k-y2hcE-kosSJ";
-            var authenticationToken = "7TDM-B27HW-THBQ";
+            var previousSharingCode = "CSGO-oO5oR-OxkVB-yD8SP-N4Sn9-7dKTK";
+            var authenticationToken = "8B8E-N9TH2-L9RN";
 
             var steamworksApi = new SteamworksApi();
 
             var nextSharingCode = await steamworksApi.GetNextMatchSharingCode(myPublicProfilePlayerSteamID, authenticationToken, previousSharingCode);
 
-            Assert.Equal("CSGO-k2TXT-9rmts-XE8G2-yqGVu-FhnEM", nextSharingCode);
+            Assert.Equal("CSGO-c8HDY-6FBwo-jQ4d9-fiuT9-6pe8E", nextSharingCode);
         }
     }
 }
