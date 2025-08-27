@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="ByteSize" Version="2.1.1" />
-        <PackageReference Include="FluentFTP" Version="40.0.0" />
+        <PackageReference Include="FluentFTP" Version="53.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.19">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
